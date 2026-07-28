@@ -122,6 +122,12 @@ def _runtime_environment() -> dict[str, str]:
         "MINERU_API_MAX_CONCURRENT_REQUESTS": str(
             settings.mineru_workers_per_pod
         ),
+        "MINERU_API_TASK_RETENTION_SECONDS": str(
+            settings.mineru_api_task_retention_seconds
+        ),
+        "MINERU_API_TASK_CLEANUP_INTERVAL_SECONDS": str(
+            settings.mineru_api_task_cleanup_interval_seconds
+        ),
         "MINERU_API_ENABLE_FASTAPI_DOCS": "true",
         "MINERU_PREPARE_TIMEOUT_SECONDS": str(
             int(settings.runpod_startup_timeout_seconds)
@@ -187,7 +193,10 @@ def _read_json_endpoint(api_url: str, path: str) -> dict[str, Any]:
     return data
 
 
-def _pending_probe_status(api_url: str, path: str) -> tuple[bool, str, dict[str, Any] | None]:
+def _pending_probe_status(
+    api_url: str,
+    path: str,
+) -> tuple[bool, str, dict[str, Any] | None]:
     try:
         return True, "ok", _read_json_endpoint(api_url, path)
     except urllib.error.HTTPError as error:
@@ -202,8 +211,32 @@ def _pending_probe_status(api_url: str, path: str) -> tuple[bool, str, dict[str,
         return False, f"{path} indisponível: {error}", None
 
 
+def _require_health_integer(
+    *,
+    api_url: str,
+    health: dict[str, Any],
+    key: str,
+    expected: int,
+) -> int:
+    observed = health.get(key)
+    try:
+        parsed = int(observed)
+    except (TypeError, ValueError) as error:
+        raise UnexpectedPodServiceError(
+            f"/health de {api_url} não informou {key} corretamente: "
+            f"{observed!r}."
+        ) from error
+
+    if parsed != expected:
+        raise UnexpectedPodServiceError(
+            f"Configuração divergente em {api_url}: "
+            f"{key}={parsed}, esperado={expected}."
+        )
+    return parsed
+
+
 def _probe_mineru_api(api_url: str) -> tuple[bool, str]:
-    """Valida rotas, versão, saúde interna e concorrência do MinerU."""
+    """Valida rotas, versão, saúde interna e configuração do MinerU."""
     available, status, openapi = _pending_probe_status(api_url, "/openapi.json")
     if not available or openapi is None:
         return False, status
@@ -246,25 +279,31 @@ def _probe_mineru_api(api_url: str) -> tuple[bool, str]:
             f"servidor={observed_version!r}, esperada={settings.mineru_version!r}."
         )
 
-    observed_concurrency = health.get("max_concurrent_requests")
-    try:
-        parsed_concurrency = int(observed_concurrency)
-    except (TypeError, ValueError) as error:
-        raise UnexpectedPodServiceError(
-            f"/health de {api_url} não informou uma concorrência válida: "
-            f"{observed_concurrency!r}."
-        ) from error
-
-    if parsed_concurrency != settings.mineru_workers_per_pod:
-        raise UnexpectedPodServiceError(
-            f"Concorrência divergente em {api_url}: "
-            f"servidor={parsed_concurrency}, "
-            f"cliente={settings.mineru_workers_per_pod}."
-        )
+    concurrency = _require_health_integer(
+        api_url=api_url,
+        health=health,
+        key="max_concurrent_requests",
+        expected=settings.mineru_workers_per_pod,
+    )
+    retention = _require_health_integer(
+        api_url=api_url,
+        health=health,
+        key="task_retention_seconds",
+        expected=settings.mineru_api_task_retention_seconds,
+    )
+    cleanup_interval = _require_health_integer(
+        api_url=api_url,
+        health=health,
+        key="task_cleanup_interval_seconds",
+        expected=settings.mineru_api_task_cleanup_interval_seconds,
+    )
 
     return (
         True,
-        f"MinerU {observed_version}; concorrência={parsed_concurrency}",
+        (
+            f"MinerU {observed_version}; concorrência={concurrency}; "
+            f"retenção={retention}s; limpeza={cleanup_interval}s"
+        ),
     )
 
 
