@@ -22,7 +22,7 @@ dependencies = [
 
 [tool.poe.tasks.inventory]
 help = "Cria o manifesto completo de uma coleção de PDFs."
-script = "baseia_extract.inventory:build_inventory"
+script = "baseia_extract.inventory:build_inventory(corpus_dir or None, output or None, workers or None, recursive)"
 args = [
   { name = "corpus_dir", options = ["--corpus"], default = "" },
   { name = "output", options = ["--output"], default = "" },
@@ -32,7 +32,7 @@ args = [
 
 [tool.poe.tasks.sample]
 help = "Gera uma amostra reprodutível do manifesto da coleção."
-script = "baseia_extract.inventory:sample_inventory"
+script = "baseia_extract.inventory:sample_inventory(size, source or None, output or None, seed)"
 args = [
   { name = "size", options = ["--size"], type = "integer", default = 100 },
   { name = "source", options = ["--source"], default = "" },
@@ -42,7 +42,7 @@ args = [
 
 [tool.poe.tasks.extract]
 help = "Executa a extração MinerU distribuída nos pods configurados."
-script = "baseia_extract.mineru:extract"
+script = "baseia_extract.mineru:extract(manifest or None, output or None, workers_per_pod or None, retries if retries >= 0 else None, overwrite, limit or None)"
 args = [
   { name = "manifest", options = ["--manifest"], default = "" },
   { name = "output", options = ["--output"], default = "" },
