@@ -74,7 +74,8 @@ def resolve_template_id(template_name: str) -> str:
     matches = [
         item
         for item in _as_items(payload)
-        if str(item.get("name", "")).strip().casefold() == template_name.casefold()
+        if str(item.get("name", "")).strip().casefold()
+        == template_name.strip().casefold()
     ]
     if not matches:
         raise LookupError(f"Template RunPod não encontrado: {template_name!r}")
@@ -101,14 +102,13 @@ def _extract_pod_id(payload: object) -> str:
 
 def create_pod(*, template_id: str, index: int) -> ManagedPod:
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
-    name = f"baseia-extract-{timestamp}-{index:02d}"
+    name = f"{settings.runpod_name_prefix}-{timestamp}-{index:02d}"
     payload = _runpodctl(
         "pod",
         "create",
         f"--template-id={template_id}",
         f"--gpu-id={settings.runpod_gpu_id}",
         f"--gpu-count={settings.runpod_gpu_count}",
-        f"--cloud-type={settings.runpod_cloud_type}",
         f"--terminate-after={settings.runpod_terminate_after}",
         f"--name={name}",
     )
@@ -154,7 +154,7 @@ def wait_until_ready(pods: tuple[ManagedPod, ...]) -> None:
         if time.monotonic() >= deadline:
             names = ", ".join(pod.name for pod in pending.values())
             raise TimeoutError(f"Pods não ficaram prontos dentro do limite: {names}")
-        time.sleep(settings.runpod_poll_interval_seconds)
+        time.sleep(settings.runpod_startup_poll_seconds)
 
 
 @contextmanager
