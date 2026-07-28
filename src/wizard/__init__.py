@@ -1,1 +1,0 @@
-"""Ferramentas do Wizard Mode."""
