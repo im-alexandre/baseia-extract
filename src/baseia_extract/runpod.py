@@ -1,134 +1,119 @@
 from __future__ import annotations
 
 import json
-import re
 import shutil
 import subprocess
 import time
+import urllib.error
+import urllib.request
 from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import Any, Iterator
+from typing import Iterator
 
 from .settings import settings
 
 
 @dataclass(frozen=True, slots=True)
-class RunPodInstance:
+class ManagedPod:
     pod_id: str
     name: str
     api_url: str
 
 
-def _runpodctl() -> str:
+def _runpodctl(*args: str) -> object:
     executable = shutil.which("runpodctl")
     if executable is None:
-        raise FileNotFoundError("runpodctl não foi encontrado no PATH.")
-    return executable
+        raise FileNotFoundError(
+            "runpodctl não foi encontrado no PATH. Instale e configure o CLI do RunPod."
+        )
 
-
-def _run(*args: str) -> str:
-    result = subprocess.run(
-        [_runpodctl(), *args],
+    completed = subprocess.run(
+        [executable, *args, "--output=json"],
         check=False,
         capture_output=True,
         text=True,
         encoding="utf-8",
     )
-    output = "\n".join(
-        part for part in (result.stdout.strip(), result.stderr.strip()) if part
-    )
-    if result.returncode != 0:
+    if completed.returncode != 0:
         raise RuntimeError(
-            f"runpodctl {' '.join(args)} falhou com código {result.returncode}:\n{output}"
+            f"runpodctl {' '.join(args)} falhou: "
+            f"{completed.stderr.strip() or completed.stdout.strip()}"
         )
-    return output
 
-
-def _json(output: str) -> Any:
+    payload = completed.stdout.strip()
+    if not payload:
+        return None
     try:
-        return json.loads(output)
+        return json.loads(payload)
     except json.JSONDecodeError as error:
-        raise RuntimeError(f"Saída JSON inválida do runpodctl:\n{output}") from error
+        raise RuntimeError(f"Saída inválida do runpodctl: {payload[:2000]}") from error
+
+
+def _as_items(payload: object) -> list[dict[str, object]]:
+    if isinstance(payload, list):
+        return [item for item in payload if isinstance(item, dict)]
+    if isinstance(payload, dict):
+        for key in ("items", "templates", "pods", "data"):
+            value = payload.get(key)
+            if isinstance(value, list):
+                return [item for item in value if isinstance(item, dict)]
+        return [payload]
+    return []
 
 
 def resolve_template_id(template_name: str) -> str:
-    """Resolve um template privado pelo nome exato."""
-    payload = _json(_run("template", "list", "--type", "user", "--limit", "100"))
-    templates = payload if isinstance(payload, list) else payload.get("templates", [])
+    """Resolve um template privado por nome exato e exige resultado único."""
+    payload = _runpodctl(
+        "template",
+        "search",
+        template_name,
+        "--type=user",
+        "--limit=100",
+    )
     matches = [
         item
-        for item in templates
-        if isinstance(item, dict)
-        and str(item.get("name", "")).strip().casefold() == template_name.strip().casefold()
+        for item in _as_items(payload)
+        if str(item.get("name", "")).strip().casefold() == template_name.casefold()
     ]
     if not matches:
-        raise ValueError(f"Template RunPod não encontrado: {template_name!r}.")
+        raise LookupError(f"Template RunPod não encontrado: {template_name!r}")
     if len(matches) > 1:
         ids = [str(item.get("id")) for item in matches]
-        raise ValueError(
-            f"Há mais de um template RunPod chamado {template_name!r}: {ids}."
+        raise LookupError(
+            f"Mais de um template possui o nome {template_name!r}: {ids}."
         )
-    template_id = str(matches[0].get("id", "")).strip()
-    if not template_id:
-        raise RuntimeError(f"Template {template_name!r} não possui ID válido.")
+
+    template_id = matches[0].get("id")
+    if not isinstance(template_id, str) or not template_id:
+        raise RuntimeError(f"Template sem ID válido: {matches[0]}")
     return template_id
 
 
-def _extract_pod_id(output: str) -> str:
-    try:
-        payload = json.loads(output)
-    except json.JSONDecodeError:
-        payload = None
-
-    def find_id(value: Any) -> str | None:
-        if isinstance(value, dict):
-            for key in ("id", "podId", "pod_id"):
-                candidate = value.get(key)
-                if isinstance(candidate, str) and candidate.strip():
-                    return candidate.strip()
-            for child in value.values():
-                candidate = find_id(child)
-                if candidate:
-                    return candidate
-        elif isinstance(value, list):
-            for child in value:
-                candidate = find_id(child)
-                if candidate:
-                    return candidate
-        return None
-
-    if payload is not None:
-        candidate = find_id(payload)
-        if candidate:
-            return candidate
-
-    for pattern in (
-        r"(?i)pod(?:\s+id|_id|Id)?\s*[:=]\s*[\"']?([a-z0-9-]{6,})",
-        r"https://([a-z0-9-]+)-\d+\.proxy\.runpod\.net",
-    ):
-        match = re.search(pattern, output)
-        if match:
-            return match.group(1)
-    raise RuntimeError(f"Não foi possível identificar o pod criado:\n{output}")
+def _extract_pod_id(payload: object) -> str:
+    for item in _as_items(payload):
+        for key in ("id", "podId", "pod_id"):
+            value = item.get(key)
+            if isinstance(value, str) and value:
+                return value
+    raise RuntimeError(f"Não foi possível obter o ID do pod: {payload}")
 
 
-def create_pod(template_id: str, index: int) -> RunPodInstance:
-    name = f"{settings.runpod_name_prefix}-{index:02d}"
-    output = _run(
+def create_pod(*, template_id: str, index: int) -> ManagedPod:
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
+    name = f"baseia-extract-{timestamp}-{index:02d}"
+    payload = _runpodctl(
         "pod",
         "create",
-        "--template-id",
-        template_id,
-        "--gpu-id",
-        settings.runpod_gpu_id,
-        "--gpu-count",
-        str(settings.runpod_gpu_count),
-        "--name",
-        name,
+        f"--template-id={template_id}",
+        f"--gpu-id={settings.runpod_gpu_id}",
+        f"--gpu-count={settings.runpod_gpu_count}",
+        f"--cloud-type={settings.runpod_cloud_type}",
+        f"--terminate-after={settings.runpod_terminate_after}",
+        f"--name={name}",
     )
-    pod_id = _extract_pod_id(output)
-    return RunPodInstance(
+    pod_id = _extract_pod_id(payload)
+    return ManagedPod(
         pod_id=pod_id,
         name=name,
         api_url=f"https://{pod_id}-{settings.runpod_api_port}.proxy.runpod.net",
@@ -136,47 +121,66 @@ def create_pod(template_id: str, index: int) -> RunPodInstance:
 
 
 def delete_pod(pod_id: str) -> None:
-    """Termina o pod, liberando GPU e armazenamento efêmero."""
-    _run("pod", "delete", pod_id)
+    _runpodctl("pod", "delete", pod_id)
 
 
-def _wait_until_ready(pod: RunPodInstance, healthcheck: Any) -> None:
-    deadline = time.monotonic() + settings.runpod_startup_timeout_seconds
-    last_error: Exception | None = None
-    while time.monotonic() < deadline:
-        try:
-            healthcheck(pod.api_url)
-            return
-        except Exception as error:
-            last_error = error
-            time.sleep(settings.runpod_startup_poll_seconds)
-    raise TimeoutError(
-        f"Pod {pod.pod_id} não ficou pronto em "
-        f"{settings.runpod_startup_timeout_seconds:.0f}s: {last_error}"
+def _healthy(api_url: str) -> bool:
+    request = urllib.request.Request(
+        f"{api_url}/health",
+        headers={"Accept": "application/json", "User-Agent": "BaseIA-Extract/1.0"},
+        method="GET",
     )
+    try:
+        with urllib.request.urlopen(
+            request,
+            timeout=settings.mineru_health_timeout_seconds,
+        ) as response:
+            return 200 <= response.status < 300
+    except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError):
+        return False
+
+
+def wait_until_ready(pods: tuple[ManagedPod, ...]) -> None:
+    deadline = time.monotonic() + settings.runpod_startup_timeout_seconds
+    pending = {pod.pod_id: pod for pod in pods}
+
+    while pending:
+        for pod_id, pod in tuple(pending.items()):
+            if _healthy(pod.api_url):
+                print(f"Pod pronto: {pod.name} | {pod.api_url}")
+                pending.pop(pod_id)
+        if not pending:
+            return
+        if time.monotonic() >= deadline:
+            names = ", ".join(pod.name for pod in pending.values())
+            raise TimeoutError(f"Pods não ficaram prontos dentro do limite: {names}")
+        time.sleep(settings.runpod_poll_interval_seconds)
 
 
 @contextmanager
-def managed_mineru_pods(healthcheck: Any) -> Iterator[tuple[RunPodInstance, ...]]:
-    """Cria, aguarda e sempre termina os pods usados por uma tarefa MinerU."""
+def managed_mineru_pods() -> Iterator[tuple[ManagedPod, ...]]:
+    """Cria pods temporários e garante sua exclusão ao final da extração."""
+    if not settings.runpod_template_name:
+        raise ValueError("RUNPOD_TEMPLATE_NAME não foi configurado no .env.")
+
     template_id = resolve_template_id(settings.runpod_template_name)
-    pods: list[RunPodInstance] = []
+    created: list[ManagedPod] = []
     try:
         for index in range(1, settings.runpod_pod_count + 1):
-            pod = create_pod(template_id, index)
-            pods.append(pod)
-            print(f"Pod criado: {pod.name} ({pod.pod_id})")
-        for pod in pods:
-            _wait_until_ready(pod, healthcheck)
-            print(f"Pod pronto: {pod.api_url}")
-        yield tuple(pods)
+            pod = create_pod(template_id=template_id, index=index)
+            created.append(pod)
+            print(f"Pod criado: {pod.name} | id={pod.pod_id}")
+
+        pods = tuple(created)
+        wait_until_ready(pods)
+        yield pods
     finally:
         failures: list[str] = []
-        for pod in reversed(pods):
+        for pod in reversed(created):
             try:
                 delete_pod(pod.pod_id)
-                print(f"Pod terminado: {pod.name} ({pod.pod_id})")
+                print(f"Pod encerrado: {pod.name} | id={pod.pod_id}")
             except Exception as error:
                 failures.append(f"{pod.pod_id}: {type(error).__name__}: {error}")
         if failures:
-            print("ATENÇÃO: falha ao terminar pods:\n- " + "\n- ".join(failures))
+            print("ATENÇÃO: falha ao encerrar pods:\n- " + "\n- ".join(failures))
