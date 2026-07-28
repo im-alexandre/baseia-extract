@@ -63,6 +63,7 @@ class Settings:
     ir_dir: Path
     structure_dir: Path
     chunks_dir: Path
+    mineru_api_urls: tuple[str, ...]
     mineru_workers_per_pod: int
     mineru_retries: int
     mineru_backend: str
@@ -99,6 +100,7 @@ def get_settings() -> Settings:
         ir_dir=data_dir / "ir",
         structure_dir=data_dir / "structure",
         chunks_dir=data_dir / "chunks",
+        mineru_api_urls=(),
         mineru_workers_per_pod=_int_env("MINERU_WORKERS_PER_POD", 8),
         mineru_retries=_int_env("MINERU_RETRIES", 2),
         mineru_backend=os.getenv("MINERU_BACKEND", "pipeline"),
