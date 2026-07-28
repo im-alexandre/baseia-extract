@@ -1,0 +1,6 @@
+﻿document_id,sha256,path,relative_path,filename,size_mb,page_count,encrypted,page_bucket,size_bucket,stratum
+90d74e349676936f,90d74e349676936fe04ef15ec74301b7851f3bd20486492a0e569f1ae7e66f87,D:\baseia_v3\corpus\GDI_0685.pdf,GDI_0685.pdf,GDI_0685.pdf,1.5285,9.0,False,006_010,001_005mb,006_010|001_005mb|not_encrypted
+1eda56df0d39f2ca,1eda56df0d39f2ca0eba1726db2215f38a6c239033145ab78f229df977bb7d88,D:\baseia_v3\corpus\GGH9.pdf,GGH9.pdf,GGH9.pdf,0.8927,8.0,False,006_010,025_001mb,006_010|025_001mb|not_encrypted
+ce786e93290d48c3,ce786e93290d48c3297039cfcbe12238d1cdf71bb7563540f77a0b4c6e449c5f,D:\baseia_v3\corpus\GGT_1247.pdf,GGT_1247.pdf,GGT_1247.pdf,1.2042,10.0,False,006_010,001_005mb,006_010|001_005mb|not_encrypted
+169ba37b912aa8dd,169ba37b912aa8ddf44315dce0edf8e7670219d53d515482c09005a680c03de7,D:\baseia_v3\corpus\GTL_0081.pdf,GTL_0081.pdf,GTL_0081.pdf,0.9256,5.0,False,003_005,025_001mb,003_005|025_001mb|not_encrypted
+153ff9c09ca994ca,153ff9c09ca994ca35b79fede481f1340c0a29b5a969a0be401e6aac5330606b,D:\baseia_v3\corpus\GTM10.pdf,GTM10.pdf,GTM10.pdf,0.6307,9.0,False,006_010,025_001mb,006_010|025_001mb|not_encrypted

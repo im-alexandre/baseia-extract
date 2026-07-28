@@ -1,0 +1,79 @@
+{
+  "documents": 5,
+  "pages": 41,
+  "blocks": 877,
+  "lines": 2475,
+  "spans": 2627,
+  "block_collections": [
+    "discarded_blocks",
+    "para_blocks",
+    "preproc_blocks"
+  ],
+  "block_types": [
+    "abstract",
+    "chart",
+    "footer",
+    "header",
+    "image",
+    "interline_equation",
+    "list",
+    "page_number",
+    "ref_text",
+    "table",
+    "text",
+    "title"
+  ],
+  "span_types": [
+    "inline_equation",
+    "interline_equation",
+    "text"
+  ],
+  "block_keys": [
+    "bbox",
+    "bbox_fs",
+    "blocks",
+    "index",
+    "level",
+    "lines",
+    "lines_deleted",
+    "score",
+    "type"
+  ],
+  "line_keys": [
+    "bbox",
+    "is_list_end_line",
+    "is_list_start_line",
+    "spans"
+  ],
+  "span_keys": [
+    "bbox",
+    "content",
+    "cross_page",
+    "image_path",
+    "score",
+    "type"
+  ],
+  "formula_types": [
+    "display_formula",
+    "equation",
+    "equation_inline",
+    "equation_interline",
+    "formula",
+    "formula_number",
+    "inline_formula",
+    "interline_equation"
+  ],
+  "image_types": [
+    "chart",
+    "figure",
+    "figure_body",
+    "header_image",
+    "image"
+  ],
+  "noise_types": [
+    "footer",
+    "header",
+    "number",
+    "page_number"
+  ]
+}

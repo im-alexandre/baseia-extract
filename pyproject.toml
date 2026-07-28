@@ -1,0 +1,23 @@
+[project]
+name = "baseia-v3"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+  "aiofiles",
+  "aiohttp",
+  "bibtexparser==2.0.0b9",
+  "httpx",
+  "ipykernel",
+  "jupyterlab",
+  "jupytext>=1.19.5",
+  "pandas",
+  "pillow",
+  "pyarrow",
+  "pydantic",
+  "pypdf[crypto]>=6.14.2",
+  "requests",
+  "tqdm",
+  "unpywall",
+]

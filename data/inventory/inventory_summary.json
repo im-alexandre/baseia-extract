@@ -1,0 +1,12 @@
+{
+  "documents_total":3429.0,
+  "documents_ok":3427.0,
+  "documents_error":2.0,
+  "encrypted":9.0,
+  "size_total_gb":6.0663,
+  "size_median_mb":0.9397,
+  "pages_total":114742.0,
+  "pages_median":9.0,
+  "duplicate_files":93.0,
+  "duplicate_groups":46.0
+}

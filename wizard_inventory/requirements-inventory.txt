@@ -1,0 +1,5 @@
+pandas>=2.2
+pyarrow>=18
+pypdf>=5
+jupyterlab>=4
+jupytext>=1.16

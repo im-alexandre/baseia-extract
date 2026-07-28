@@ -1,0 +1,449 @@
+﻿filename,block_collection,block_index,block_type,block_level,line_index,line_text,line_x0,line_y0,line_x1,line_y1
+GDI_0685.pdf,discarded_blocks,1,header,,0,XXVII Seminário Nacional de,124.0,35.0,229.0,43.0
+GDI_0685.pdf,discarded_blocks,1,header,,1,Produção e Transmissão,124.0,45.0,248.0,55.0
+GDI_0685.pdf,discarded_blocks,1,header,,2,de Energia Elétrica,124.0,56.0,219.0,67.0
+GDI_0685.pdf,discarded_blocks,1,header,,3,XXVIISNPTEE,68.0,66.0,119.0,74.0
+GDI_0685.pdf,discarded_blocks,2,header,,0,0685,501.0,41.0,524.0,52.0
+GDI_0685.pdf,discarded_blocks,2,header,,1,GDI/7,498.0,58.0,523.0,69.0
+GDI_0685.pdf,para_blocks,3,title,1.0,0,GRUPO DE ESTUDO DE SISTEMAS DE DISTRIBUIÇÃO - GDI,165.0,137.0,424.0,149.0
+GDI_0685.pdf,preproc_blocks,3,title,1.0,0,GRUPO DE ESTUDO DE SISTEMAS DE DISTRIBUIÇÃO - GDI,165.0,137.0,424.0,149.0
+GDI_0685.pdf,para_blocks,4,title,1.0,0,DESENVOLVIMENTO DE CAMINHÃO ELÉTRICO PARA UTILIZAÇÃO EM MANUTENÇÃO EM REDES DE,75.0,168.0,514.0,179.0
+GDI_0685.pdf,preproc_blocks,4,title,1.0,0,DESENVOLVIMENTO DE CAMINHÃO ELÉTRICO PARA UTILIZAÇÃO EM MANUTENÇÃO EM REDES DE,75.0,168.0,514.0,179.0
+GDI_0685.pdf,para_blocks,4,title,1.0,1,DISTRIBUIÇÃO DE BAIXA TENSÃO,218.0,178.0,370.0,189.0
+GDI_0685.pdf,preproc_blocks,4,title,1.0,1,DISTRIBUIÇÃO DE BAIXA TENSÃO,218.0,178.0,370.0,189.0
+GDI_0685.pdf,para_blocks,5,list,,0,ANA PAULA OENING (1); SIGNIE LAUREANO FRANÇA SANTOS (1); NATAN BARBIZAN (2); LEONARDO,71.0,212.0,516.0,223.0
+GDI_0685.pdf,preproc_blocks,5,text,,0,ANA PAULA OENING (1); SIGNIE LAUREANO FRANÇA SANTOS (1); NATAN BARBIZAN (2); LEONARDO,71.0,212.0,516.0,223.0
+GDI_0685.pdf,para_blocks,5,list,,1,LOMBARDO FERREIRA (2); EDEMIR LUIZ KOWALSKI (1); GUILHERME RACHELLE HERNASKI (1);,81.0,220.0,505.0,234.0
+GDI_0685.pdf,preproc_blocks,5,text,,1,LOMBARDO FERREIRA (2); EDEMIR LUIZ KOWALSKI (1); GUILHERME RACHELLE HERNASKI (1);,81.0,220.0,505.0,234.0
+GDI_0685.pdf,para_blocks,5,list,,2,EDUARDO CASARIN (3); AMANDA CORTEZ (3),191.0,231.0,394.0,243.0
+GDI_0685.pdf,preproc_blocks,5,text,,2,EDUARDO CASARIN (3); AMANDA CORTEZ (3),191.0,231.0,394.0,243.0
+GDI_0685.pdf,para_blocks,5,list,,3,INSTITUTO DE TECNOLOGIA PARA O DESENVOLVIMENTO (1); BYD DO BRASIL LTDA (2); ELEKTRO,74.0,241.0,512.0,255.0
+GDI_0685.pdf,preproc_blocks,5,text,,3,INSTITUTO DE TECNOLOGIA PARA O DESENVOLVIMENTO (1); BYD DO BRASIL LTDA (2); ELEKTRO,74.0,241.0,512.0,255.0
+GDI_0685.pdf,para_blocks,5,list,,4,REDES S.A. (3),260.0,253.0,327.0,264.0
+GDI_0685.pdf,preproc_blocks,5,text,,4,REDES S.A. (3),260.0,253.0,327.0,264.0
+GDI_0685.pdf,para_blocks,6,title,2.0,0,RESUMO,67.0,282.0,107.0,294.0
+GDI_0685.pdf,preproc_blocks,6,title,2.0,0,RESUMO,67.0,282.0,107.0,294.0
+GDI_0685.pdf,para_blocks,7,abstract,,0,Neste trabalho é apresentado o desenvolvimento de um caminhão elétrico para serviços de manutenção em redes,66.0,299.0,531.0,308.0
+GDI_0685.pdf,preproc_blocks,7,abstract,,0,Neste trabalho é apresentado o desenvolvimento de um caminhão elétrico para serviços de manutenção em redes,66.0,299.0,531.0,308.0
+GDI_0685.pdf,para_blocks,7,abstract,,1,"de distribuição de energia elétrica, incluindo todas as adaptações necessárias para a inclusão de cesto aéreo e",67.0,310.0,530.0,318.0
+GDI_0685.pdf,preproc_blocks,7,abstract,,1,"de distribuição de energia elétrica, incluindo todas as adaptações necessárias para a inclusão de cesto aéreo e",67.0,310.0,530.0,318.0
+GDI_0685.pdf,para_blocks,7,abstract,,2,sistema seguro e eficiente para recargas de oportunidade do veículo na própria rede de distribuição da,67.0,320.0,531.0,330.0
+GDI_0685.pdf,preproc_blocks,7,abstract,,2,sistema seguro e eficiente para recargas de oportunidade do veículo na própria rede de distribuição da,67.0,320.0,531.0,330.0
+GDI_0685.pdf,para_blocks,7,abstract,,3,concessionária. O desenvolvimento foi realizado no âmbito do programa de P&D ANEEL dentro da Chamada,67.0,330.0,531.0,340.0
+GDI_0685.pdf,preproc_blocks,7,abstract,,3,concessionária. O desenvolvimento foi realizado no âmbito do programa de P&D ANEEL dentro da Chamada,67.0,330.0,531.0,340.0
+GDI_0685.pdf,para_blocks,7,abstract,,4,Estratégica nº 22/2018 que teve como intuito impulsionar a mobilidade elétrica no país.,67.0,340.0,414.0,350.0
+GDI_0685.pdf,preproc_blocks,7,abstract,,4,Estratégica nº 22/2018 que teve como intuito impulsionar a mobilidade elétrica no país.,67.0,340.0,414.0,350.0
+GDI_0685.pdf,para_blocks,8,title,2.0,0,PALAVRAS-CHAVE,67.0,368.0,149.0,378.0
+GDI_0685.pdf,preproc_blocks,8,title,2.0,0,PALAVRAS-CHAVE,67.0,368.0,149.0,378.0
+GDI_0685.pdf,para_blocks,9,text,,0,Mobilidade elétrica; veículo elétrico; serviços de manutenção; recarga de oportunidade.,66.0,384.0,415.0,393.0
+GDI_0685.pdf,preproc_blocks,9,text,,0,Mobilidade elétrica; veículo elétrico; serviços de manutenção; recarga de oportunidade.,66.0,384.0,415.0,393.0
+GDI_0685.pdf,para_blocks,10,title,2.0,0,1.0 INTRODUÇÃO,68.0,403.0,143.0,415.0
+GDI_0685.pdf,preproc_blocks,10,title,2.0,0,1.0 INTRODUÇÃO,68.0,403.0,143.0,415.0
+GDI_0685.pdf,para_blocks,11,text,,0,Em 2018 foi firmada uma parceria estratégica entre a ANEEL e a Agência de Cooperação Alemã (GIZ) para a,67.0,421.0,531.0,430.0
+GDI_0685.pdf,preproc_blocks,11,text,,0,Em 2018 foi firmada uma parceria estratégica entre a ANEEL e a Agência de Cooperação Alemã (GIZ) para a,67.0,421.0,531.0,430.0
+GDI_0685.pdf,para_blocks,11,text,,1,"organização da estruturação da Rede de Inovação do Setor Elétrico – RISE aplicada à Mobilidade Elétrica, com a",67.0,431.0,531.0,440.0
+GDI_0685.pdf,preproc_blocks,11,text,,1,"organização da estruturação da Rede de Inovação do Setor Elétrico – RISE aplicada à Mobilidade Elétrica, com a",67.0,431.0,531.0,440.0
+GDI_0685.pdf,para_blocks,11,text,,2,"intenção de promover ambientes de inovação propícios à criação de produtos tecnológicos com inserção no mercado,",67.0,441.0,530.0,450.0
+GDI_0685.pdf,preproc_blocks,11,text,,2,"intenção de promover ambientes de inovação propícios à criação de produtos tecnológicos com inserção no mercado,",67.0,441.0,530.0,450.0
+GDI_0685.pdf,para_blocks,11,text,,3,"através de pesquisas alinhadas com o setor industrial, de modo a impulsionar a mobilidade elétrica no Brasil. Em",67.0,452.0,531.0,460.0
+GDI_0685.pdf,preproc_blocks,11,text,,3,"através de pesquisas alinhadas com o setor industrial, de modo a impulsionar a mobilidade elétrica no Brasil. Em",67.0,452.0,531.0,460.0
+GDI_0685.pdf,para_blocks,11,text,,4,"consonância, a ANEEL lançou a Chamada de Projeto de P&D Estratégico “Desenvolvimento de Soluções em",66.0,461.0,531.0,472.0
+GDI_0685.pdf,preproc_blocks,11,text,,4,"consonância, a ANEEL lançou a Chamada de Projeto de P&D Estratégico “Desenvolvimento de Soluções em",66.0,461.0,531.0,472.0
+GDI_0685.pdf,para_blocks,11,text,,5,"Mobilidade Elétrica Eficiente” [1], a qual tem por objetivo a apresentação de soluções para mobilidade elétrica por",67.0,473.0,531.0,482.0
+GDI_0685.pdf,preproc_blocks,11,text,,5,"Mobilidade Elétrica Eficiente” [1], a qual tem por objetivo a apresentação de soluções para mobilidade elétrica por",67.0,473.0,531.0,482.0
+GDI_0685.pdf,para_blocks,11,text,,6,"meio de modelos de negócio, equipamentos, tecnologias, serviços, sistemas ou infraestruturas para suporte ao",67.0,483.0,531.0,493.0
+GDI_0685.pdf,preproc_blocks,11,text,,6,"meio de modelos de negócio, equipamentos, tecnologias, serviços, sistemas ou infraestruturas para suporte ao",67.0,483.0,531.0,493.0
+GDI_0685.pdf,para_blocks,11,text,,7,desenvolvimento ou à operação dos veículos elétricos ou híbridos plug-in.,66.0,493.0,362.0,503.0
+GDI_0685.pdf,preproc_blocks,11,text,,7,desenvolvimento ou à operação dos veículos elétricos ou híbridos plug-in.,66.0,493.0,362.0,503.0
+GDI_0685.pdf,para_blocks,12,text,,0,"Neste sentido, com o intuito de contribuir para os objetivos propostos na temática da eletromobilidade no país e",66.0,510.0,531.0,519.0
+GDI_0685.pdf,preproc_blocks,12,text,,0,"Neste sentido, com o intuito de contribuir para os objetivos propostos na temática da eletromobilidade no país e",66.0,510.0,531.0,519.0
+GDI_0685.pdf,para_blocks,12,text,,1,"alcançar os resultados a que se propõe [2], a Neoenergia por meio da Elektro e demais cooperadas em parceira com",65.0,519.0,532.0,529.0
+GDI_0685.pdf,preproc_blocks,12,text,,1,"alcançar os resultados a que se propõe [2], a Neoenergia por meio da Elektro e demais cooperadas em parceira com",65.0,519.0,532.0,529.0
+GDI_0685.pdf,para_blocks,12,text,,2,"o Lactec (instituto de pesquisa), com a BYD (indústria de veículos elétricos) e a com a PLE (desenvolvedora de",66.0,530.0,531.0,539.0
+GDI_0685.pdf,preproc_blocks,12,text,,2,"o Lactec (instituto de pesquisa), com a BYD (indústria de veículos elétricos) e a com a PLE (desenvolvedora de",66.0,530.0,531.0,539.0
+GDI_0685.pdf,para_blocks,12,text,,3,soluções em eletroeletrônicos) propuseram a realização de um projeto de P&D para o Desenvolvimento de Caminhão,66.0,540.0,532.0,551.0
+GDI_0685.pdf,preproc_blocks,12,text,,3,soluções em eletroeletrônicos) propuseram a realização de um projeto de P&D para o Desenvolvimento de Caminhão,66.0,540.0,532.0,551.0
+GDI_0685.pdf,para_blocks,12,text,,4,"Elétrico para Manutenção de Redes de Distribuição, com conjunto inteligente para o gerenciamento da recarga e",65.0,550.0,532.0,561.0
+GDI_0685.pdf,preproc_blocks,12,text,,4,"Elétrico para Manutenção de Redes de Distribuição, com conjunto inteligente para o gerenciamento da recarga e",65.0,550.0,532.0,561.0
+GDI_0685.pdf,para_blocks,12,text,,5,sistema seguro e eficiente para recargas do veículo na própria rede da concessionária [3].,66.0,561.0,427.0,570.0
+GDI_0685.pdf,preproc_blocks,12,text,,5,sistema seguro e eficiente para recargas do veículo na própria rede da concessionária [3].,66.0,561.0,427.0,570.0
+GDI_0685.pdf,para_blocks,13,text,,0,"Desta forma, neste trabalho estão apresentadas as etapas realizadas para a implementação de inovações no",66.0,577.0,531.0,587.0
+GDI_0685.pdf,preproc_blocks,13,text,,0,"Desta forma, neste trabalho estão apresentadas as etapas realizadas para a implementação de inovações no",66.0,577.0,531.0,587.0
+GDI_0685.pdf,para_blocks,13,text,,1,"caminhão elétrico comercializado internacionalmente para aplicação em manutenção de redes de distribuição, o que",66.0,587.0,531.0,598.0
+GDI_0685.pdf,preproc_blocks,13,text,,1,"caminhão elétrico comercializado internacionalmente para aplicação em manutenção de redes de distribuição, o que",66.0,587.0,531.0,598.0
+GDI_0685.pdf,para_blocks,13,text,,2,inclui a integração de braço hidráulico e cesto aéreo e sistema seguro e eficiente para recargas de oportunidade do,67.0,599.0,531.0,607.0
+GDI_0685.pdf,preproc_blocks,13,text,,2,inclui a integração de braço hidráulico e cesto aéreo e sistema seguro e eficiente para recargas de oportunidade do,67.0,599.0,531.0,607.0
+GDI_0685.pdf,para_blocks,13,text,,3,veículo na própria rede de distribuição da concessionária.,66.0,609.0,298.0,618.0
+GDI_0685.pdf,preproc_blocks,13,text,,3,veículo na própria rede de distribuição da concessionária.,66.0,609.0,298.0,618.0
+GDI_0685.pdf,para_blocks,14,title,2.0,0,2.0 DESENVOLVIMENTO,66.0,630.0,173.0,641.0
+GDI_0685.pdf,preproc_blocks,14,title,2.0,0,2.0 DESENVOLVIMENTO,66.0,630.0,173.0,641.0
+GDI_0685.pdf,para_blocks,15,text,,0,2.1 Estudos para definição dos requisitos e características para aprimoramento do caminhão e do carregador,66.0,650.0,505.0,660.0
+GDI_0685.pdf,preproc_blocks,15,text,,0,2.1 Estudos para definição dos requisitos e características para aprimoramento do caminhão e do carregador,66.0,650.0,505.0,660.0
+GDI_0685.pdf,para_blocks,16,text,,0,O veículo escolhido para as implementações necessárias ao desenvolvimento do caminhão elétrico para manutenção,66.0,666.0,531.0,676.0
+GDI_0685.pdf,preproc_blocks,16,text,,0,O veículo escolhido para as implementações necessárias ao desenvolvimento do caminhão elétrico para manutenção,66.0,666.0,531.0,676.0
+GDI_0685.pdf,para_blocks,16,text,,1,"de redes de distribuição é o caminhão BYD modelo T7 com pack de baterias de aproximadamente 160 kW, que pode",67.0,678.0,530.0,685.0
+GDI_0685.pdf,preproc_blocks,16,text,,1,"de redes de distribuição é o caminhão BYD modelo T7 com pack de baterias de aproximadamente 160 kW, que pode",67.0,678.0,530.0,685.0
+GDI_0685.pdf,para_blocks,16,text,,2,ser observado na Figura 1.,66.0,687.0,175.0,696.0
+GDI_0685.pdf,preproc_blocks,16,text,,2,ser observado na Figura 1.,66.0,687.0,175.0,696.0
+GDI_0685.pdf,discarded_blocks,17,footer,,0,ana.oening@lactec.com.br,241.0,791.0,356.0,799.0
+GGH9.pdf,discarded_blocks,1,header,,0,XXIIISNPTEE,96.0,91.0,192.0,113.0
+GGH9.pdf,discarded_blocks,1,header,,1,Samirsáulo Nectonal de Produçião,133.0,113.0,191.0,118.0
+GGH9.pdf,discarded_blocks,1,header,,2,B Trananbsão de Enargla Bétrioa,133.0,117.0,191.0,122.0
+GGH9.pdf,discarded_blocks,1,header,,3,,152.0,130.0,173.0,135.0
+GGH9.pdf,discarded_blocks,1,header,,4,16 a 21 de cukbro de Z016 | Foedo lguepa | PR,132.0,161.0,191.0,166.0
+GGH9.pdf,discarded_blocks,2,header,,0,XXIII SNPTEE,205.0,108.0,265.0,118.0
+GGH9.pdf,discarded_blocks,2,header,,1,SEMINÁRIO NACIONAL,205.0,118.0,308.0,128.0
+GGH9.pdf,discarded_blocks,2,header,,2,DE PRODUÇÃO E,205.0,128.0,283.0,138.0
+GGH9.pdf,discarded_blocks,2,header,,3,TRANSMISSÃO DE,204.0,137.0,289.0,150.0
+GGH9.pdf,discarded_blocks,2,header,,4,ENERGIA ELÉTRICA,205.0,149.0,295.0,159.0
+GGH9.pdf,discarded_blocks,3,header,,0,FI/GGH/09,487.0,119.0,532.0,128.0
+GGH9.pdf,discarded_blocks,3,header,,1,18 a 21 de Outubro de 2015,420.0,130.0,532.0,139.0
+GGH9.pdf,discarded_blocks,3,header,,2,Foz do Iguaçu - PR,453.0,140.0,533.0,150.0
+GGH9.pdf,para_blocks,4,text,,0,GRUPO - I,67.0,198.0,112.0,207.0
+GGH9.pdf,preproc_blocks,4,text,,0,GRUPO - I,67.0,198.0,112.0,207.0
+GGH9.pdf,para_blocks,5,title,1.0,0,GRUPO DE ESTUDO DE GERAÇÃO HIDRÁULICA- GGH,182.0,207.0,418.0,219.0
+GGH9.pdf,preproc_blocks,5,title,1.0,0,GRUPO DE ESTUDO DE GERAÇÃO HIDRÁULICA- GGH,182.0,207.0,418.0,219.0
+GGH9.pdf,para_blocks,6,title,1.0,0,ESTRATÉGIAS “PIT STOP” PARA REDUZIR CUSTOS DE REFORMAS DE USINAS HIDRELÉTRICAS,88.0,239.0,511.0,250.0
+GGH9.pdf,preproc_blocks,6,title,1.0,0,ESTRATÉGIAS “PIT STOP” PARA REDUZIR CUSTOS DE REFORMAS DE USINAS HIDRELÉTRICAS,88.0,239.0,511.0,250.0
+GGH9.pdf,para_blocks,7,text,,0,Cornelis J. V. D. Poel Filho (*),118.0,276.0,245.0,286.0
+GGH9.pdf,preproc_blocks,7,text,,0,Cornelis J. V. D. Poel Filho (*),118.0,276.0,245.0,286.0
+GGH9.pdf,para_blocks,7,text,,1,ALSTOM ENERGIAS RENOVÁVEIS LTDA,93.0,285.0,270.0,296.0
+GGH9.pdf,preproc_blocks,7,text,,1,ALSTOM ENERGIAS RENOVÁVEIS LTDA,93.0,285.0,270.0,296.0
+GGH9.pdf,para_blocks,8,text,,0,Marco A. P. Santos,140.0,305.0,222.0,314.0
+GGH9.pdf,preproc_blocks,8,text,,0,Marco A. P. Santos,140.0,305.0,222.0,314.0
+GGH9.pdf,para_blocks,8,text,,1,ALSTOM ENERGIAS RENOVÁVEIS LTDA,93.0,314.0,270.0,323.0
+GGH9.pdf,preproc_blocks,8,text,,1,ALSTOM ENERGIAS RENOVÁVEIS LTDA,93.0,314.0,270.0,323.0
+GGH9.pdf,para_blocks,9,text,,0,Marcos V. D. Silva,378.0,276.0,457.0,285.0
+GGH9.pdf,preproc_blocks,9,text,,0,Marcos V. D. Silva,378.0,276.0,457.0,285.0
+GGH9.pdf,para_blocks,9,text,,1,ALSTOM ENERGIAS RENOVÁVEIS LTDA,329.0,285.0,505.0,295.0
+GGH9.pdf,preproc_blocks,9,text,,1,ALSTOM ENERGIAS RENOVÁVEIS LTDA,329.0,285.0,505.0,295.0
+GGH9.pdf,para_blocks,10,text,,0,Wilian C. D. Oliveira,374.0,304.0,461.0,315.0
+GGH9.pdf,preproc_blocks,10,text,,0,Wilian C. D. Oliveira,374.0,304.0,461.0,315.0
+GGH9.pdf,para_blocks,10,text,,1,ALSTOM ENERGIAS RENOVÁVEIS LTDA,330.0,313.0,505.0,324.0
+GGH9.pdf,preproc_blocks,10,text,,1,ALSTOM ENERGIAS RENOVÁVEIS LTDA,330.0,313.0,505.0,324.0
+GGH9.pdf,para_blocks,11,title,2.0,0,RESUMO,66.0,349.0,107.0,360.0
+GGH9.pdf,preproc_blocks,11,title,2.0,0,RESUMO,66.0,349.0,107.0,360.0
+GGH9.pdf,para_blocks,12,abstract,,0,"A manutenção contínua é essencial à disponibilidade das usinas para geração, porém, mesmo se realizada",67.0,370.0,531.0,379.0
+GGH9.pdf,preproc_blocks,12,abstract,,0,"A manutenção contínua é essencial à disponibilidade das usinas para geração, porém, mesmo se realizada",67.0,370.0,531.0,379.0
+GGH9.pdf,para_blocks,12,abstract,,1,"diligentemente, não evitará o envelhecimento das plantas. Para assegurar o desempenho no longo prazo, há a",67.0,381.0,531.0,389.0
+GGH9.pdf,preproc_blocks,12,abstract,,1,"diligentemente, não evitará o envelhecimento das plantas. Para assegurar o desempenho no longo prazo, há a",67.0,381.0,531.0,389.0
+GGH9.pdf,para_blocks,12,abstract,,2,"necessidade de uma reforma ou modernização. Essas intervenções requerem paradas de operação, significando",67.0,391.0,531.0,399.0
+GGH9.pdf,preproc_blocks,12,abstract,,2,"necessidade de uma reforma ou modernização. Essas intervenções requerem paradas de operação, significando",67.0,391.0,531.0,399.0
+GGH9.pdf,para_blocks,12,abstract,,3,perdas de produção e receitas. Reduzir estas paradas significa melhorar a relação de custo-benefício do,67.0,401.0,531.0,410.0
+GGH9.pdf,preproc_blocks,12,abstract,,3,perdas de produção e receitas. Reduzir estas paradas significa melhorar a relação de custo-benefício do,67.0,401.0,531.0,410.0
+GGH9.pdf,para_blocks,12,abstract,,4,investimento. O presente artigo abordará o conceito de pit-stop aplicado às reformas e modernizações. Será,66.0,411.0,531.0,421.0
+GGH9.pdf,preproc_blocks,12,abstract,,4,investimento. O presente artigo abordará o conceito de pit-stop aplicado às reformas e modernizações. Será,66.0,411.0,531.0,421.0
+GGH9.pdf,para_blocks,12,abstract,,5,apresentado um estudo de caso onde a estratégia de pit-stop possibilitou reduzir o tempo de parada em,67.0,422.0,531.0,430.0
+GGH9.pdf,preproc_blocks,12,abstract,,5,apresentado um estudo de caso onde a estratégia de pit-stop possibilitou reduzir o tempo de parada em,67.0,422.0,531.0,430.0
+GGH9.pdf,para_blocks,12,abstract,,6,aproximadamente 45% quando comparado a métodos tradicionais.,67.0,432.0,334.0,440.0
+GGH9.pdf,preproc_blocks,12,abstract,,6,aproximadamente 45% quando comparado a métodos tradicionais.,67.0,432.0,334.0,440.0
+GGH9.pdf,para_blocks,13,title,2.0,0,PALAVRAS-CHAVE,67.0,464.0,149.0,473.0
+GGH9.pdf,preproc_blocks,13,title,2.0,0,PALAVRAS-CHAVE,67.0,464.0,149.0,473.0
+GGH9.pdf,para_blocks,14,text,,0,"Usinas hidrelétricas, serviços, reforma, modernização, “Pit Stop”",67.0,484.0,325.0,493.0
+GGH9.pdf,preproc_blocks,14,text,,0,"Usinas hidrelétricas, serviços, reforma, modernização, “Pit Stop”",67.0,484.0,325.0,493.0
+GGH9.pdf,para_blocks,15,title,2.0,0,1.0 - INTRODUÇÃO,77.0,506.0,158.0,516.0
+GGH9.pdf,preproc_blocks,15,title,2.0,0,1.0 - INTRODUÇÃO,77.0,506.0,158.0,516.0
+GGH9.pdf,para_blocks,16,text,,0,Usinas hidrelétricas precisam de uma manutenção contínua para assegurar elevados níveis de disponibilidade e,66.0,529.0,531.0,538.0
+GGH9.pdf,preproc_blocks,16,text,,0,Usinas hidrelétricas precisam de uma manutenção contínua para assegurar elevados níveis de disponibilidade e,66.0,529.0,531.0,538.0
+GGH9.pdf,para_blocks,16,text,,1,"geração de energia. Entretanto, mesmo os mais cuidadosos e diligentes programas de manutenção não evitarão o",66.0,540.0,531.0,549.0
+GGH9.pdf,preproc_blocks,16,text,,1,"geração de energia. Entretanto, mesmo os mais cuidadosos e diligentes programas de manutenção não evitarão o",66.0,540.0,531.0,549.0
+GGH9.pdf,para_blocks,16,text,,2,"envelhecimento da usina e de seus equipamentos. Após anos de operação, não haverá manutenções nem",66.0,551.0,531.0,559.0
+GGH9.pdf,preproc_blocks,16,text,,2,"envelhecimento da usina e de seus equipamentos. Após anos de operação, não haverá manutenções nem",66.0,551.0,531.0,559.0
+GGH9.pdf,para_blocks,16,text,,3,intervenções maiores de revisão capazes de manter o desempenho dos equipamentos igual ao original e nem em,66.0,561.0,531.0,570.0
+GGH9.pdf,preproc_blocks,16,text,,3,intervenções maiores de revisão capazes de manter o desempenho dos equipamentos igual ao original e nem em,66.0,561.0,531.0,570.0
+GGH9.pdf,para_blocks,16,text,,4,níveis lucrativos. Este é o momento em que uma reforma mais ampla ou modernização será necessária.,67.0,572.0,530.0,579.0
+GGH9.pdf,preproc_blocks,16,text,,4,níveis lucrativos. Este é o momento em que uma reforma mais ampla ou modernização será necessária.,67.0,572.0,530.0,579.0
+GGH9.pdf,para_blocks,16,text,,5,"Modernizações têm a vantagem de proporcionar um ganho de desempenho ao equipamento, enquanto que uma",66.0,582.0,531.0,590.0
+GGH9.pdf,preproc_blocks,16,text,,5,"Modernizações têm a vantagem de proporcionar um ganho de desempenho ao equipamento, enquanto que uma",66.0,582.0,531.0,590.0
+GGH9.pdf,para_blocks,16,text,,6,reforma tem o objetivo de recuperar o desempenho original. Modernizações são possíveis devido às evoluções,66.0,592.0,531.0,601.0
+GGH9.pdf,preproc_blocks,16,text,,6,reforma tem o objetivo de recuperar o desempenho original. Modernizações são possíveis devido às evoluções,66.0,592.0,531.0,601.0
+GGH9.pdf,para_blocks,16,text,,7,"tecnológicas que ocorrem com o passar do tempo e ao serem realizadas, utiliza-se o estado-da-arte do(s)",66.0,603.0,531.0,612.0
+GGH9.pdf,preproc_blocks,16,text,,7,"tecnológicas que ocorrem com o passar do tempo e ao serem realizadas, utiliza-se o estado-da-arte do(s)",66.0,603.0,531.0,612.0
+GGH9.pdf,para_blocks,16,text,,8,equipamento(s) envolvido(s) – ver Figura 1. Assumindo que a operação e manutenção de uma usina seguem boas,66.0,613.0,531.0,622.0
+GGH9.pdf,preproc_blocks,16,text,,8,equipamento(s) envolvido(s) – ver Figura 1. Assumindo que a operação e manutenção de uma usina seguem boas,66.0,613.0,531.0,622.0
+GGH9.pdf,para_blocks,16,text,,9,"práticas, o momento em que será necessária uma reforma ou modernização dependerá do equipamento",66.0,623.0,530.0,632.0
+GGH9.pdf,preproc_blocks,16,text,,9,"práticas, o momento em que será necessária uma reforma ou modernização dependerá do equipamento",66.0,623.0,530.0,632.0
+GGH9.pdf,para_blocks,16,text,,10,"específico. Por exemplo, sistemas eletrônicos e reguladores ficam obsoletos rapidamente e podem necessitar de",66.0,633.0,531.0,642.0
+GGH9.pdf,preproc_blocks,16,text,,10,"específico. Por exemplo, sistemas eletrônicos e reguladores ficam obsoletos rapidamente e podem necessitar de",66.0,633.0,531.0,642.0
+GGH9.pdf,para_blocks,16,text,,11,uma modernização em tempos tão breves como 5 (cinco) ou 10 (dez) anos. Quando se trata de turbinas ou,66.0,644.0,530.0,652.0
+GGH9.pdf,preproc_blocks,16,text,,11,uma modernização em tempos tão breves como 5 (cinco) ou 10 (dez) anos. Quando se trata de turbinas ou,66.0,644.0,530.0,652.0
+GGH9.pdf,para_blocks,16,text,,12,"geradores, este tempo pode ser entre 20 (vinte) e 30 (trinta) anos ou até mais. Em qualquer caso, há redução de",66.0,654.0,531.0,663.0
+GGH9.pdf,preproc_blocks,16,text,,12,"geradores, este tempo pode ser entre 20 (vinte) e 30 (trinta) anos ou até mais. Em qualquer caso, há redução de",66.0,654.0,531.0,663.0
+GGH9.pdf,para_blocks,16,text,,13,"desempenho operacional dos equipamentos, seja por sua vida útil, seja pela obsolescência tecnológica, o que em",66.0,665.0,531.0,673.0
+GGH9.pdf,preproc_blocks,16,text,,13,"desempenho operacional dos equipamentos, seja por sua vida útil, seja pela obsolescência tecnológica, o que em",66.0,665.0,531.0,673.0
+GGH9.pdf,para_blocks,16,text,,14,"algum momento demandará uma ação de intervenção mais completa. Para o investidor, este é um momento crítico",66.0,675.0,531.0,684.0
+GGH9.pdf,preproc_blocks,16,text,,14,"algum momento demandará uma ação de intervenção mais completa. Para o investidor, este é um momento crítico",66.0,675.0,531.0,684.0
+GGH9.pdf,para_blocks,16,text,,15,porque uma reforma ou modernização é um serviço que requer investimentos significativos e sua execução,66.0,685.0,531.0,694.0
+GGH9.pdf,preproc_blocks,16,text,,15,porque uma reforma ou modernização é um serviço que requer investimentos significativos e sua execução,66.0,685.0,531.0,694.0
+GGH9.pdf,para_blocks,16,text,,16,"tipicamente requer paradas de operação, significando perda de produção de energia e de receitas.",67.0,697.0,461.0,704.0
+GGH9.pdf,preproc_blocks,16,text,,16,"tipicamente requer paradas de operação, significando perda de produção de energia e de receitas.",67.0,697.0,461.0,704.0
+GGH9.pdf,discarded_blocks,17,footer,,0,"(*) Av. Charles Schneider, s/n˚ – CEP 12.040-001 Taubaté, SP, Brasil.",153.0,779.0,435.0,789.0
+GGH9.pdf,discarded_blocks,17,footer,,1,Tel: (+55 12) 3608-3029 – Fax: (+55 12) 3608-3192 – Email: cornelis.poel@power.alstom.com,106.0,789.0,483.0,799.0
+GGT_1247.pdf,discarded_blocks,1,header,,0,XXVI SNPTEE,91.0,45.0,121.0,51.0
+GGT_1247.pdf,discarded_blocks,2,header,,0,Produção e Transmissão,140.0,55.0,267.0,65.0
+GGT_1247.pdf,discarded_blocks,2,header,,1,de Energia Elétrica,140.0,66.0,237.0,77.0
+GGT_1247.pdf,discarded_blocks,3,header,,0,1247,505.0,52.0,527.0,63.0
+GGT_1247.pdf,discarded_blocks,3,header,,1,GGT/16,493.0,68.0,527.0,79.0
+GGT_1247.pdf,para_blocks,4,title,1.0,0,GRUPO DE ESTUDO DE GERAÇÃO TÉRMICA - GGT,183.0,128.0,406.0,139.0
+GGT_1247.pdf,preproc_blocks,4,title,1.0,0,GRUPO DE ESTUDO DE GERAÇÃO TÉRMICA - GGT,183.0,128.0,406.0,139.0
+GGT_1247.pdf,para_blocks,5,title,1.0,0,AVALIAÇÃO DA EFICIÊNCIA ENERGÉTICA DA ADIÇÃO DE HIDROGÊNIO À REDES DE GÁS NATURAL,75.0,158.0,514.0,170.0
+GGT_1247.pdf,preproc_blocks,5,title,1.0,0,AVALIAÇÃO DA EFICIÊNCIA ENERGÉTICA DA ADIÇÃO DE HIDROGÊNIO À REDES DE GÁS NATURAL,75.0,158.0,514.0,170.0
+GGT_1247.pdf,para_blocks,6,text,,0,JOÃO HENRIQUE PAULINO DE AZEVEDO (1); RODRIGO FLORA CALILI (1); SERGIO LEAL BRAGA (1),75.0,189.0,512.0,201.0
+GGT_1247.pdf,preproc_blocks,6,text,,0,JOÃO HENRIQUE PAULINO DE AZEVEDO (1); RODRIGO FLORA CALILI (1); SERGIO LEAL BRAGA (1),75.0,189.0,512.0,201.0
+GGT_1247.pdf,para_blocks,6,text,,1,PONTIFÍCIA UNIVERSIDADE CATÓLICA DO RIO DE JANEIRO (1),154.0,199.0,433.0,211.0
+GGT_1247.pdf,preproc_blocks,6,text,,1,PONTIFÍCIA UNIVERSIDADE CATÓLICA DO RIO DE JANEIRO (1),154.0,199.0,433.0,211.0
+GGT_1247.pdf,para_blocks,7,title,2.0,0,RESUMO,67.0,232.0,107.0,243.0
+GGT_1247.pdf,preproc_blocks,7,title,2.0,0,RESUMO,67.0,232.0,107.0,243.0
+GGT_1247.pdf,para_blocks,8,abstract,,0,A utilização do hidrogênio se mostra como alternativa para que as metas de descarbonização sejam atingidas. Há,67.0,253.0,531.0,262.0
+GGT_1247.pdf,preproc_blocks,8,abstract,,0,A utilização do hidrogênio se mostra como alternativa para que as metas de descarbonização sejam atingidas. Há,67.0,253.0,531.0,262.0
+GGT_1247.pdf,para_blocks,8,abstract,,1,"um aumento da eficiência energética do gás natural ao se misturar o hidrogênio a este gás. Neste trabalho, é",66.0,263.0,531.0,272.0
+GGT_1247.pdf,preproc_blocks,8,abstract,,1,"um aumento da eficiência energética do gás natural ao se misturar o hidrogênio a este gás. Neste trabalho, é",66.0,263.0,531.0,272.0
+GGT_1247.pdf,para_blocks,8,abstract,,2,analisada a possibilidade de mistura de hidrogênio ao gás natural em redes de fornecimento já existentes. Uma,66.0,273.0,531.0,282.0
+GGT_1247.pdf,preproc_blocks,8,abstract,,2,analisada a possibilidade de mistura de hidrogênio ao gás natural em redes de fornecimento já existentes. Uma,66.0,273.0,531.0,282.0
+GGT_1247.pdf,para_blocks,8,abstract,,3,revisão da literatura é realizada para entender as questões técnicas e definir as concentrações aceitáveis de,66.0,284.0,531.0,293.0
+GGT_1247.pdf,preproc_blocks,8,abstract,,3,revisão da literatura é realizada para entender as questões técnicas e definir as concentrações aceitáveis de,66.0,284.0,531.0,293.0
+GGT_1247.pdf,para_blocks,8,abstract,,4,"hidrogênio no gás natural. Por fim, é feita a projeção de emissões e custos evitados para se avaliar a eficiência",66.0,294.0,531.0,303.0
+GGT_1247.pdf,preproc_blocks,8,abstract,,4,"hidrogênio no gás natural. Por fim, é feita a projeção de emissões e custos evitados para se avaliar a eficiência",66.0,294.0,531.0,303.0
+GGT_1247.pdf,para_blocks,8,abstract,,5,energética alcançável com a inserção do hidrogênio ao gás natural em redes no Brasil.,67.0,305.0,414.0,313.0
+GGT_1247.pdf,preproc_blocks,8,abstract,,5,energética alcançável com a inserção do hidrogênio ao gás natural em redes no Brasil.,67.0,305.0,414.0,313.0
+GGT_1247.pdf,para_blocks,9,text,,0,PALAVRAS-CHAVE,67.0,326.0,149.0,336.0
+GGT_1247.pdf,preproc_blocks,9,text,,0,PALAVRAS-CHAVE,67.0,326.0,149.0,336.0
+GGT_1247.pdf,para_blocks,10,text,,0,Gás natural enriquecido com hidrogênio; hidrogênio; descarbonização; eficiência energética; combustão,67.0,345.0,443.0,356.0
+GGT_1247.pdf,preproc_blocks,10,text,,0,Gás natural enriquecido com hidrogênio; hidrogênio; descarbonização; eficiência energética; combustão,67.0,345.0,443.0,356.0
+GGT_1247.pdf,para_blocks,11,title,2.0,0,1.0 INTRODUÇÃO,67.0,376.0,146.0,388.0
+GGT_1247.pdf,preproc_blocks,11,title,2.0,0,1.0 INTRODUÇÃO,67.0,376.0,146.0,388.0
+GGT_1247.pdf,para_blocks,12,text,,0,O hidrogênio oferece uma ótima oportunidade para descarbonizar os suprimentos de energia atuais. Mesmo,81.0,397.0,531.0,406.0
+GGT_1247.pdf,preproc_blocks,12,text,,0,O hidrogênio oferece uma ótima oportunidade para descarbonizar os suprimentos de energia atuais. Mesmo,81.0,397.0,531.0,406.0
+GGT_1247.pdf,para_blocks,12,text,,1,"sendo o elemento químico mais abundante na natureza, este deve ser produzido para ser considerado uma",67.0,407.0,531.0,416.0
+GGT_1247.pdf,preproc_blocks,12,text,,1,"sendo o elemento químico mais abundante na natureza, este deve ser produzido para ser considerado uma",67.0,407.0,531.0,416.0
+GGT_1247.pdf,para_blocks,12,text,,2,"alternativa de uso final energético. Além disso, ele representa um verdadeiro transportador de energia livre de",67.0,417.0,531.0,426.0
+GGT_1247.pdf,preproc_blocks,12,text,,2,"alternativa de uso final energético. Além disso, ele representa um verdadeiro transportador de energia livre de",67.0,417.0,531.0,426.0
+GGT_1247.pdf,para_blocks,12,text,,3,"carbono. Todavia, as tecnologias para produzi-lo causam uma pegada de carbono diferente de zero. Acordos",68.0,428.0,531.0,435.0
+GGT_1247.pdf,preproc_blocks,12,text,,3,"carbono. Todavia, as tecnologias para produzi-lo causam uma pegada de carbono diferente de zero. Acordos",68.0,428.0,531.0,435.0
+GGT_1247.pdf,para_blocks,12,text,,4,mundiais impulsionaram os países a adotarem tecnologias de baixo carbono: o protocolo de Kyoto assinado em 1997,67.0,437.0,531.0,447.0
+GGT_1247.pdf,preproc_blocks,12,text,,4,mundiais impulsionaram os países a adotarem tecnologias de baixo carbono: o protocolo de Kyoto assinado em 1997,67.0,437.0,531.0,447.0
+GGT_1247.pdf,para_blocks,12,text,,5,e aplicado em 2005 ao impor a todos os membros a reduzirem suas emissões de gases de efeito estufa; e o acordo,67.0,448.0,529.0,455.0
+GGT_1247.pdf,preproc_blocks,12,text,,5,e aplicado em 2005 ao impor a todos os membros a reduzirem suas emissões de gases de efeito estufa; e o acordo,67.0,448.0,529.0,455.0
+GGT_1247.pdf,para_blocks,12,text,,6,"COP21 em Paris de 2015, que definiu responsabilidades nas emissões para todos os países do globo.",67.0,457.0,478.0,466.0
+GGT_1247.pdf,preproc_blocks,12,text,,6,"COP21 em Paris de 2015, que definiu responsabilidades nas emissões para todos os países do globo.",67.0,457.0,478.0,466.0
+GGT_1247.pdf,para_blocks,13,text,,0,"Em 2018 o fornecimento de eletricidade e energia térmica para edifícios, indústrias e transportes foi responsável",81.0,467.0,531.0,476.0
+GGT_1247.pdf,preproc_blocks,13,text,,0,"Em 2018 o fornecimento de eletricidade e energia térmica para edifícios, indústrias e transportes foi responsável",81.0,467.0,531.0,476.0
+GGT_1247.pdf,para_blocks,13,text,,1,"por 56% das emissões globais, enquanto apenas o setor de geração respondia por 41% (IEA, 2020). Sabe-se que a",67.0,477.0,531.0,487.0
+GGT_1247.pdf,preproc_blocks,13,text,,1,"por 56% das emissões globais, enquanto apenas o setor de geração respondia por 41% (IEA, 2020). Sabe-se que a",67.0,477.0,531.0,487.0
+GGT_1247.pdf,para_blocks,13,text,,2,"produção de energia renovável é menos constante e previsível do que a fóssil, pois não são despacháveis. Uma",67.0,487.0,531.0,497.0
+GGT_1247.pdf,preproc_blocks,13,text,,2,"produção de energia renovável é menos constante e previsível do que a fóssil, pois não são despacháveis. Uma",67.0,487.0,531.0,497.0
+GGT_1247.pdf,para_blocks,13,text,,3,"matriz de energia elétrica limpa, implica desafios significativos na gestão da rede elétrica. Assim, há a necessidade",67.0,497.0,531.0,507.0
+GGT_1247.pdf,preproc_blocks,13,text,,3,"matriz de energia elétrica limpa, implica desafios significativos na gestão da rede elétrica. Assim, há a necessidade",67.0,497.0,531.0,507.0
+GGT_1247.pdf,para_blocks,13,text,,4,de novas tecnologias que permitam o armazenamento de energia e o balanceamento da rede. Uma tecnologia,67.0,507.0,531.0,516.0
+GGT_1247.pdf,preproc_blocks,13,text,,4,de novas tecnologias que permitam o armazenamento de energia e o balanceamento da rede. Uma tecnologia,67.0,507.0,531.0,516.0
+GGT_1247.pdf,para_blocks,13,text,,5,"promissora é o power-to-gas (P2G), que permite transformar eletricidade em hidrogênio (H2) ou em outros",66.0,517.0,531.0,527.0
+GGT_1247.pdf,preproc_blocks,13,text,,5,"promissora é o power-to-gas (P2G), que permite transformar eletricidade em hidrogênio (H2) ou em outros",66.0,517.0,531.0,527.0
+GGT_1247.pdf,para_blocks,13,text,,6,combustíveis.,68.0,528.0,123.0,536.0
+GGT_1247.pdf,preproc_blocks,13,text,,6,combustíveis.,68.0,528.0,123.0,536.0
+GGT_1247.pdf,para_blocks,14,text,,0,"O hidrogênio produzido pode ser injetado diretamente na rede de gás natural, ou usado para produzir metano por",81.0,536.0,531.0,546.0
+GGT_1247.pdf,preproc_blocks,14,text,,0,"O hidrogênio produzido pode ser injetado diretamente na rede de gás natural, ou usado para produzir metano por",81.0,536.0,531.0,546.0
+GGT_1247.pdf,para_blocks,14,text,,1,meio do processo de metanação. Quando P2G utiliza eletrólise da água através da utilização de energia renovável,67.0,548.0,531.0,555.0
+GGT_1247.pdf,preproc_blocks,14,text,,1,meio do processo de metanação. Quando P2G utiliza eletrólise da água através da utilização de energia renovável,67.0,548.0,531.0,555.0
+GGT_1247.pdf,para_blocks,14,text,,2,"(eólica, solar etc.), o combustível produzido é teoricamente zero de carbono e, neste caso, o hidrogênio é",68.0,558.0,531.0,565.0
+GGT_1247.pdf,preproc_blocks,14,text,,2,"(eólica, solar etc.), o combustível produzido é teoricamente zero de carbono e, neste caso, o hidrogênio é",68.0,558.0,531.0,565.0
+GGT_1247.pdf,para_blocks,14,text,,3,"frequentemente referido como “hidrogênio verde” (DAWOOD, ANDA, et al., 2020). Outra via de descarbonização é",67.0,567.0,531.0,576.0
+GGT_1247.pdf,preproc_blocks,14,text,,3,"frequentemente referido como “hidrogênio verde” (DAWOOD, ANDA, et al., 2020). Outra via de descarbonização é",67.0,567.0,531.0,576.0
+GGT_1247.pdf,para_blocks,14,text,,4,a transformação do gás natural por reforma a vapor do metano (SMR – Steam Methane Reforming) juntamente com,67.0,577.0,531.0,586.0
+GGT_1247.pdf,preproc_blocks,14,text,,4,a transformação do gás natural por reforma a vapor do metano (SMR – Steam Methane Reforming) juntamente com,67.0,577.0,531.0,586.0
+GGT_1247.pdf,para_blocks,14,text,,5,tecnologias de captura e sequestro de carbono (CCS – Carbon Capture and Storage). O hidrogênio produzido desta,66.0,586.0,531.0,597.0
+GGT_1247.pdf,preproc_blocks,14,text,,5,tecnologias de captura e sequestro de carbono (CCS – Carbon Capture and Storage). O hidrogênio produzido desta,66.0,586.0,531.0,597.0
+GGT_1247.pdf,para_blocks,14,text,,6,"forma é geralmente referido como “hidrogênio azul” (DAWOOD, ANDA, et al., 2020). Qualquer que seja a via de",67.0,597.0,531.0,606.0
+GGT_1247.pdf,preproc_blocks,14,text,,6,"forma é geralmente referido como “hidrogênio azul” (DAWOOD, ANDA, et al., 2020). Qualquer que seja a via de",67.0,597.0,531.0,606.0
+GGT_1247.pdf,para_blocks,14,text,,7,"descarbonização prevalecente, dependendo também da evolução dos aspectos tecnológicos e econômicos, o futuro",67.0,607.0,531.0,616.0
+GGT_1247.pdf,preproc_blocks,14,text,,7,"descarbonização prevalecente, dependendo também da evolução dos aspectos tecnológicos e econômicos, o futuro",67.0,607.0,531.0,616.0
+GGT_1247.pdf,para_blocks,14,text,,8,"do gás natural envolverá o uso de H2 e metano mistos, também relatado na literatura como Gás Natural Enriquecido",67.0,617.0,531.0,626.0
+GGT_1247.pdf,preproc_blocks,14,text,,8,"do gás natural envolverá o uso de H2 e metano mistos, também relatado na literatura como Gás Natural Enriquecido",67.0,617.0,531.0,626.0
+GGT_1247.pdf,para_blocks,14,text,,9,com Hidrogênio (HENG – Hydrogen Enriched Natural Gas).,67.0,627.0,305.0,636.0
+GGT_1247.pdf,preproc_blocks,14,text,,9,com Hidrogênio (HENG – Hydrogen Enriched Natural Gas).,67.0,627.0,305.0,636.0
+GGT_1247.pdf,para_blocks,15,text,,0,O objetivo deste artigo é estimar as emissões de gases efeito estufa e os custos evitados com a inserção do,80.0,636.0,531.0,648.0
+GGT_1247.pdf,preproc_blocks,15,text,,0,O objetivo deste artigo é estimar as emissões de gases efeito estufa e os custos evitados com a inserção do,80.0,636.0,531.0,648.0
+GGT_1247.pdf,para_blocks,15,text,,1,"hidrogênio no Brasil e, assim, avaliar a eficiência energética alcançável com a mistura do hidrogênio às redes de gás",66.0,647.0,531.0,657.0
+GGT_1247.pdf,preproc_blocks,15,text,,1,"hidrogênio no Brasil e, assim, avaliar a eficiência energética alcançável com a mistura do hidrogênio às redes de gás",66.0,647.0,531.0,657.0
+GGT_1247.pdf,para_blocks,15,text,,2,natural do país.,68.0,658.0,129.0,666.0
+GGT_1247.pdf,preproc_blocks,15,text,,2,natural do país.,68.0,658.0,129.0,666.0
+GGT_1247.pdf,para_blocks,16,title,2.0,0,2.0 REVISÃO BIBLIOGRÁFICA,67.0,677.0,197.0,687.0
+GGT_1247.pdf,preproc_blocks,16,title,2.0,0,2.0 REVISÃO BIBLIOGRÁFICA,67.0,677.0,197.0,687.0
+GGT_1247.pdf,para_blocks,17,text,,0,"A distribuição de misturas de hidrogênio e metano por gasoduto tem uma longa história, que remonta às origens do",66.0,698.0,531.0,708.0
+GGT_1247.pdf,preproc_blocks,17,text,,0,"A distribuição de misturas de hidrogênio e metano por gasoduto tem uma longa história, que remonta às origens do",66.0,698.0,531.0,708.0
+GGT_1247.pdf,para_blocks,17,text,,1,"sistema de gás natural de hoje, quando o gás manufaturado (gás de síntese) produzido a partir do carvão foi",67.0,709.0,531.0,717.0
+GGT_1247.pdf,preproc_blocks,17,text,,1,"sistema de gás natural de hoje, quando o gás manufaturado (gás de síntese) produzido a partir do carvão foi",67.0,709.0,531.0,717.0
+GGT_1247.pdf,para_blocks,17,text,,2,"canalizado pela primeira vez durante a era Gaslight para postes de luz, edifícios comerciais, e famílias no início e",67.0,719.0,531.0,727.0
+GGT_1247.pdf,preproc_blocks,17,text,,2,"canalizado pela primeira vez durante a era Gaslight para postes de luz, edifícios comerciais, e famílias no início e",67.0,719.0,531.0,727.0
+GGT_1247.pdf,para_blocks,17,text,,3,"meados de 1800 (TOMORY, 2009). Os produtos de gás manufaturados da época, também conhecidos como gás de",66.0,727.0,531.0,738.0
+GGT_1247.pdf,preproc_blocks,17,text,,3,"meados de 1800 (TOMORY, 2009). Os produtos de gás manufaturados da época, também conhecidos como gás de",66.0,727.0,531.0,738.0
+GGT_1247.pdf,para_blocks,17,text,,4,"cidade ou gás de água, normalmente continham 30% a 50% de hidrogênio, que podiam ser produzidos a partir de",68.0,86.0,531.0,96.0
+GGT_1247.pdf,para_blocks,17,text,,5,"piche, óleo de baleia, carvão ou produtos petrolíferos (MELAINA, ANTONIA, et al., 2013).",67.0,96.0,425.0,106.0
+GGT_1247.pdf,discarded_blocks,18,footer,,0,joaohpazevedo@gmail.com,240.0,791.0,359.0,799.0
+GTL_0081.pdf,discarded_blocks,1,header,,0,XXVII Seminário Nacional de,124.0,35.0,229.0,43.0
+GTL_0081.pdf,discarded_blocks,1,header,,1,Produção e Transmissão,124.0,45.0,248.0,55.0
+GTL_0081.pdf,discarded_blocks,1,header,,2,de Energia Elétrica,124.0,56.0,219.0,67.0
+GTL_0081.pdf,discarded_blocks,1,header,,3,XXVIISNPTEE,68.0,66.0,119.0,74.0
+GTL_0081.pdf,discarded_blocks,2,header,,0,0081,501.0,41.0,523.0,52.0
+GTL_0081.pdf,discarded_blocks,2,header,,1,GTL/4,496.0,58.0,523.0,69.0
+GTL_0081.pdf,para_blocks,3,title,1.0,0,GRUPO DE ESTUDO DE SISTEMAS DE INFORMAÇÃO E TELECOMUNICAÇÃO PARA SISTEMAS,88.0,137.0,501.0,147.0
+GTL_0081.pdf,preproc_blocks,3,title,1.0,0,GRUPO DE ESTUDO DE SISTEMAS DE INFORMAÇÃO E TELECOMUNICAÇÃO PARA SISTEMAS,88.0,137.0,501.0,147.0
+GTL_0081.pdf,para_blocks,3,title,1.0,1,ELÉTRICOS - GTL,255.0,148.0,334.0,157.0
+GTL_0081.pdf,preproc_blocks,3,title,1.0,1,ELÉTRICOS - GTL,255.0,148.0,334.0,157.0
+GTL_0081.pdf,para_blocks,4,title,1.0,0,CENTRO VIRTUAL DE OPERAÇÃO,219.0,179.0,369.0,190.0
+GTL_0081.pdf,preproc_blocks,4,title,1.0,0,CENTRO VIRTUAL DE OPERAÇÃO,219.0,179.0,369.0,190.0
+GTL_0081.pdf,para_blocks,5,title,1.0,0,CLAUDIO VINICIUS DUARTE CABRAL(1);WILLAMS VIDAL SAMPAIO(2);SIDNEY FERREIRA,98.0,210.0,489.0,222.0
+GTL_0081.pdf,preproc_blocks,5,title,1.0,0,CLAUDIO VINICIUS DUARTE CABRAL(1);WILLAMS VIDAL SAMPAIO(2);SIDNEY FERREIRA,98.0,210.0,489.0,222.0
+GTL_0081.pdf,para_blocks,5,title,1.0,1,PINTO(3);CLEITON SILVA CASTRO(4);ANDRE LUIS DE FREITAS FARIAS(5),132.0,221.0,456.0,232.0
+GTL_0081.pdf,preproc_blocks,5,title,1.0,1,PINTO(3);CLEITON SILVA CASTRO(4);ANDRE LUIS DE FREITAS FARIAS(5),132.0,221.0,456.0,232.0
+GTL_0081.pdf,para_blocks,5,title,1.0,2,CENTRAIS ELETRICAS DO NORTE DO BRASIL S/A(1),177.0,231.0,409.0,242.0
+GTL_0081.pdf,preproc_blocks,5,title,1.0,2,CENTRAIS ELETRICAS DO NORTE DO BRASIL S/A(1),177.0,231.0,409.0,242.0
+GTL_0081.pdf,para_blocks,6,title,2.0,0,RESUMO,66.0,262.0,108.0,275.0
+GTL_0081.pdf,preproc_blocks,6,title,2.0,0,RESUMO,66.0,262.0,108.0,275.0
+GTL_0081.pdf,para_blocks,7,text,,0,O Centro Virtual de Operação foi desenvolvido com tecnologias de realidade virtual e computação em nuvem (cloud,67.0,282.0,531.0,292.0
+GTL_0081.pdf,preproc_blocks,7,text,,0,O Centro Virtual de Operação foi desenvolvido com tecnologias de realidade virtual e computação em nuvem (cloud,67.0,282.0,531.0,292.0
+GTL_0081.pdf,para_blocks,7,text,,1,"computing), integradas com sistemas especialistas SCADA (SAGE). O Centro de Operação Virtual é uma réplica",67.0,293.0,531.0,303.0
+GTL_0081.pdf,preproc_blocks,7,text,,1,"computing), integradas com sistemas especialistas SCADA (SAGE). O Centro de Operação Virtual é uma réplica",67.0,293.0,531.0,303.0
+GTL_0081.pdf,para_blocks,7,text,,2,digital (digital twin) da sala e controle do Centro de Operação Integrada de Geração e Transmissão - COI GT. Este,67.0,303.0,531.0,313.0
+GTL_0081.pdf,preproc_blocks,7,text,,2,digital (digital twin) da sala e controle do Centro de Operação Integrada de Geração e Transmissão - COI GT. Este,67.0,303.0,531.0,313.0
+GTL_0081.pdf,para_blocks,7,text,,3,"ambiente, acessado com o uso de óculos de realidade virtual – VR, apresenta um layout digital dos elementos reais",67.0,315.0,530.0,322.0
+GTL_0081.pdf,preproc_blocks,7,text,,3,"ambiente, acessado com o uso de óculos de realidade virtual – VR, apresenta um layout digital dos elementos reais",67.0,315.0,530.0,322.0
+GTL_0081.pdf,para_blocks,7,text,,4,presentes em uma sala controle de operação em tempo real.,67.0,325.0,310.0,333.0
+GTL_0081.pdf,preproc_blocks,7,text,,4,presentes em uma sala controle de operação em tempo real.,67.0,325.0,310.0,333.0
+GTL_0081.pdf,para_blocks,8,title,2.0,0,PALAVRAS-CHAVE,67.0,346.0,149.0,354.0
+GTL_0081.pdf,preproc_blocks,8,title,2.0,0,PALAVRAS-CHAVE,67.0,346.0,149.0,354.0
+GTL_0081.pdf,para_blocks,9,text,,0,"digital Twin, SAGE, Realiadde Virtual, Meta Verso, cloud computing, Centro de Operação, Eletrobras Eletronorte",68.0,356.0,516.0,365.0
+GTL_0081.pdf,preproc_blocks,9,text,,0,"digital Twin, SAGE, Realiadde Virtual, Meta Verso, cloud computing, Centro de Operação, Eletrobras Eletronorte",68.0,356.0,516.0,365.0
+GTL_0081.pdf,para_blocks,10,title,2.0,0,1.0 INTRODUÇÃO,67.0,376.0,143.0,387.0
+GTL_0081.pdf,preproc_blocks,10,title,2.0,0,1.0 INTRODUÇÃO,67.0,376.0,143.0,387.0
+GTL_0081.pdf,para_blocks,11,text,,0,A Indústria 4.0 é a quarta revolução industrial que está sendo caracterizada pelo uso da tecnologia da informação,66.0,396.0,531.0,406.0
+GTL_0081.pdf,preproc_blocks,11,text,,0,A Indústria 4.0 é a quarta revolução industrial que está sendo caracterizada pelo uso da tecnologia da informação,66.0,396.0,531.0,406.0
+GTL_0081.pdf,para_blocks,11,text,,1,"para automatizar processos industriais, a partir dos avanços em áreas como inteligência artificial, internet das coisas,",66.0,407.0,531.0,417.0
+GTL_0081.pdf,preproc_blocks,11,text,,1,"para automatizar processos industriais, a partir dos avanços em áreas como inteligência artificial, internet das coisas,",66.0,407.0,531.0,417.0
+GTL_0081.pdf,para_blocks,11,text,,2,"robótica e análise de dados. Com o objetivo de aumentar a eficiência, reduzir os custos e melhorar a qualidade dos",67.0,418.0,530.0,426.0
+GTL_0081.pdf,preproc_blocks,11,text,,2,"robótica e análise de dados. Com o objetivo de aumentar a eficiência, reduzir os custos e melhorar a qualidade dos",67.0,418.0,530.0,426.0
+GTL_0081.pdf,para_blocks,11,text,,3,"produtos, a Indústria 4.0 está mudando a maneira como a produção é realizada e os produtos são desenvolvidos.",67.0,428.0,521.0,437.0
+GTL_0081.pdf,preproc_blocks,11,text,,3,"produtos, a Indústria 4.0 está mudando a maneira como a produção é realizada e os produtos são desenvolvidos.",67.0,428.0,521.0,437.0
+GTL_0081.pdf,para_blocks,12,text,,0,"O metaverso é a visão de um universo virtual coletivo, que pode ser acessado através da tecnologia da realidade",67.0,448.0,531.0,457.0
+GTL_0081.pdf,preproc_blocks,12,text,,0,"O metaverso é a visão de um universo virtual coletivo, que pode ser acessado através da tecnologia da realidade",67.0,448.0,531.0,457.0
+GTL_0081.pdf,para_blocks,12,text,,1,"virtual. Ele é criado a partir de uma combinação de realidade virtual e inteligência artificial, com o objetivo de criar",66.0,459.0,531.0,468.0
+GTL_0081.pdf,preproc_blocks,12,text,,1,"virtual. Ele é criado a partir de uma combinação de realidade virtual e inteligência artificial, com o objetivo de criar",66.0,459.0,531.0,468.0
+GTL_0081.pdf,para_blocks,12,text,,2,"uma experiência imersiva para o usuário. Esta tecnologia permite que os usuários explorem, criem e colaborem em",67.0,470.0,530.0,478.0
+GTL_0081.pdf,preproc_blocks,12,text,,2,"uma experiência imersiva para o usuário. Esta tecnologia permite que os usuários explorem, criem e colaborem em",67.0,470.0,530.0,478.0
+GTL_0081.pdf,para_blocks,12,text,,3,"um ambiente virtual, onde eles podem interagir com outras pessoas e objetos virtuais de maneira realista. Além disso,",66.0,480.0,531.0,489.0
+GTL_0081.pdf,preproc_blocks,12,text,,3,"um ambiente virtual, onde eles podem interagir com outras pessoas e objetos virtuais de maneira realista. Além disso,",66.0,480.0,531.0,489.0
+GTL_0081.pdf,para_blocks,12,text,,4,"o metaverso pode ser usado para aplicações comerciais, como a venda de produtos virtuais, a realização de eventos",66.0,490.0,531.0,499.0
+GTL_0081.pdf,preproc_blocks,12,text,,4,"o metaverso pode ser usado para aplicações comerciais, como a venda de produtos virtuais, a realização de eventos",66.0,490.0,531.0,499.0
+GTL_0081.pdf,para_blocks,12,text,,5,virtuais e a criação de novas formas de entretenimento.,67.0,501.0,288.0,509.0
+GTL_0081.pdf,preproc_blocks,12,text,,5,virtuais e a criação de novas formas de entretenimento.,67.0,501.0,288.0,509.0
+GTL_0081.pdf,para_blocks,13,text,,0,A Indústria 4.0 e o metaverso estão se complementando em muitos aspectos. A Indústria 4.0 está fornecendo a,66.0,521.0,531.0,529.0
+GTL_0081.pdf,preproc_blocks,13,text,,0,A Indústria 4.0 e o metaverso estão se complementando em muitos aspectos. A Indústria 4.0 está fornecendo a,66.0,521.0,531.0,529.0
+GTL_0081.pdf,para_blocks,13,text,,1,"tecnologia necessária para criar o metaverso, e o metaverso está fornecendo novas formas de usar essa tecnologia",66.0,531.0,531.0,541.0
+GTL_0081.pdf,preproc_blocks,13,text,,1,"tecnologia necessária para criar o metaverso, e o metaverso está fornecendo novas formas de usar essa tecnologia",66.0,531.0,531.0,541.0
+GTL_0081.pdf,para_blocks,13,text,,2,"para melhorar a produção e a venda de produtos. Além disso, a Indústria 4.0 está usando o metaverso para criar",66.0,542.0,530.0,551.0
+GTL_0081.pdf,preproc_blocks,13,text,,2,"para melhorar a produção e a venda de produtos. Além disso, a Indústria 4.0 está usando o metaverso para criar",66.0,542.0,530.0,551.0
+GTL_0081.pdf,para_blocks,13,text,,3,"novas formas de treinar e capacitar funcionários, além de fornecer novas formas de entretenimento e socialização.",66.0,552.0,525.0,561.0
+GTL_0081.pdf,preproc_blocks,13,text,,3,"novas formas de treinar e capacitar funcionários, além de fornecer novas formas de entretenimento e socialização.",66.0,552.0,525.0,561.0
+GTL_0081.pdf,para_blocks,14,title,2.0,0,2.0 MATERIAIS E MÉTODOS,67.0,582.0,187.0,593.0
+GTL_0081.pdf,preproc_blocks,14,title,2.0,0,2.0 MATERIAIS E MÉTODOS,67.0,582.0,187.0,593.0
+GTL_0081.pdf,para_blocks,15,text,,0,"No ano de 2022, a Eletrobras Eletronorte desenvolveu um projeto estratégico com tema principal a inovação do",65.0,613.0,531.0,624.0
+GTL_0081.pdf,preproc_blocks,15,text,,0,"No ano de 2022, a Eletrobras Eletronorte desenvolveu um projeto estratégico com tema principal a inovação do",65.0,613.0,531.0,624.0
+GTL_0081.pdf,para_blocks,15,text,,1,"macroprocesso “Operar”, consolidando o uso de metodologias ágeis na gestão dos PECs, busca de novas",66.0,625.0,531.0,633.0
+GTL_0081.pdf,preproc_blocks,15,text,,1,"macroprocesso “Operar”, consolidando o uso de metodologias ágeis na gestão dos PECs, busca de novas",66.0,625.0,531.0,633.0
+GTL_0081.pdf,para_blocks,15,text,,2,tecnológicas de indústria 4.0 e a aplicação destas tecnologias disruptivas. As inovações desenvolvidas no decorrer,66.0,635.0,531.0,644.0
+GTL_0081.pdf,preproc_blocks,15,text,,2,tecnológicas de indústria 4.0 e a aplicação destas tecnologias disruptivas. As inovações desenvolvidas no decorrer,66.0,635.0,531.0,644.0
+GTL_0081.pdf,para_blocks,15,text,,3,do projeto estão pavimentando a jornada da transformação digital no processo “Operar”.,67.0,645.0,420.0,654.0
+GTL_0081.pdf,preproc_blocks,15,text,,3,do projeto estão pavimentando a jornada da transformação digital no processo “Operar”.,67.0,645.0,420.0,654.0
+GTL_0081.pdf,para_blocks,16,text,,0,"Uma das inovações desenvolvidas foi o Minimum Viable Product - MVP do Centro Virtual de Operação, desenvolvido",67.0,666.0,530.0,675.0
+GTL_0081.pdf,preproc_blocks,16,text,,0,"Uma das inovações desenvolvidas foi o Minimum Viable Product - MVP do Centro Virtual de Operação, desenvolvido",67.0,666.0,530.0,675.0
+GTL_0081.pdf,para_blocks,16,text,,1,"com tecnologias de realidade virtual e computação em nuvem (cloud computing), integradas com sistemas",66.0,677.0,531.0,685.0
+GTL_0081.pdf,preproc_blocks,16,text,,1,"com tecnologias de realidade virtual e computação em nuvem (cloud computing), integradas com sistemas",66.0,677.0,531.0,685.0
+GTL_0081.pdf,para_blocks,16,text,,2,especialistas. O Centro de Operação Virtual é uma réplica digital (digital twin) da sala e controle do Centro de,67.0,687.0,530.0,695.0
+GTL_0081.pdf,preproc_blocks,16,text,,2,especialistas. O Centro de Operação Virtual é uma réplica digital (digital twin) da sala e controle do Centro de,67.0,687.0,530.0,695.0
+GTL_0081.pdf,para_blocks,16,text,,3,Operação Integrada de Geração e Transmissão - COI G&T. Os técnicos de operação acessaram o ambiente virtual,67.0,697.0,531.0,706.0
+GTL_0081.pdf,preproc_blocks,16,text,,3,Operação Integrada de Geração e Transmissão - COI G&T. Os técnicos de operação acessaram o ambiente virtual,67.0,697.0,531.0,706.0
+GTL_0081.pdf,para_blocks,16,text,,4,"com o uso de óculos de realidade virtual – VR. Estes óculos proporcionam uma experiência sintética e imersiva, sem",66.0,708.0,531.0,716.0
+GTL_0081.pdf,preproc_blocks,16,text,,4,"com o uso de óculos de realidade virtual – VR. Estes óculos proporcionam uma experiência sintética e imersiva, sem",66.0,708.0,531.0,716.0
+GTL_0081.pdf,para_blocks,16,text,,5,nenhum senso do mundo real externo. A seguir são apresentadas imagens do Centro de Operação Virtual e as,66.0,718.0,531.0,728.0
+GTL_0081.pdf,preproc_blocks,16,text,,5,nenhum senso do mundo real externo. A seguir são apresentadas imagens do Centro de Operação Virtual e as,66.0,718.0,531.0,728.0
+GTL_0081.pdf,para_blocks,16,text,,6,fotografias do Centro Real de Operação do COI G&T:,66.0,728.0,282.0,736.0
+GTL_0081.pdf,preproc_blocks,16,text,,6,fotografias do Centro Real de Operação do COI G&T:,66.0,728.0,282.0,736.0
+GTL_0081.pdf,discarded_blocks,17,footer,,0,claudio.cabral@eletronorte.com.br,224.0,790.0,374.0,799.0
+GTL_0081.pdf,discarded_blocks,18,footer,,0,CLASSIFICAÇÃO: PÚBLICA,235.0,813.0,358.0,825.0
+GTM10.pdf,discarded_blocks,1,header,,0,XXIVSNPTEE,89.0,153.0,199.0,169.0
+GTM10.pdf,discarded_blocks,2,header,,0,XXIV SNPTEE,226.0,110.0,287.0,119.0
+GTM10.pdf,discarded_blocks,2,header,,1,SEMINÁRIO NACIONAL DE RODUÇÃO,225.0,123.0,408.0,136.0
+GTM10.pdf,discarded_blocks,2,header,,2,TRANSMISSÃO DE ENERGIA ELÉTRICA,226.0,136.0,400.0,146.0
+GTM10.pdf,discarded_blocks,3,header,,0,CB/GTM/10,488.0,111.0,536.0,120.0
+GTM10.pdf,discarded_blocks,4,header,,0,22 a 25 de outubro de 2017,227.0,170.0,342.0,178.0
+GTM10.pdf,para_blocks,5,text,,0,Curitiba - PR,226.0,186.0,282.0,196.0
+GTM10.pdf,preproc_blocks,5,text,,0,Curitiba - PR,226.0,186.0,282.0,196.0
+GTM10.pdf,para_blocks,6,text,,0,GRUPO - XIII,70.0,237.0,126.0,246.0
+GTM10.pdf,preproc_blocks,6,text,,0,GRUPO - XIII,70.0,237.0,126.0,246.0
+GTM10.pdf,para_blocks,7,title,1.0,0,"GRUPO DE ESTUDO DE TRANSFORMADORES, REATORES, MATERIAIS E TECNOLOGIAS EMERGENTES -",74.0,254.0,533.0,262.0
+GTM10.pdf,preproc_blocks,7,title,1.0,0,"GRUPO DE ESTUDO DE TRANSFORMADORES, REATORES, MATERIAIS E TECNOLOGIAS EMERGENTES -",74.0,254.0,533.0,262.0
+GTM10.pdf,para_blocks,7,title,1.0,1,GTM,293.0,264.0,313.0,273.0
+GTM10.pdf,preproc_blocks,7,title,1.0,1,GTM,293.0,264.0,313.0,273.0
+GTM10.pdf,para_blocks,8,title,1.0,0,CONDIÇÕES DE SOBRECARGA E IMPLICAÇÕES DA NBR 5356-7 DURANTE O DESIGN REVIEW DE,90.0,278.0,516.0,290.0
+GTM10.pdf,preproc_blocks,8,title,1.0,0,CONDIÇÕES DE SOBRECARGA E IMPLICAÇÕES DA NBR 5356-7 DURANTE O DESIGN REVIEW DE,90.0,278.0,516.0,290.0
+GTM10.pdf,para_blocks,8,title,1.0,1,TRANSFORMADORES,255.0,290.0,351.0,300.0
+GTM10.pdf,preproc_blocks,8,title,1.0,1,TRANSFORMADORES,255.0,290.0,351.0,300.0
+GTM10.pdf,para_blocks,9,text,,0,Luiz Fernando de Oliveira (*) Álvaro Portillo,75.0,313.0,286.0,324.0
+GTM10.pdf,preproc_blocks,9,text,,0,Luiz Fernando de Oliveira (*) Álvaro Portillo,75.0,313.0,286.0,324.0
+GTM10.pdf,para_blocks,10,text,,0,Gilson Semiano,336.0,314.0,404.0,325.0
+GTM10.pdf,preproc_blocks,10,text,,0,Gilson Semiano,336.0,314.0,404.0,325.0
+GTM10.pdf,para_blocks,11,text,,0,Odirlan Iaronka,463.0,315.0,529.0,324.0
+GTM10.pdf,preproc_blocks,11,text,,0,Odirlan Iaronka,463.0,315.0,529.0,324.0
+GTM10.pdf,para_blocks,12,title,1.0,0,WEG – WTD Transformadores,239.0,335.0,367.0,345.0
+GTM10.pdf,preproc_blocks,12,title,1.0,0,WEG – WTD Transformadores,239.0,335.0,367.0,345.0
+GTM10.pdf,para_blocks,13,title,2.0,0,RESUMO,67.0,378.0,105.0,389.0
+GTM10.pdf,preproc_blocks,13,title,2.0,0,RESUMO,67.0,378.0,105.0,389.0
+GTM10.pdf,para_blocks,14,text,,0,"Na iminência da publicação da NBR 5356-7, baseada na IEC 60076-7, é fundamental o domínio da metodologia",84.0,394.0,536.0,403.0
+GTM10.pdf,preproc_blocks,14,text,,0,"Na iminência da publicação da NBR 5356-7, baseada na IEC 60076-7, é fundamental o domínio da metodologia",84.0,394.0,536.0,403.0
+GTM10.pdf,para_blocks,14,text,,1,"de cálculo térmico utilizado pela norma, na qual pequenas variações na aplicação podem levar a resultados bastante",67.0,405.0,536.0,414.0
+GTM10.pdf,preproc_blocks,14,text,,1,"de cálculo térmico utilizado pela norma, na qual pequenas variações na aplicação podem levar a resultados bastante",67.0,405.0,536.0,414.0
+GTM10.pdf,para_blocks,14,text,,2,diferentes. A norma introduzirá ainda o “Anexo H” com caráter normativo estabelecendo o ensaio de elevação de,67.0,415.0,536.0,424.0
+GTM10.pdf,preproc_blocks,14,text,,2,diferentes. A norma introduzirá ainda o “Anexo H” com caráter normativo estabelecendo o ensaio de elevação de,67.0,415.0,536.0,424.0
+GTM10.pdf,para_blocks,14,text,,3,temperatura em sobrecarga com o objetivo de assegurar a verificação das características dos transformadores frente,66.0,425.0,535.0,434.0
+GTM10.pdf,preproc_blocks,14,text,,3,temperatura em sobrecarga com o objetivo de assegurar a verificação das características dos transformadores frente,66.0,425.0,535.0,434.0
+GTM10.pdf,para_blocks,14,text,,4,"a sobrecargas de curta duração, onde as medições das temperaturas são realizadas sem a estabilização em regime",66.0,436.0,536.0,445.0
+GTM10.pdf,preproc_blocks,14,text,,4,"a sobrecargas de curta duração, onde as medições das temperaturas são realizadas sem a estabilização em regime",66.0,436.0,536.0,445.0
+GTM10.pdf,para_blocks,14,text,,5,"permanente. Este trabalho visa propiciar um entendimento melhor destas implicações, para comprador e fabricante.",66.0,447.0,530.0,455.0
+GTM10.pdf,preproc_blocks,14,text,,5,"permanente. Este trabalho visa propiciar um entendimento melhor destas implicações, para comprador e fabricante.",66.0,447.0,530.0,455.0
+GTM10.pdf,para_blocks,15,title,2.0,0,PALAVRAS-CHAVE,67.0,462.0,142.0,473.0
+GTM10.pdf,preproc_blocks,15,title,2.0,0,PALAVRAS-CHAVE,67.0,462.0,142.0,473.0
+GTM10.pdf,para_blocks,16,text,,0,"Transformador, Sobrecarga em transformadores, Temperatura de Hot-Spot, Design Review, Vida útil",85.0,479.0,488.0,488.0
+GTM10.pdf,preproc_blocks,16,text,,0,"Transformador, Sobrecarga em transformadores, Temperatura de Hot-Spot, Design Review, Vida útil",85.0,479.0,488.0,488.0
+GTM10.pdf,para_blocks,17,title,2.0,0,1.0 - INTRODUÇÃO,67.0,501.0,148.0,510.0
+GTM10.pdf,preproc_blocks,17,title,2.0,0,1.0 - INTRODUÇÃO,67.0,501.0,148.0,510.0
+GTM10.pdf,para_blocks,18,text,,0,"Historicamente, os valores das características gque descrevem o desempenho de transformadores são garantidos",84.0,518.0,529.0,525.0
+GTM10.pdf,preproc_blocks,18,text,,0,"Historicamente, os valores das características gque descrevem o desempenho de transformadores são garantidos",84.0,518.0,529.0,525.0
+GTM10.pdf,para_blocks,18,text,,1,com base nos dados de medicões em regime permanente (é assim com perdas. temperatura. etc.). Os valores de,67.0,528.0,531.0,536.0
+GTM10.pdf,preproc_blocks,18,text,,1,com base nos dados de medicões em regime permanente (é assim com perdas. temperatura. etc.). Os valores de,67.0,528.0,531.0,536.0
+GTM10.pdf,para_blocks,18,text,,2,temperatura exigem ensaios de longa duração devido aos valores das constantes térmicas serem relativamente,66.0,538.0,531.0,548.0
+GTM10.pdf,preproc_blocks,18,text,,2,temperatura exigem ensaios de longa duração devido aos valores das constantes térmicas serem relativamente,66.0,538.0,531.0,548.0
+GTM10.pdf,para_blocks,18,text,,3,"elevados, consequentemente, o transformador leva horas para atingir as temperaturas de regime. O Anexo H da",66.0,549.0,531.0,558.0
+GTM10.pdf,preproc_blocks,18,text,,3,"elevados, consequentemente, o transformador leva horas para atingir as temperaturas de regime. O Anexo H da",66.0,549.0,531.0,558.0
+GTM10.pdf,para_blocks,18,text,,4,"NBR 5356-7 deve introduzir o ensaio de elevação de temperatura em sobrecarga e, como é de se esperar, o tempo",66.0,558.0,531.0,568.0
+GTM10.pdf,preproc_blocks,18,text,,4,"NBR 5356-7 deve introduzir o ensaio de elevação de temperatura em sobrecarga e, como é de se esperar, o tempo",66.0,558.0,531.0,568.0
+GTM10.pdf,para_blocks,18,text,,5,"dessas sobrecargas são inferiores ao tempo necessário para estabilização das temperaturas, sobretudo do fluido",66.0,569.0,531.0,579.0
+GTM10.pdf,preproc_blocks,18,text,,5,"dessas sobrecargas são inferiores ao tempo necessário para estabilização das temperaturas, sobretudo do fluido",66.0,569.0,531.0,579.0
+GTM10.pdf,para_blocks,18,text,,6,isolante.,66.0,579.0,101.0,589.0
+GTM10.pdf,preproc_blocks,18,text,,6,isolante.,66.0,579.0,101.0,589.0
+GTM10.pdf,para_blocks,19,text,,0,Tendo em vista a necessidade da análise transitória das temperaturas e as informações geralmente solicitadas,84.0,596.0,531.0,605.0
+GTM10.pdf,preproc_blocks,19,text,,0,Tendo em vista a necessidade da análise transitória das temperaturas e as informações geralmente solicitadas,84.0,596.0,531.0,605.0
+GTM10.pdf,para_blocks,19,text,,1,"durante o Design Review, este trabalho abordará os seguintes tópicos:",67.0,606.0,350.0,615.0
+GTM10.pdf,preproc_blocks,19,text,,1,"durante o Design Review, este trabalho abordará os seguintes tópicos:",67.0,606.0,350.0,615.0
+GTM10.pdf,para_blocks,20,text,,0, Comparativo entre o método exponencial e o método diferencial sugeridos pela IEC 60076-7 [1];,86.0,622.0,488.0,634.0
+GTM10.pdf,preproc_blocks,20,text,,0, Comparativo entre o método exponencial e o método diferencial sugeridos pela IEC 60076-7 [1];,86.0,622.0,488.0,634.0
+GTM10.pdf,para_blocks,21,text,,0, Influência da temperatura ambiente na vida útil e durante o ensaio de sobrecarga;,87.0,635.0,430.0,644.0
+GTM10.pdf,preproc_blocks,21,text,,0, Influência da temperatura ambiente na vida útil e durante o ensaio de sobrecarga;,87.0,635.0,430.0,644.0
+GTM10.pdf,para_blocks,22,text,,0, Efeito do fluxo disperso adicional em shunts magnéticos,87.0,645.0,328.0,655.0
+GTM10.pdf,preproc_blocks,22,text,,0, Efeito do fluxo disperso adicional em shunts magnéticos,87.0,645.0,328.0,655.0
+GTM10.pdf,para_blocks,23,text,,0,Influência do fator de Hot-Spot variável;,102.0,657.0,262.0,665.0
+GTM10.pdf,preproc_blocks,23,text,,0,Influência do fator de Hot-Spot variável;,102.0,657.0,262.0,665.0
+GTM10.pdf,para_blocks,24,text,,0,Em muitas análises ao longo deste trabalho será utilizado o ciclo denominado como “Ciclo de sobrecarga” da,83.0,672.0,530.0,683.0
+GTM10.pdf,preproc_blocks,24,text,,0,Em muitas análises ao longo deste trabalho será utilizado o ciclo denominado como “Ciclo de sobrecarga” da,83.0,672.0,530.0,683.0
+GTM10.pdf,para_blocks,24,text,,1,"nota técnica elaborada pelo ONS [2], exibido na Figura 1.",66.0,682.0,298.0,693.0
+GTM10.pdf,preproc_blocks,24,text,,1,"nota técnica elaborada pelo ONS [2], exibido na Figura 1.",66.0,682.0,298.0,693.0
+GTM10.pdf,discarded_blocks,25,footer,,0,"Rua Dr. Pedro Zimmermann, n˚ 6751 – CEP 89068-001 Blumenau, SC – Brasil",145.0,768.0,461.0,777.0
+GTM10.pdf,discarded_blocks,25,footer,,1,Tel: (+55 47) 3337-1000 – Fax: (+55 47) 3337-1090 – email: luizo@weg.net,151.0,783.0,455.0,795.0
