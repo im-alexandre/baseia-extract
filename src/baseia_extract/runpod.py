@@ -73,8 +73,28 @@ def _as_items(payload: object) -> list[dict[str, object]]:
             value = payload.get(key)
             if isinstance(value, list):
                 return [item for item in value if isinstance(item, dict)]
+            if isinstance(value, dict):
+                return [value]
         return [payload]
     return []
+
+
+def _first_present(payload: dict[str, object], *keys: str) -> object | None:
+    for key in keys:
+        if key in payload:
+            return payload[key]
+    return None
+
+
+def _command_configured(value: object) -> bool:
+    if value is None:
+        return False
+    if isinstance(value, str):
+        normalized = value.strip()
+        return bool(normalized and normalized not in {"[]", "null"})
+    if isinstance(value, (list, tuple)):
+        return any(str(item).strip() for item in value)
+    return bool(value)
 
 
 def resolve_template_id(template_name: str) -> str:
@@ -104,6 +124,50 @@ def resolve_template_id(template_name: str) -> str:
     if not isinstance(template_id, str) or not template_id:
         raise RuntimeError(f"Template sem ID válido: {matches[0]}")
     return template_id
+
+
+def validate_template(template_id: str) -> None:
+    """Rejeita overrides que impediriam o entrypoint da imagem de executar."""
+    payload = _runpodctl("template", "get", template_id)
+    items = _as_items(payload)
+    if not items:
+        raise RuntimeError(f"RunPod não devolveu o template {template_id!r}.")
+
+    template = items[0]
+    entrypoint = _first_present(
+        template,
+        "dockerEntrypoint",
+        "docker_entrypoint",
+        "docker-entrypoint",
+    )
+    if _command_configured(entrypoint):
+        raise ValueError(
+            "O template RunPod possui Docker Entrypoint configurado e "
+            "sobrescreveria /usr/local/bin/start-mineru. Limpe o campo "
+            "Docker Entrypoint no template antes de executar `poe extract`. "
+            f"Valor atual: {entrypoint!r}"
+        )
+
+    start_command = _first_present(
+        template,
+        "dockerStartCmd",
+        "docker_start_cmd",
+        "docker-start-cmd",
+        "dockerArgs",
+        "docker_args",
+    )
+    if _command_configured(start_command):
+        print(
+            "Aviso: o template possui Docker Start Command/Docker Args. "
+            "O bootstrap do BaseIA vai ignorar esses argumentos: "
+            f"{start_command!r}"
+        )
+
+    image = _first_present(template, "imageName", "image_name", "image")
+    print(
+        f"Template RunPod validado: id={template_id} | "
+        f"imagem={image or 'não informada'}"
+    )
 
 
 def _extract_pod_id(payload: object) -> str:
@@ -159,7 +223,12 @@ def create_pod(*, template_id: str, index: int) -> ManagedPod:
         ),
     ]
     if settings.network_volume_id:
-        create_args.append(f"--network-volume-id={settings.network_volume_id}")
+        create_args.extend(
+            [
+                f"--network-volume-id={settings.network_volume_id}",
+                f"--volume-mount-path={settings.runpod_volume_mount_path}",
+            ]
+        )
 
     payload = _runpodctl(*create_args)
     pod_id = _extract_pod_id(payload)
@@ -347,6 +416,8 @@ def managed_mineru_pods() -> Iterator[tuple[ManagedPod, ...]]:
         raise ValueError("RUNPOD_TEMPLATE_NAME não foi configurado no .env.")
 
     template_id = resolve_template_id(settings.runpod_template_name)
+    validate_template(template_id)
+
     created: list[ManagedPod] = []
     try:
         for index in range(1, settings.runpod_pod_count + 1):
