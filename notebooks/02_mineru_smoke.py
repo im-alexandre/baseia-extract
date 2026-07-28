@@ -61,7 +61,7 @@ if PROJECT_ROOT.name == "notebooks":
     PROJECT_ROOT = PROJECT_ROOT.parent
 
 
-SAMPLE_MANIFEST = PROJECT_ROOT / "data" / "samples" / "benchmark_sample.csv"
+SAMPLE_MANIFEST = PROJECT_ROOT / "data" / "inventory" / "inventory.csv"
 
 MINERU_EXE = PROJECT_ROOT / ".venv-mineru" / "Scripts" / "mineru.exe"
 
@@ -97,7 +97,7 @@ API_URLS = (
 )
 
 
-WORKER_COUNTS: tuple(int) = (3, 6, 9, 12, 15, 18, 24)
+WORKER_COUNTS: tuple(int) = (24,)
 
 TEST_SLICE = 24
 OVERWRITE_BENCHMARK_OUTPUTS = True
@@ -132,10 +132,8 @@ if any(worker_count % len(API_URLS) != 0 for worker_count in WORKER_COUNTS):
         "Todos os valores de WORKER_COUNTS devem ser múltiplos do número de pods."
     )
 
-if max(WORKER_COUNTS) // len(API_URLS) > 8:
-    raise ValueError("A configuração excede oito chamadas simultâneas por pod.")
 
-sample = pd.read_csv(SAMPLE_MANIFEST).head(TEST_SLICE).reset_index(drop=True)
+sample = pd.read_csv(SAMPLE_MANIFEST).reset_index(drop=True)
 
 if sample.empty:
     raise RuntimeError("A amostra está vazia.")

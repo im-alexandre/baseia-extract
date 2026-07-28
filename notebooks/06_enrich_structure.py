@@ -26,14 +26,13 @@
 # %%
 from __future__ import annotations
 
+import hashlib
 import json
-import re
 from collections import Counter
 from pathlib import Path
 from typing import Any, Iterable, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
-
 
 # %% [markdown]
 # ## Configuração
@@ -59,6 +58,7 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 #
 # Quando os modelos forem movidos para `src/baseia/ir/models.py`,
 # substituir esta seção por imports.
+
 
 # %%
 class IRModel(BaseModel):
@@ -248,6 +248,7 @@ ASSET_ROLE_TO_KIND = {
 # %% [markdown]
 # ## Helpers
 
+
 # %%
 def child_id(
     parent_id: str,
@@ -257,12 +258,144 @@ def child_id(
     return f"{parent_id}:{kind}{index:04d}"
 
 
+def sha256_file(path: Path) -> str:
+    """Calcula o SHA-256 de um arquivo sem carregá-lo inteiro na memória."""
+    digest = hashlib.sha256()
+
+    with path.open("rb") as file:
+        for chunk in iter(lambda: file.read(1024 * 1024), b""):
+            digest.update(chunk)
+
+    return digest.hexdigest()
+
+
+def fallback_sha256(payload: dict[str, Any]) -> str:
+    """
+    Gera uma identidade estável quando o arquivo-fonte não está disponível.
+
+    O hash é calculado sobre o conteúdo do IR antes da inclusão dos IDs.
+    """
+    serialized = json.dumps(
+        payload,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+
+    return hashlib.sha256(serialized).hexdigest()
+
+
+def assign_block_ids(
+    blocks: list[dict[str, Any]],
+    *,
+    page_id: str,
+    collection_name: str,
+) -> None:
+    """Adiciona IDs determinísticos a blocos, linhas e spans."""
+    for block_index, block in enumerate(blocks):
+        block_id = f"{page_id}:{collection_name}-block{block_index:04d}"
+        block.setdefault("id", block_id)
+
+        # Preserva o índice original do MinerU quando existente.
+        if block.get("block_index") is None:
+            original_index = block.get("index") or block.get("attributes", {}).get(
+                "index"
+            )
+
+            if original_index is not None:
+                block["block_index"] = original_index
+
+        lines = block.get("lines") or []
+
+        for line_index, line in enumerate(lines):
+            line_id = f"{block_id}:line{line_index:04d}"
+            line.setdefault("id", line_id)
+
+            spans = line.get("spans") or []
+
+            for span_index, span in enumerate(spans):
+                span.setdefault(
+                    "id",
+                    f"{line_id}:span{span_index:04d}",
+                )
+
+                # Alguns dados MinerU usam `content`; o IR usa `text`.
+                if "text" not in span and "content" in span:
+                    span["text"] = span.pop("content")
+
+
+def hydrate_document_ir(
+    payload: dict[str, Any],
+) -> dict[str, Any]:
+    """
+    Completa campos de identidade ausentes no protótipo do IR.
+
+    Não altera o arquivo em disco; apenas normaliza o payload carregado.
+    """
+    source_path_value = payload.get("source_path")
+    source_path = (
+        Path(source_path_value) if isinstance(source_path_value, str) else None
+    )
+
+    source_sha256 = payload.get("source_sha256")
+
+    if not source_sha256:
+        if source_path is not None and source_path.is_file():
+            source_sha256 = sha256_file(source_path)
+        else:
+            source_sha256 = fallback_sha256(payload)
+
+        payload["source_sha256"] = source_sha256
+
+    payload.setdefault(
+        "id",
+        f"doc:{source_sha256[:16]}",
+    )
+
+    if not payload.get("source_name"):
+        payload["source_name"] = (
+            source_path.name if source_path is not None else payload["id"]
+        )
+
+    # Compatibilidade com o nome usado no protótipo anterior.
+    if "backend_version" not in payload and "version_name" in payload:
+        payload["backend_version"] = payload.pop("version_name")
+
+    document_id = payload["id"]
+    pages = payload.get("pages") or []
+
+    for page_index, page in enumerate(pages):
+        page_number = page.get("page", page_index)
+        page_id = f"{document_id}:page{int(page_number):04d}"
+
+        page.setdefault("id", page_id)
+
+        assign_block_ids(
+            page.get("blocks") or [],
+            page_id=page_id,
+            collection_name="content",
+        )
+
+        assign_block_ids(
+            page.get("discarded_blocks") or [],
+            page_id=page_id,
+            collection_name="discarded",
+        )
+
+    return payload
+
+
 def load_document_ir(
     path: Path,
 ) -> DocumentIR:
-    return DocumentIR.model_validate_json(
-        path.read_text(encoding="utf-8")
-    )
+    payload = json.loads(path.read_text(encoding="utf-8"))
+
+    if not isinstance(payload, dict):
+        raise TypeError(f"O IR em {path} não contém um objeto JSON.")
+
+    hydrated = hydrate_document_ir(payload)
+
+    return DocumentIR.model_validate(hydrated)
 
 
 def write_json(
@@ -346,6 +479,7 @@ def iter_discarded_blocks(
 # - blocos seguintes pertencem à seção atualmente aberta;
 # - títulos sem `level` são tratados como nível `1`.
 
+
 # %%
 class SectionBuilder:
     def __init__(self, document_id: str) -> None:
@@ -362,13 +496,9 @@ class SectionBuilder:
             )
         ]
 
-        self.by_id: dict[str, SectionNode] = {
-            self.root_id: self.sections[0]
-        }
+        self.by_id: dict[str, SectionNode] = {self.root_id: self.sections[0]}
 
-        self.stack: list[SectionNode] = [
-            self.sections[0]
-        ]
+        self.stack: list[SectionNode] = [self.sections[0]]
 
         self.next_ordinal = 1
 
@@ -382,10 +512,7 @@ class SectionBuilder:
     ) -> SectionNode:
         level = normalize_title_level(title_block)
 
-        while (
-            len(self.stack) > 1
-            and self.stack[-1].level >= level
-        ):
+        while len(self.stack) > 1 and self.stack[-1].level >= level:
             self.stack.pop()
 
         parent = self.stack[-1]
@@ -426,6 +553,7 @@ class SectionBuilder:
 # Blocos `list` contíguos dentro da mesma seção formam um grupo.
 # A continuidade é quebrada por qualquer bloco não-lista ou mudança de seção.
 
+
 # %%
 class ListGroupBuilder:
     def __init__(self, document_id: str) -> None:
@@ -440,10 +568,7 @@ class ListGroupBuilder:
         block_id: str,
         section_id: str | None,
     ) -> str:
-        if (
-            self.current is None
-            or self.current.section_id != section_id
-        ):
+        if self.current is None or self.current.section_id != section_id:
             self.current = ListGroup(
                 id=child_id(
                     self.document_id,
@@ -466,6 +591,7 @@ class ListGroupBuilder:
 
 # %% [markdown]
 # ## Enriquecimento
+
 
 # %%
 def enrich_document(
@@ -541,10 +667,7 @@ def enrich_document(
 
         reading_order += 1
 
-    discarded_block_ids = [
-        block.id
-        for _, block in iter_discarded_blocks(document)
-    ]
+    discarded_block_ids = [block.id for _, block in iter_discarded_blocks(document)]
 
     return DocumentStructure(
         document_id=document.id,
@@ -566,30 +689,19 @@ def enrich_document(
 # %% [markdown]
 # ## Validação
 
+
 # %%
 def validate_structure(
     document: DocumentIR,
     structure: DocumentStructure,
 ) -> dict[str, Any]:
-    content_block_ids = [
-        block.id
-        for _, block in iter_content_blocks(document)
-    ]
+    content_block_ids = [block.id for _, block in iter_content_blocks(document)]
 
-    discarded_block_ids = [
-        block.id
-        for _, block in iter_discarded_blocks(document)
-    ]
+    discarded_block_ids = [block.id for _, block in iter_discarded_blocks(document)]
 
-    annotation_block_ids = [
-        annotation.block_id
-        for annotation in structure.annotations
-    ]
+    annotation_block_ids = [annotation.block_id for annotation in structure.annotations]
 
-    section_ids = {
-        section.id
-        for section in structure.sections
-    }
+    section_ids = {section.id for section in structure.sections}
 
     annotation_section_ids = {
         annotation.section_id
@@ -597,10 +709,7 @@ def validate_structure(
         if annotation.section_id is not None
     }
 
-    list_group_ids = {
-        group.id
-        for group in structure.list_groups
-    }
+    list_group_ids = {group.id for group in structure.list_groups}
 
     annotation_list_group_ids = {
         annotation.list_group_id
@@ -608,10 +717,7 @@ def validate_structure(
         if annotation.list_group_id is not None
     }
 
-    asset_block_ids = {
-        asset.block_id
-        for asset in structure.assets
-    }
+    asset_block_ids = {asset.block_id for asset in structure.assets}
 
     expected_asset_block_ids = {
         annotation.block_id
@@ -619,45 +725,29 @@ def validate_structure(
         if annotation.role in ASSET_ROLE_TO_KIND
     }
 
-    serialized = structure.model_dump_json(
-        exclude_none=True
-    )
+    serialized = structure.model_dump_json(exclude_none=True)
 
-    restored = DocumentStructure.model_validate_json(
-        serialized
-    )
+    restored = DocumentStructure.model_validate_json(serialized)
 
     checks = {
-        "all_content_blocks_annotated": (
-            annotation_block_ids == content_block_ids
-        ),
+        "all_content_blocks_annotated": (annotation_block_ids == content_block_ids),
         "annotation_ids_unique": (
-            len(annotation_block_ids)
-            == len(set(annotation_block_ids))
+            len(annotation_block_ids) == len(set(annotation_block_ids))
         ),
         "reading_order_contiguous": (
-            [
-                annotation.reading_order
-                for annotation in structure.annotations
-            ]
+            [annotation.reading_order for annotation in structure.annotations]
             == list(range(len(structure.annotations)))
         ),
-        "all_annotation_sections_exist": (
-            annotation_section_ids <= section_ids
-        ),
+        "all_annotation_sections_exist": (annotation_section_ids <= section_ids),
         "all_annotation_list_groups_exist": (
             annotation_list_group_ids <= list_group_ids
         ),
-        "all_assets_registered": (
-            asset_block_ids == expected_asset_block_ids
-        ),
+        "all_assets_registered": (asset_block_ids == expected_asset_block_ids),
         "discarded_blocks_preserved": (
-            structure.discarded_block_ids
-            == discarded_block_ids
+            structure.discarded_block_ids == discarded_block_ids
         ),
         "primary_flow_is_subset": (
-            set(structure.primary_flow_block_ids)
-            <= set(content_block_ids)
+            set(structure.primary_flow_block_ids) <= set(content_block_ids)
         ),
         "roundtrip_matches": restored == structure,
     }
@@ -672,9 +762,7 @@ def validate_structure(
             "sections": len(structure.sections),
             "list_groups": len(structure.list_groups),
             "assets": len(structure.assets),
-            "primary_flow_blocks": len(
-                structure.primary_flow_block_ids
-            ),
+            "primary_flow_blocks": len(structure.primary_flow_block_ids),
         },
         "checks": checks,
         "valid": all(checks.values()),
@@ -717,15 +805,9 @@ for index, ir_path in enumerate(
         structure,
     )
 
-    relative_parent = ir_path.parent.relative_to(
-        IR_DIR
-    )
+    relative_parent = ir_path.parent.relative_to(IR_DIR)
 
-    output_path = (
-        OUTPUT_DIR
-        / relative_parent
-        / "structure_ir.json"
-    )
+    output_path = OUTPUT_DIR / relative_parent / "structure_ir.json"
 
     write_json(
         structure.model_dump(
@@ -755,9 +837,7 @@ for index, ir_path in enumerate(
 
 # %%
 role_counts = Counter(
-    annotation.role
-    for structure in structures
-    for annotation in structure.annotations
+    annotation.role for structure in structures for annotation in structure.annotations
 )
 
 source_type_counts = Counter(
@@ -767,54 +847,26 @@ source_type_counts = Counter(
 )
 
 asset_kind_counts = Counter(
-    asset.kind
-    for structure in structures
-    for asset in structure.assets
+    asset.kind for structure in structures for asset in structure.assets
 )
 
 summary = {
     "documents": len(structures),
-    "valid_documents": sum(
-        report["valid"]
-        for report in validation_reports
-    ),
-    "invalid_documents": sum(
-        not report["valid"]
-        for report in validation_reports
-    ),
-    "sections": sum(
-        len(structure.sections)
-        for structure in structures
-    ),
-    "list_groups": sum(
-        len(structure.list_groups)
-        for structure in structures
-    ),
-    "assets": sum(
-        len(structure.assets)
-        for structure in structures
-    ),
-    "annotations": sum(
-        len(structure.annotations)
-        for structure in structures
-    ),
+    "valid_documents": sum(report["valid"] for report in validation_reports),
+    "invalid_documents": sum(not report["valid"] for report in validation_reports),
+    "sections": sum(len(structure.sections) for structure in structures),
+    "list_groups": sum(len(structure.list_groups) for structure in structures),
+    "assets": sum(len(structure.assets) for structure in structures),
+    "annotations": sum(len(structure.annotations) for structure in structures),
     "primary_flow_blocks": sum(
-        len(structure.primary_flow_block_ids)
-        for structure in structures
+        len(structure.primary_flow_block_ids) for structure in structures
     ),
     "discarded_blocks": sum(
-        len(structure.discarded_block_ids)
-        for structure in structures
+        len(structure.discarded_block_ids) for structure in structures
     ),
-    "role_counts": dict(
-        role_counts.most_common()
-    ),
-    "source_type_counts": dict(
-        source_type_counts.most_common()
-    ),
-    "asset_kind_counts": dict(
-        asset_kind_counts.most_common()
-    ),
+    "role_counts": dict(role_counts.most_common()),
+    "source_type_counts": dict(source_type_counts.most_common()),
+    "asset_kind_counts": dict(asset_kind_counts.most_common()),
 }
 
 write_json(
@@ -835,9 +887,7 @@ summary
 
 # %%
 section_levels = Counter(
-    section.level
-    for structure in structures
-    for section in structure.sections
+    section.level for structure in structures for section in structure.sections
 )
 
 empty_sections = [
@@ -854,10 +904,7 @@ empty_sections = [
 
 section_diagnostics = {
     "level_counts": {
-        str(level): count
-        for level, count in sorted(
-            section_levels.items()
-        )
+        str(level): count for level, count in sorted(section_levels.items())
     },
     "empty_sections": empty_sections,
 }
@@ -874,11 +921,7 @@ section_diagnostics
 # ## Falhar explicitamente em inconsistência
 
 # %%
-invalid_reports = [
-    report
-    for report in validation_reports
-    if not report["valid"]
-]
+invalid_reports = [report for report in validation_reports if not report["valid"]]
 
 if FAIL_ON_INVALID and invalid_reports:
     raise AssertionError(
