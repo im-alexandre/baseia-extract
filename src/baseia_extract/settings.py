@@ -60,6 +60,7 @@ class Settings:
     inventory_path: Path
     sample_path: Path
     mineru_output_dir: Path
+    audit_dir: Path
     ir_dir: Path
     structure_dir: Path
     chunks_dir: Path
@@ -73,6 +74,9 @@ class Settings:
     mineru_poll_interval_seconds: float
     mineru_task_timeout_seconds: float
     mineru_result_timeout_seconds: float
+    audit_textless_page_warn_ratio: float
+    audit_min_middle_bytes: int
+    audit_review_sample_size: int
     runpod_template_name: str
     runpod_gpu_id: str
     runpod_pod_count: int
@@ -97,6 +101,7 @@ def get_settings() -> Settings:
         inventory_path=inventory_dir / "inventory.csv",
         sample_path=inventory_dir / "sample.csv",
         mineru_output_dir=data_dir / "mineru",
+        audit_dir=data_dir / "audit",
         ir_dir=data_dir / "ir",
         structure_dir=data_dir / "structure",
         chunks_dir=data_dir / "chunks",
@@ -105,26 +110,79 @@ def get_settings() -> Settings:
         mineru_retries=_int_env("MINERU_RETRIES", 2),
         mineru_backend=os.getenv("MINERU_BACKEND", "pipeline"),
         mineru_overwrite=_bool_env("MINERU_OVERWRITE", False),
-        mineru_health_timeout_seconds=_float_env("MINERU_HEALTH_TIMEOUT_SECONDS", 30.0),
-        mineru_submit_timeout_seconds=_float_env("MINERU_SUBMIT_TIMEOUT_SECONDS", 300.0),
-        mineru_poll_interval_seconds=_float_env("MINERU_POLL_INTERVAL_SECONDS", 1.0),
-        mineru_task_timeout_seconds=_float_env("MINERU_TASK_TIMEOUT_SECONDS", 3600.0),
-        mineru_result_timeout_seconds=_float_env("MINERU_RESULT_TIMEOUT_SECONDS", 300.0),
-        runpod_template_name=os.getenv("RUNPOD_TEMPLATE_NAME", "").strip(),
-        runpod_gpu_id=os.getenv("RUNPOD_GPU_ID", "NVIDIA GeForce RTX 5090").strip(),
+        mineru_health_timeout_seconds=_float_env(
+            "MINERU_HEALTH_TIMEOUT_SECONDS",
+            30.0,
+        ),
+        mineru_submit_timeout_seconds=_float_env(
+            "MINERU_SUBMIT_TIMEOUT_SECONDS",
+            300.0,
+        ),
+        mineru_poll_interval_seconds=_float_env(
+            "MINERU_POLL_INTERVAL_SECONDS",
+            1.0,
+        ),
+        mineru_task_timeout_seconds=_float_env(
+            "MINERU_TASK_TIMEOUT_SECONDS",
+            3600.0,
+        ),
+        mineru_result_timeout_seconds=_float_env(
+            "MINERU_RESULT_TIMEOUT_SECONDS",
+            300.0,
+        ),
+        audit_textless_page_warn_ratio=_float_env(
+            "AUDIT_TEXTLESS_PAGE_WARN_RATIO",
+            0.5,
+        ),
+        audit_min_middle_bytes=_int_env(
+            "AUDIT_MIN_MIDDLE_BYTES",
+            1024,
+        ),
+        audit_review_sample_size=_int_env(
+            "AUDIT_REVIEW_SAMPLE_SIZE",
+            75,
+        ),
+        runpod_template_name=os.getenv(
+            "RUNPOD_TEMPLATE_NAME",
+            "",
+        ).strip(),
+        runpod_gpu_id=os.getenv(
+            "RUNPOD_GPU_ID",
+            "NVIDIA GeForce RTX 5090",
+        ).strip(),
         runpod_pod_count=_int_env("RUNPOD_POD_COUNT", 1),
         runpod_gpu_count=_int_env("RUNPOD_GPU_COUNT", 1),
         runpod_api_port=_int_env("RUNPOD_API_PORT", 8000),
-        runpod_name_prefix=os.getenv("RUNPOD_NAME_PREFIX", "baseia-mineru").strip(),
-        runpod_terminate_after=os.getenv("RUNPOD_TERMINATE_AFTER", "12h").strip(),
-        runpod_startup_timeout_seconds=_float_env("RUNPOD_STARTUP_TIMEOUT_SECONDS", 1800.0),
-        runpod_startup_poll_seconds=_float_env("RUNPOD_STARTUP_POLL_SECONDS", 10.0),
+        runpod_name_prefix=os.getenv(
+            "RUNPOD_NAME_PREFIX",
+            "baseia-mineru",
+        ).strip(),
+        runpod_terminate_after=os.getenv(
+            "RUNPOD_TERMINATE_AFTER",
+            "12h",
+        ).strip(),
+        runpod_startup_timeout_seconds=_float_env(
+            "RUNPOD_STARTUP_TIMEOUT_SECONDS",
+            1800.0,
+        ),
+        runpod_startup_poll_seconds=_float_env(
+            "RUNPOD_STARTUP_POLL_SECONDS",
+            10.0,
+        ),
     )
 
     if result.mineru_workers_per_pod < 1:
         raise ValueError("MINERU_WORKERS_PER_POD deve ser maior que zero.")
     if result.mineru_retries < 0:
         raise ValueError("MINERU_RETRIES não pode ser negativo.")
+    if not 0 <= result.audit_textless_page_warn_ratio <= 1:
+        raise ValueError(
+            "AUDIT_TEXTLESS_PAGE_WARN_RATIO deve estar entre 0 e 1."
+        )
+    if result.audit_min_middle_bytes < 0:
+        raise ValueError("AUDIT_MIN_MIDDLE_BYTES não pode ser negativo.")
+    if result.audit_review_sample_size < 1:
+        raise ValueError("AUDIT_REVIEW_SAMPLE_SIZE deve ser maior que zero.")
     if result.runpod_pod_count < 1:
         raise ValueError("RUNPOD_POD_COUNT deve ser maior que zero.")
     if result.runpod_gpu_count < 1:
