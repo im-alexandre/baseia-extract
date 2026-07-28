@@ -1,7 +1,7 @@
 [project]
-name = "baseia-v3"
+name = "baseia-extract"
 version = "0.1.0"
-description = "Add your description here"
+description = "Camada de extração documental do BaseIA"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -9,15 +9,45 @@ dependencies = [
   "aiohttp",
   "bibtexparser==2.0.0b9",
   "httpx",
-  "ipykernel",
-  "jupyterlab",
-  "jupytext>=1.19.5",
   "pandas",
   "pillow",
+  "poethepoet>=0.38",
   "pyarrow",
   "pydantic",
   "pypdf[crypto]>=6.14.2",
   "requests",
   "tqdm",
   "unpywall",
+]
+
+[tool.poe.tasks.inventory]
+help = "Cria o manifesto completo de uma coleção de PDFs."
+script = "baseia_extract.inventory:build_inventory"
+args = [
+  { name = "corpus_dir", options = ["--corpus"], default = "" },
+  { name = "output", options = ["--output"], default = "" },
+  { name = "workers", options = ["--workers"], type = "integer", default = 0 },
+  { name = "recursive", options = ["--recursive"], type = "boolean", default = true },
+]
+
+[tool.poe.tasks.sample]
+help = "Gera uma amostra reprodutível do manifesto da coleção."
+script = "baseia_extract.inventory:sample_inventory"
+args = [
+  { name = "size", options = ["--size"], type = "integer", default = 100 },
+  { name = "source", options = ["--source"], default = "" },
+  { name = "output", options = ["--output"], default = "" },
+  { name = "seed", options = ["--seed"], type = "integer", default = 42 },
+]
+
+[tool.poe.tasks.extract]
+help = "Executa a extração MinerU distribuída nos pods configurados."
+script = "baseia_extract.mineru:extract"
+args = [
+  { name = "manifest", options = ["--manifest"], default = "" },
+  { name = "output", options = ["--output"], default = "" },
+  { name = "workers_per_pod", options = ["--workers-per-pod"], type = "integer", default = 0 },
+  { name = "retries", options = ["--retries"], type = "integer", default = -1 },
+  { name = "overwrite", options = ["--overwrite"], type = "boolean", default = false },
+  { name = "limit", options = ["--limit"], type = "integer", default = 0 },
 ]
