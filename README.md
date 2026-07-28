@@ -2,7 +2,7 @@
 
 Camada de extração documental do BaseIA.
 
-O código operacional vive em `src/baseia_extract`. Configuração de ambiente fica no `.env`; caminhos e defaults são resolvidos exclusivamente por `baseia_extract.settings`.
+O código operacional vive em `src/baseia_extract`. A configuração fica no `.env`; caminhos e defaults são resolvidos exclusivamente por `baseia_extract.settings`.
 
 ## Instalação
 
@@ -11,72 +11,94 @@ uv sync
 Copy-Item .env.example .env
 ```
 
-Edite o `.env` com o diretório do corpus e as URLs públicas dos pods MinerU.
+O Poe the Poet é usado globalmente e não faz parte das dependências do projeto.
+
+## Estrutura local
+
+```text
+corpus/                 PDFs da coleção; ignorado pelo Git
+data/                   todos os dados produzidos; ignorado pelo Git
+src/baseia_extract/     código Python do pipeline
+```
+
+Por padrão, o corpus fica em `corpus/`. Todos os resultados ficam abaixo de `data/`.
 
 ## Pipeline operacional
 
-### 1. Inventário da coleção
+### 1. Inventário completo
 
 ```powershell
-uv run poe inventory
+poe inventory
 ```
 
-Sobrescritas ocasionais:
+Opcionalmente, ajuste apenas o paralelismo local:
 
 ```powershell
-uv run poe inventory --corpus 'D:\meu-corpus' --workers 8
+poe inventory --workers 8
 ```
 
-### 2. Amostra da coleção
+Saída:
+
+```text
+data/inventory/inventory.csv
+data/inventory/inventory_errors.csv
+```
+
+### 2. Amostra reprodutível
 
 ```powershell
-uv run poe sample --size 100
+poe sample --size 100
 ```
 
-A task usa seed fixa por padrão e grava `data/inventory/sample.csv`.
+Saída:
 
-### 3. Extração MinerU
+```text
+data/inventory/sample.csv
+```
+
+### 3. Extração completa
 
 ```powershell
-uv run poe extract
+poe extract
 ```
+
+A task:
+
+1. resolve o template privado do RunPod pelo nome;
+2. cria a quantidade configurada de pods;
+3. aguarda o MinerU responder em `/health`;
+4. processa todo o `data/inventory/inventory.csv`;
+5. persiste continuamente o progresso;
+6. encerra os pods em `finally`.
+
+Não existe modo limitado na task operacional. `poe extract` sempre processa o manifesto completo, pulando documentos já concluídos quando `MINERU_OVERWRITE=false`.
 
 A concorrência total é:
 
 ```text
-quantidade de pods × MINERU_WORKERS_PER_POD
-```
-
-Exemplo para uma RTX 5090 configurada para 12 chamadas concorrentes:
-
-```powershell
-uv run poe extract --workers-per-pod 12
-```
-
-Teste limitado:
-
-```powershell
-uv run poe extract --limit 20
-```
-
-Reprocessamento:
-
-```powershell
-uv run poe extract --overwrite
+RUNPOD_POD_COUNT × MINERU_WORKERS_PER_POD
 ```
 
 ## Saídas canônicas
 
 ```text
-data/inventory/inventory.csv
-artifacts/mineru/extraction/documents/
-artifacts/mineru/extraction/runs.csv
-artifacts/mineru/extraction/errors.csv
-artifacts/mineru/extraction/summary.json
-artifacts/mineru/extraction/pods.json
-artifacts/ir/
-artifacts/structure/
-artifacts/chunks/
+data/inventory/
+data/mineru/documents/
+data/mineru/runs.csv
+data/mineru/errors.csv
+data/mineru/summary.json
+data/mineru/pods.json
+data/ir/
+data/structure/
+data/chunks/
 ```
 
-Não há configuração de caminhos dentro das etapas do pipeline. Novos módulos devem importar `settings` de `baseia_extract.settings`.
+## Sobrescrita
+
+O comportamento é controlado somente no `.env`:
+
+```env
+MINERU_OVERWRITE=false
+```
+
+Com `false`, documentos já concluídos são preservados e ignorados. Com `true`, suas saídas são removidas e recriadas.
