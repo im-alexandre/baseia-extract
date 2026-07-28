@@ -1,3 +1,7 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
 name = "baseia-extract"
 version = "0.1.0"
@@ -19,6 +23,9 @@ dependencies = [
   "tqdm",
   "unpywall",
 ]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/baseia_extract"]
 
 [tool.poe.tasks.inventory]
 help = "Cria o manifesto completo de uma coleção de PDFs."
