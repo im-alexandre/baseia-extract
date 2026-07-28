@@ -9,9 +9,24 @@ import urllib.request
 from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import Iterator
+from typing import Any, Iterator
 
 from .settings import settings
+
+
+REQUIRED_MINERU_ROUTES = frozenset(
+    {
+        "/health",
+        "/file_parse",
+        "/tasks",
+        "/tasks/{task_id}",
+        "/tasks/{task_id}/result",
+    }
+)
+
+
+class UnexpectedPodServiceError(RuntimeError):
+    """O proxy respondeu, mas o processo exposto não é a API do MinerU."""
 
 
 @dataclass(frozen=True, slots=True)
@@ -100,6 +115,21 @@ def _extract_pod_id(payload: object) -> str:
     raise RuntimeError(f"Não foi possível obter o ID do pod: {payload}")
 
 
+def _runtime_environment() -> dict[str, str]:
+    """Configuração que precisa ser idêntica no cliente e na API remota."""
+    return {
+        "MINERU_VERSION": settings.mineru_version,
+        "MINERU_API_MAX_CONCURRENT_REQUESTS": str(
+            settings.mineru_workers_per_pod
+        ),
+        "MINERU_API_ENABLE_FASTAPI_DOCS": "true",
+        "MINERU_PREPARE_TIMEOUT_SECONDS": str(
+            int(settings.runpod_startup_timeout_seconds)
+        ),
+        "PORT": str(settings.runpod_api_port),
+    }
+
+
 def create_pod(*, template_id: str, index: int) -> ManagedPod:
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
     name = f"{settings.runpod_name_prefix}-{timestamp}-{index:02d}"
@@ -109,8 +139,15 @@ def create_pod(*, template_id: str, index: int) -> ManagedPod:
         f"--template-id={template_id}",
         f"--gpu-id={settings.runpod_gpu_id}",
         f"--gpu-count={settings.runpod_gpu_count}",
+        f"--ports={settings.runpod_api_port}/http",
         f"--terminate-after={settings.runpod_terminate_after}",
         f"--name={name}",
+        "--env",
+        json.dumps(
+            _runtime_environment(),
+            ensure_ascii=True,
+            separators=(",", ":"),
+        ),
     ]
     if settings.network_volume_id:
         create_args.append(f"--network-volume-id={settings.network_volume_id}")
@@ -128,36 +165,96 @@ def delete_pod(pod_id: str) -> None:
     _runpodctl("pod", "delete", pod_id)
 
 
-def _healthy(api_url: str) -> bool:
+def _read_openapi(api_url: str) -> dict[str, Any]:
     request = urllib.request.Request(
-        f"{api_url}/health",
-        headers={"Accept": "application/json", "User-Agent": "BaseIA-Extract/1.0"},
+        f"{api_url}/openapi.json",
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "BaseIA-Extract/1.0",
+        },
         method="GET",
     )
+
+    with urllib.request.urlopen(
+        request,
+        timeout=settings.mineru_health_timeout_seconds,
+    ) as response:
+        payload = response.read().decode("utf-8")
+
+    data = json.loads(payload)
+    if not isinstance(data, dict):
+        raise TypeError("openapi.json não contém um objeto JSON.")
+    return data
+
+
+def _probe_mineru_api(api_url: str) -> tuple[bool, str]:
+    """Valida o contrato da API, não apenas um `/health` genérico."""
     try:
-        with urllib.request.urlopen(
-            request,
-            timeout=settings.mineru_health_timeout_seconds,
-        ) as response:
-            return 200 <= response.status < 300
-    except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError):
-        return False
+        openapi = _read_openapi(api_url)
+    except urllib.error.HTTPError as error:
+        return False, f"openapi.json respondeu HTTP {error.code}"
+    except urllib.error.URLError as error:
+        return False, f"proxy indisponível: {error.reason}"
+    except TimeoutError:
+        return False, "timeout consultando openapi.json"
+    except json.JSONDecodeError:
+        return False, "openapi.json ainda não retornou JSON válido"
+    except (OSError, TypeError) as error:
+        return False, f"openapi.json indisponível: {error}"
+
+    raw_paths = openapi.get("paths")
+    if not isinstance(raw_paths, dict):
+        raise UnexpectedPodServiceError(
+            f"{api_url} respondeu a /openapi.json sem um mapa de rotas válido."
+        )
+
+    observed_routes = {str(path) for path in raw_paths}
+    missing_routes = REQUIRED_MINERU_ROUTES - observed_routes
+    if missing_routes:
+        service_hint = (
+            " O serviço parece ser o servidor OpenAI do vLLM."
+            if any(route.startswith("/v1/") for route in observed_routes)
+            else ""
+        )
+        observed_preview = ", ".join(sorted(observed_routes)[:20])
+        raise UnexpectedPodServiceError(
+            f"{api_url} está respondendo, mas não é a API MinerU esperada."
+            f"{service_hint} Rotas ausentes: {sorted(missing_routes)}. "
+            f"Rotas observadas: {observed_preview}. Verifique a imagem e remova "
+            "Docker Entrypoint/Docker Start Command que sobrescrevam o entrypoint "
+            "da imagem no template RunPod."
+        )
+
+    return True, "contrato MinerU disponível"
 
 
 def wait_until_ready(pods: tuple[ManagedPod, ...]) -> None:
     deadline = time.monotonic() + settings.runpod_startup_timeout_seconds
     pending = {pod.pod_id: pod for pod in pods}
+    last_status: dict[str, str] = {}
 
     while pending:
         for pod_id, pod in tuple(pending.items()):
-            if _healthy(pod.api_url):
-                print(f"Pod pronto: {pod.name} | {pod.api_url}")
+            ready, status = _probe_mineru_api(pod.api_url)
+            last_status[pod_id] = status
+            if ready:
+                print(f"Pod MinerU pronto: {pod.name} | {pod.api_url}")
                 pending.pop(pod_id)
+
         if not pending:
             return
+
         if time.monotonic() >= deadline:
-            names = ", ".join(pod.name for pod in pending.values())
-            raise TimeoutError(f"Pods não ficaram prontos dentro do limite: {names}")
+            details = "\n".join(
+                f"- {pod.name} ({pod.api_url}): "
+                f"{last_status.get(pod_id, 'sem resposta')}"
+                for pod_id, pod in pending.items()
+            )
+            raise TimeoutError(
+                "Pods não expuseram o contrato MinerU dentro do limite:\n"
+                f"{details}"
+            )
+
         time.sleep(settings.runpod_startup_poll_seconds)
 
 
