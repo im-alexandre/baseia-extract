@@ -89,10 +89,10 @@ class Settings:
     runpod_pod_count: int
     runpod_gpu_count: int
     runpod_api_port: int
-    runpod_cloud_type: str
+    runpod_name_prefix: str
     runpod_terminate_after: str
     runpod_startup_timeout_seconds: float
-    runpod_poll_interval_seconds: float
+    runpod_startup_poll_seconds: float
 
 
 def get_settings() -> Settings:
@@ -129,10 +129,10 @@ def get_settings() -> Settings:
         runpod_pod_count=_int_env("RUNPOD_POD_COUNT", 1),
         runpod_gpu_count=_int_env("RUNPOD_GPU_COUNT", 1),
         runpod_api_port=_int_env("RUNPOD_API_PORT", 8000),
-        runpod_cloud_type=os.getenv("RUNPOD_CLOUD_TYPE", "COMMUNITY").strip().upper(),
+        runpod_name_prefix=os.getenv("RUNPOD_NAME_PREFIX", "baseia-mineru").strip(),
         runpod_terminate_after=os.getenv("RUNPOD_TERMINATE_AFTER", "12h").strip(),
         runpod_startup_timeout_seconds=_float_env("RUNPOD_STARTUP_TIMEOUT_SECONDS", 1800.0),
-        runpod_poll_interval_seconds=_float_env("RUNPOD_POLL_INTERVAL_SECONDS", 10.0),
+        runpod_startup_poll_seconds=_float_env("RUNPOD_STARTUP_POLL_SECONDS", 10.0),
     )
 
     if result.mineru_workers_per_pod < 1:
@@ -143,8 +143,8 @@ def get_settings() -> Settings:
         raise ValueError("RUNPOD_POD_COUNT deve ser maior que zero.")
     if result.runpod_gpu_count < 1:
         raise ValueError("RUNPOD_GPU_COUNT deve ser maior que zero.")
-    if result.runpod_cloud_type not in {"SECURE", "COMMUNITY"}:
-        raise ValueError("RUNPOD_CLOUD_TYPE deve ser SECURE ou COMMUNITY.")
+    if result.runpod_api_port < 1:
+        raise ValueError("RUNPOD_API_PORT deve ser maior que zero.")
 
     return result
 
