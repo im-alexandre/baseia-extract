@@ -47,8 +47,8 @@ args = [
 ]
 
 [tool.poe.tasks.extract]
-help = "Executa a extração MinerU distribuída nos pods configurados."
-script = "baseia_extract.mineru:extract(manifest or None, output or None, workers_per_pod or None, retries if retries >= 0 else None, overwrite, limit or None)"
+help = "Cria pods RunPod temporários, executa o MinerU e encerra os pods ao final."
+script = "baseia_extract.tasks:extract(manifest or None, output or None, workers_per_pod or None, retries if retries >= 0 else None, overwrite, limit or None)"
 args = [
   { name = "manifest", options = ["--manifest"], default = "" },
   { name = "output", options = ["--output"], default = "" },
