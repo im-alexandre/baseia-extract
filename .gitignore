@@ -8,3 +8,11 @@ wheels/
 
 # Virtual environments
 .venv
+/artifacts/mineru/raw/0605582v2/auto
+/artifacts/mineru/raw2/0605582v2/auto
+/artifacts/mineru/smoke
+/bib_sources
+/corpus
+/notebooks/.ipynb_checkpoints
+/pdf_dataset
+/src/wizard/.ipynb_checkpoints
