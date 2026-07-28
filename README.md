@@ -103,12 +103,13 @@ A task:
 1. audita o inventário e usa apenas documentos válidos e únicos;
 2. resolve o template privado do RunPod pelo nome;
 3. cria a quantidade configurada de pods;
-4. injeta versão, porta e concorrência do MinerU em cada pod;
+4. injeta versão, porta, concorrência e retenção do MinerU em cada pod;
 5. aguarda `/openapi.json` expor o contrato real do `mineru-api`;
-6. processa todo o manifesto deduplicado;
-7. persiste continuamente o progresso;
-8. encerra os pods em `finally`;
-9. executa a auditoria completa sem GPU.
+6. valida `/health`, versão e configuração efetiva do servidor;
+7. processa todo o manifesto deduplicado;
+8. persiste continuamente o progresso;
+9. encerra os pods em `finally`;
+10. executa a auditoria completa sem GPU.
 
 Não existe modo limitado na task operacional. `poe extract` sempre processa
 todo o manifesto, pulando documentos já concluídos quando
@@ -140,6 +141,16 @@ Na primeira execução de uma versão, um pod:
 Os demais pods aguardam os locks no volume. Nas execuções seguintes, o ambiente
 e os modelos são reutilizados.
 
+As saídas internas da API ficam no disco efêmero do container, em
+`/tmp/mineru-api-output`, porque o cliente já persiste cada resultado em
+`data/mineru/`. Para impedir que milhares de tarefas ocupem o disco do pod, os
+defaults são:
+
+```env
+MINERU_API_TASK_RETENTION_SECONDS=600
+MINERU_API_TASK_CLEANUP_INTERVAL_SECONDS=60
+```
+
 O template privado do RunPod deve:
 
 - apontar para a imagem construída com `mineru-server/Dockerfile`;
@@ -152,8 +163,9 @@ sobrescreve o entrypoint da imagem e pode iniciar o servidor OpenAI do vLLM no
 lugar do `mineru-api`.
 
 O provisionador não considera mais qualquer `/health` como sucesso. Ele exige as
-rotas `/tasks`, `/tasks/{task_id}`, `/tasks/{task_id}/result` e `/file_parse`.
-Caso outro serviço — por exemplo, o vLLM — ocupe a porta 8000, a execução falha
+rotas `/tasks`, `/tasks/{task_id}`, `/tasks/{task_id}/result` e `/file_parse`,
+além da versão, concorrência e retenção esperadas no `/health`. Caso outro
+serviço — por exemplo, o vLLM — ocupe a porta 8000, a execução falha
 imediatamente e os pods são encerrados.
 
 ## Saídas canônicas
