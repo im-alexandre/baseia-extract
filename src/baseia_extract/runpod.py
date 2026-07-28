@@ -26,7 +26,7 @@ REQUIRED_MINERU_ROUTES = frozenset(
 
 
 class UnexpectedPodServiceError(RuntimeError):
-    """O proxy respondeu, mas o processo exposto não é a API do MinerU."""
+    """O proxy respondeu, mas o processo exposto não é a API esperada."""
 
 
 @dataclass(frozen=True, slots=True)
@@ -165,9 +165,9 @@ def delete_pod(pod_id: str) -> None:
     _runpodctl("pod", "delete", pod_id)
 
 
-def _read_openapi(api_url: str) -> dict[str, Any]:
+def _read_json_endpoint(api_url: str, path: str) -> dict[str, Any]:
     request = urllib.request.Request(
-        f"{api_url}/openapi.json",
+        f"{api_url}{path}",
         headers={
             "Accept": "application/json",
             "User-Agent": "BaseIA-Extract/1.0",
@@ -183,24 +183,30 @@ def _read_openapi(api_url: str) -> dict[str, Any]:
 
     data = json.loads(payload)
     if not isinstance(data, dict):
-        raise TypeError("openapi.json não contém um objeto JSON.")
+        raise TypeError(f"{path} não contém um objeto JSON.")
     return data
 
 
-def _probe_mineru_api(api_url: str) -> tuple[bool, str]:
-    """Valida o contrato da API, não apenas um `/health` genérico."""
+def _pending_probe_status(api_url: str, path: str) -> tuple[bool, str, dict[str, Any] | None]:
     try:
-        openapi = _read_openapi(api_url)
+        return True, "ok", _read_json_endpoint(api_url, path)
     except urllib.error.HTTPError as error:
-        return False, f"openapi.json respondeu HTTP {error.code}"
+        return False, f"{path} respondeu HTTP {error.code}", None
     except urllib.error.URLError as error:
-        return False, f"proxy indisponível: {error.reason}"
+        return False, f"proxy indisponível: {error.reason}", None
     except TimeoutError:
-        return False, "timeout consultando openapi.json"
+        return False, f"timeout consultando {path}", None
     except json.JSONDecodeError:
-        return False, "openapi.json ainda não retornou JSON válido"
+        return False, f"{path} ainda não retornou JSON válido", None
     except (OSError, TypeError) as error:
-        return False, f"openapi.json indisponível: {error}"
+        return False, f"{path} indisponível: {error}", None
+
+
+def _probe_mineru_api(api_url: str) -> tuple[bool, str]:
+    """Valida rotas, versão, saúde interna e concorrência do MinerU."""
+    available, status, openapi = _pending_probe_status(api_url, "/openapi.json")
+    if not available or openapi is None:
+        return False, status
 
     raw_paths = openapi.get("paths")
     if not isinstance(raw_paths, dict):
@@ -221,11 +227,45 @@ def _probe_mineru_api(api_url: str) -> tuple[bool, str]:
             f"{api_url} está respondendo, mas não é a API MinerU esperada."
             f"{service_hint} Rotas ausentes: {sorted(missing_routes)}. "
             f"Rotas observadas: {observed_preview}. Verifique a imagem e remova "
-            "Docker Entrypoint/Docker Start Command que sobrescrevam o entrypoint "
-            "da imagem no template RunPod."
+            "Docker Entrypoint que sobrescreva o entrypoint da imagem no "
+            "template RunPod."
         )
 
-    return True, "contrato MinerU disponível"
+    available, status, health = _pending_probe_status(api_url, "/health")
+    if not available or health is None:
+        return False, status
+
+    health_status = str(health.get("status", "")).lower()
+    if health_status != "healthy":
+        return False, f"MinerU ainda não está saudável: {health}"
+
+    observed_version = str(health.get("version", "")).strip()
+    if observed_version != settings.mineru_version:
+        raise UnexpectedPodServiceError(
+            f"Versão MinerU divergente em {api_url}: "
+            f"servidor={observed_version!r}, esperada={settings.mineru_version!r}."
+        )
+
+    observed_concurrency = health.get("max_concurrent_requests")
+    try:
+        parsed_concurrency = int(observed_concurrency)
+    except (TypeError, ValueError) as error:
+        raise UnexpectedPodServiceError(
+            f"/health de {api_url} não informou uma concorrência válida: "
+            f"{observed_concurrency!r}."
+        ) from error
+
+    if parsed_concurrency != settings.mineru_workers_per_pod:
+        raise UnexpectedPodServiceError(
+            f"Concorrência divergente em {api_url}: "
+            f"servidor={parsed_concurrency}, "
+            f"cliente={settings.mineru_workers_per_pod}."
+        )
+
+    return (
+        True,
+        f"MinerU {observed_version}; concorrência={parsed_concurrency}",
+    )
 
 
 def wait_until_ready(pods: tuple[ManagedPod, ...]) -> None:
@@ -238,7 +278,7 @@ def wait_until_ready(pods: tuple[ManagedPod, ...]) -> None:
             ready, status = _probe_mineru_api(pod.api_url)
             last_status[pod_id] = status
             if ready:
-                print(f"Pod MinerU pronto: {pod.name} | {pod.api_url}")
+                print(f"Pod MinerU pronto: {pod.name} | {pod.api_url} | {status}")
                 pending.pop(pod_id)
 
         if not pending:
