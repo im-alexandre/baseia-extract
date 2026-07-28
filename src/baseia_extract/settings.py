@@ -75,6 +75,8 @@ class Settings:
     mineru_poll_interval_seconds: float
     mineru_task_timeout_seconds: float
     mineru_result_timeout_seconds: float
+    mineru_api_task_retention_seconds: int
+    mineru_api_task_cleanup_interval_seconds: int
     audit_textless_page_warn_ratio: float
     audit_min_middle_bytes: int
     audit_review_sample_size: int
@@ -133,6 +135,14 @@ def get_settings() -> Settings:
             "MINERU_RESULT_TIMEOUT_SECONDS",
             300.0,
         ),
+        mineru_api_task_retention_seconds=_int_env(
+            "MINERU_API_TASK_RETENTION_SECONDS",
+            600,
+        ),
+        mineru_api_task_cleanup_interval_seconds=_int_env(
+            "MINERU_API_TASK_CLEANUP_INTERVAL_SECONDS",
+            60,
+        ),
         audit_textless_page_warn_ratio=_float_env(
             "AUDIT_TEXTLESS_PAGE_WARN_RATIO",
             0.5,
@@ -184,6 +194,14 @@ def get_settings() -> Settings:
         raise ValueError("MINERU_WORKERS_PER_POD deve ser maior que zero.")
     if result.mineru_retries < 0:
         raise ValueError("MINERU_RETRIES não pode ser negativo.")
+    if result.mineru_api_task_retention_seconds < 0:
+        raise ValueError(
+            "MINERU_API_TASK_RETENTION_SECONDS não pode ser negativo."
+        )
+    if result.mineru_api_task_cleanup_interval_seconds < 1:
+        raise ValueError(
+            "MINERU_API_TASK_CLEANUP_INTERVAL_SECONDS deve ser maior que zero."
+        )
     if not 0 <= result.audit_textless_page_warn_ratio <= 1:
         raise ValueError(
             "AUDIT_TEXTLESS_PAGE_WARN_RATIO deve estar entre 0 e 1."
