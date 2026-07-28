@@ -35,7 +35,6 @@ from __future__ import annotations
 
 import json
 import shutil
-import subprocess
 import threading
 import time
 import urllib.error
@@ -92,16 +91,20 @@ print(f"Saída: {OUTPUT_ROOT}")
 BACKEND = "pipeline"
 
 API_URLS = (
-    "https://00e1vcjtxavr7w-8000.proxy.runpod.net",
+    "https://34ntsgihys60me-8000.proxy.runpod.net",
     "https://8wddd5b6crg0c3-8000.proxy.runpod.net",
     "https://0zgf7sp4qhvuc7-8000.proxy.runpod.net",
 )
 
-WORKER_COUNTS = tuple(range(3, 25, 3))
+
+WORKER_COUNTS: tuple(int) = (3, 6, 9, 12, 15, 18, 24)
 
 TEST_SLICE = 24
 OVERWRITE_BENCHMARK_OUTPUTS = True
 HEALTH_TIMEOUT_SECONDS = 30.0
+TASK_POLL_INTERVAL_SECONDS = 1.0
+TASK_TIMEOUT_SECONDS = 3600.0
+RESULT_TIMEOUT_SECONDS = 300.0
 
 # O CLI pode ficar muito tempo aguardando um PDF grande.
 # `None` desativa timeout do subprocesso.
@@ -274,64 +277,335 @@ def has_completed_output(output_dir: Path) -> bool:
 
 
 # %%
+def encode_multipart_form(
+    *,
+    pdf_path: Path,
+    fields: dict[str, str],
+) -> tuple[bytes, str]:
+    """Monta um corpo multipart/form-data sem dependências externas."""
+    boundary = f"----BaseIAMinerU{time.time_ns():x}"
+    body = bytearray()
+
+    for name, value in fields.items():
+        body.extend(f"--{boundary}\r\n".encode())
+        body.extend(
+            (
+                f'Content-Disposition: form-data; name="{name}"\r\n\r\n{value}\r\n'
+            ).encode("utf-8")
+        )
+
+    body.extend(f"--{boundary}\r\n".encode())
+    body.extend(
+        (
+            'Content-Disposition: form-data; name="files"; '
+            f'filename="{pdf_path.name}"\r\n'
+            "Content-Type: application/pdf\r\n"
+            "\r\n"
+        ).encode("utf-8")
+    )
+    body.extend(pdf_path.read_bytes())
+    body.extend(b"\r\n")
+    body.extend(f"--{boundary}--\r\n".encode())
+
+    return bytes(body), f"multipart/form-data; boundary={boundary}"
+
+
+def read_json_response(
+    request: urllib.request.Request,
+    *,
+    timeout_seconds: float,
+) -> dict[str, Any]:
+    """Executa uma requisição e exige um objeto JSON como resposta."""
+    try:
+        with urllib.request.urlopen(
+            request,
+            timeout=timeout_seconds,
+        ) as response:
+            payload = response.read().decode("utf-8")
+
+    except urllib.error.HTTPError as error:
+        body = error.read().decode("utf-8", errors="replace")
+        raise RuntimeError(
+            f"MinerU API respondeu HTTP {error.code}: "
+            f"{request.full_url}. Resposta: {body[:1000]}"
+        ) from error
+
+    except urllib.error.URLError as error:
+        raise RuntimeError(
+            f"Não foi possível acessar {request.full_url}: {error.reason}"
+        ) from error
+
+    data = json.loads(payload)
+
+    if not isinstance(data, dict):
+        raise TypeError(f"A resposta de {request.full_url} não é um objeto JSON.")
+
+    return data
+
+
+def submit_mineru_task(
+    *,
+    pdf_path: Path,
+    api_url: str,
+) -> dict[str, Any]:
+    """Envia um PDF para o endpoint assíncrono do MinerU."""
+    body, content_type = encode_multipart_form(
+        pdf_path=pdf_path,
+        fields={
+            "backend": BACKEND,
+            "parse_method": "auto",
+            "formula_enable": "true",
+            "table_enable": "true",
+            "return_md": "true",
+            "return_middle_json": "true",
+            "return_model_output": "false",
+            "return_content_list": "false",
+            "return_images": "false",
+            "response_format_zip": "false",
+        },
+    )
+
+    request = urllib.request.Request(
+        f"{api_url.rstrip('/')}/tasks",
+        data=body,
+        headers={
+            "Accept": "application/json",
+            "Content-Type": content_type,
+            "User-Agent": "BaseIA-MinerU-Client/1.0",
+        },
+        method="POST",
+    )
+
+    return read_json_response(
+        request,
+        timeout_seconds=RESULT_TIMEOUT_SECONDS,
+    )
+
+
+def wait_for_mineru_task(
+    *,
+    api_url: str,
+    task_id: str,
+) -> dict[str, Any]:
+    """
+    Aguarda a tarefa terminar.
+
+    A URL é deliberadamente reconstruída a partir de `api_url`.
+    `status_url` devolvido pelo servidor é ignorado porque pode conter
+    endereço privado do pod.
+    """
+    status_url = f"{api_url.rstrip('/')}/tasks/{task_id}"
+    deadline = time.monotonic() + TASK_TIMEOUT_SECONDS
+
+    while True:
+        request = urllib.request.Request(
+            status_url,
+            headers={
+                "Accept": "application/json",
+                "User-Agent": "BaseIA-MinerU-Client/1.0",
+            },
+            method="GET",
+        )
+
+        status_payload = read_json_response(
+            request,
+            timeout_seconds=HEALTH_TIMEOUT_SECONDS,
+        )
+
+        status = str(status_payload.get("status", "")).lower()
+
+        if status == "completed":
+            return status_payload
+
+        if status in {"failed", "error", "cancelled"}:
+            raise RuntimeError(
+                f"Tarefa MinerU {task_id} terminou com status "
+                f"{status!r}: {status_payload.get('error') or status_payload}"
+            )
+
+        if time.monotonic() >= deadline:
+            raise TimeoutError(
+                f"Tarefa MinerU {task_id} excedeu {TASK_TIMEOUT_SECONDS:.0f} segundos."
+            )
+
+        time.sleep(TASK_POLL_INTERVAL_SECONDS)
+
+
+def download_mineru_result(
+    *,
+    api_url: str,
+    task_id: str,
+) -> dict[str, Any]:
+    """
+    Baixa o resultado usando a URL pública reconstruída.
+
+    `result_url` devolvido pela API também é ignorado.
+    """
+    result_url = f"{api_url.rstrip('/')}/tasks/{task_id}/result"
+
+    request = urllib.request.Request(
+        result_url,
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "BaseIA-MinerU-Client/1.0",
+        },
+        method="GET",
+    )
+
+    return read_json_response(
+        request,
+        timeout_seconds=RESULT_TIMEOUT_SECONDS,
+    )
+
+
+def save_mineru_result(
+    *,
+    result: dict[str, Any],
+    output_dir: Path,
+) -> None:
+    """Salva o Markdown e o middle JSON no formato esperado pelo benchmark."""
+    results = result.get("results")
+
+    if not isinstance(results, dict) or not results:
+        raise ValueError("A resposta MinerU não contém resultados.")
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    for document_name, document_result in results.items():
+        if not isinstance(document_result, dict):
+            continue
+
+        document_dir = output_dir / str(document_name)
+        document_dir.mkdir(parents=True, exist_ok=True)
+
+        md_content = document_result.get("md_content")
+        if isinstance(md_content, str):
+            (document_dir / f"{document_name}.md").write_text(
+                md_content,
+                encoding="utf-8",
+            )
+
+        middle_json = document_result.get("middle_json")
+        if isinstance(middle_json, str):
+            try:
+                parsed_middle_json = json.loads(middle_json)
+            except json.JSONDecodeError:
+                parsed_middle_json = middle_json
+
+            with (document_dir / f"{document_name}_middle.json").open(
+                "w",
+                encoding="utf-8",
+            ) as file:
+                json.dump(
+                    parsed_middle_json,
+                    file,
+                    ensure_ascii=False,
+                    indent=2,
+                )
+        elif middle_json is not None:
+            with (document_dir / f"{document_name}_middle.json").open(
+                "w",
+                encoding="utf-8",
+            ) as file:
+                json.dump(
+                    middle_json,
+                    file,
+                    ensure_ascii=False,
+                    indent=2,
+                )
+
+    with (output_dir / "api_result.json").open(
+        "w",
+        encoding="utf-8",
+    ) as file:
+        json.dump(
+            result,
+            file,
+            ensure_ascii=False,
+            indent=2,
+        )
+
+
 def run_mineru(
     pdf_path: Path,
     output_dir: Path,
     log_path: Path,
     api_url: str,
 ) -> dict[str, object]:
-    command = [
-        str(MINERU_EXE),
-        "-p",
-        str(pdf_path),
-        "-o",
-        str(output_dir),
-        "--api-url",
-        api_url,
-        "--backend",
-        BACKEND,
-    ]
+    """
+    Executa uma tarefa MinerU diretamente pela API.
 
+    Não utiliza o CLI porque ele segue `status_url` e `result_url`
+    internos devolvidos pelo RunPod.
+    """
     started_at = datetime.now(timezone.utc)
     started_counter = time.perf_counter()
 
     output_dir.mkdir(parents=True, exist_ok=True)
     log_path.parent.mkdir(parents=True, exist_ok=True)
 
-    with log_path.open(
-        "w",
-        encoding="utf-8",
-        errors="replace",
-    ) as log_file:
-        log_file.write(subprocess.list2cmdline(command))
-        log_file.write("\n\n")
-        log_file.flush()
+    submission = submit_mineru_task(
+        pdf_path=pdf_path,
+        api_url=api_url,
+    )
 
-        process = subprocess.Popen(
-            command,
-            cwd=PROJECT_ROOT,
-            stdout=log_file,
-            stderr=subprocess.STDOUT,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
+    task_id = submission.get("task_id")
+
+    if not isinstance(task_id, str) or not task_id:
+        raise ValueError(f"A submissão não devolveu um task_id válido: {submission}")
+
+    with log_path.open("w", encoding="utf-8") as log_file:
+        log_file.write(
+            json.dumps(
+                {
+                    "event": "submitted",
+                    "api_url": api_url,
+                    "task_id": task_id,
+                    "submission": submission,
+                },
+                ensure_ascii=False,
+                indent=2,
+            )
         )
+        log_file.write("\n")
 
-        try:
-            return_code = process.wait(timeout=PROCESS_TIMEOUT_SECONDS)
-        except subprocess.TimeoutExpired as error:
-            process.kill()
-            process.wait()
-            raise TimeoutError(
-                f"MinerU excedeu o timeout para {pdf_path.name}."
-            ) from error
+    status_payload = wait_for_mineru_task(
+        api_url=api_url,
+        task_id=task_id,
+    )
+
+    result = download_mineru_result(
+        api_url=api_url,
+        task_id=task_id,
+    )
+
+    save_mineru_result(
+        result=result,
+        output_dir=output_dir,
+    )
 
     duration_seconds = time.perf_counter() - started_counter
     completed_at = datetime.now(timezone.utc)
 
+    with log_path.open("a", encoding="utf-8") as log_file:
+        log_file.write(
+            json.dumps(
+                {
+                    "event": "completed",
+                    "task_id": task_id,
+                    "status": status_payload,
+                    "duration_seconds": duration_seconds,
+                },
+                ensure_ascii=False,
+                indent=2,
+            )
+        )
+        log_file.write("\n")
+
     return {
-        "status": "ok" if return_code == 0 else "error",
-        "return_code": return_code,
+        "status": "ok",
+        "return_code": 0,
+        "task_id": task_id,
         "started_at": started_at.isoformat(),
         "completed_at": completed_at.isoformat(),
         "duration_seconds": round(duration_seconds, 3),
