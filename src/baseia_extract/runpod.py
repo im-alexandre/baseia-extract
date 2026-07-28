@@ -119,6 +119,9 @@ def _runtime_environment() -> dict[str, str]:
     """Configuração que precisa ser idêntica no cliente e na API remota."""
     return {
         "MINERU_VERSION": settings.mineru_version,
+        "MINERU_VENV": settings.mineru_remote_venv,
+        "MINERU_MODELS_ROOT": settings.mineru_remote_models_root,
+        "MINERU_API_OUTPUT_ROOT": settings.mineru_remote_output_root,
         "MINERU_API_MAX_CONCURRENT_REQUESTS": str(
             settings.mineru_workers_per_pod
         ),
