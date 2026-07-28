@@ -93,14 +93,10 @@ def inspect_pdf(path: Path, corpus_dir: Path) -> dict[str, Any]:
     return row
 
 
-def build_inventory(
-    corpus_dir: str | Path | None = None,
-    output: str | Path | None = None,
-    workers: int | None = None,
-    recursive: bool = True,
-) -> Path:
-    corpus = Path(corpus_dir).expanduser().resolve() if corpus_dir else settings.corpus_dir
-    output_path = Path(output).expanduser().resolve() if output else settings.inventory_path
+def build_inventory(workers: int | None = None, recursive: bool = True) -> Path:
+    """Inventaria todos os PDFs de corpus/ no manifesto canônico em data/."""
+    corpus = settings.corpus_dir
+    output_path = settings.inventory_path
     if not corpus.is_dir():
         raise NotADirectoryError(f"Corpus inválido: {corpus}")
 
@@ -128,25 +124,15 @@ def build_inventory(
     return output_path
 
 
-def sample_inventory(
-    size: int = 100,
-    source: str | Path | None = None,
-    output: str | Path | None = None,
-    seed: int = 42,
-) -> Path:
-    source_path = Path(source).expanduser().resolve() if source else settings.inventory_path
-    output_path = (
-        Path(output).expanduser().resolve()
-        if output
-        else settings.inventory_dir / "sample.csv"
-    )
-    inventory = pd.read_csv(source_path)
+def sample_inventory(size: int = 100, seed: int = 42) -> Path:
+    """Gera uma amostra reprodutível do manifesto canônico."""
+    inventory = pd.read_csv(settings.inventory_path)
     valid = inventory[inventory["status"].eq("ok")].copy()
     if valid.empty:
         raise RuntimeError("Não há documentos válidos para amostrar.")
     sample_size = min(size, len(valid))
     sample = valid.sample(n=sample_size, random_state=seed).sort_values("relative_path")
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    sample.to_csv(output_path, index=False, encoding="utf-8-sig")
-    print(f"Amostra: {output_path} ({len(sample)} documentos)")
-    return output_path
+    settings.sample_path.parent.mkdir(parents=True, exist_ok=True)
+    sample.to_csv(settings.sample_path, index=False, encoding="utf-8-sig")
+    print(f"Amostra: {settings.sample_path} ({len(sample)} documentos)")
+    return settings.sample_path
