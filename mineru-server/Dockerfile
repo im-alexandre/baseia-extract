@@ -26,4 +26,3 @@ EXPOSE 8000
 STOPSIGNAL SIGTERM
 
 ENTRYPOINT ["/usr/local/bin/start-mineru"]
-CMD []
