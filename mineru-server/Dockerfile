@@ -1,48 +1,46 @@
-# Use the official vllm image for gpu with Volta、Turing、Ampere、Ada Lovelace、Hopper、Blackwell architecture (7.0 <= Compute Capability <= 12.1)
-# The default base image uses vLLM 0.21.0 with CUDA 13.0. For CUDA 12.9 environments, switch to the commented cu129 image below.
-# Compute Capability version query (https://developer.nvidia.com/cuda-gpus)
-# support x86_64 architecture and ARM(AArch64) architecture
-FROM vllm/vllm-openai:v0.21.0
-# FROM vllm/vllm-openai:v0.21.0-cu129
+# syntax=docker/dockerfile:1.7
 
-# Install libgl for opencv support & Noto fonts for Chinese characters
-RUN apt-get update && \
-  apt-get install -y \
+FROM vllm/vllm-openai:v0.21.0
+
+ARG MINERU_VERSION=3.4.0
+
+ENV DEBIAN_FRONTEND=noninteractive \
+  PIP_DISABLE_PIP_VERSION_CHECK=1 \
+  PIP_NO_CACHE_DIR=1 \
+  PYTHONDONTWRITEBYTECODE=1 \
+  HF_HOME=/workspace/mineru/huggingface \
+  HUGGINGFACE_HUB_CACHE=/workspace/mineru/huggingface/hub \
+  MODELSCOPE_CACHE=/workspace/mineru/modelscope \
+  MINERU_TOOLS_CONFIG_JSON=/workspace/mineru/mineru.json \
+  MINERU_MODEL_SOURCE=local \
+  MINERU_API_OUTPUT_ROOT=/workspace/mineru/output \
+  MINERU_API_MAX_CONCURRENT_REQUESTS=1
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends \
+  ca-certificates \
+  curl \
+  fontconfig \
   fonts-noto-core \
   fonts-noto-cjk \
-  fontconfig \
-  libgl1 && \
-  fc-cache -fv && \
-  apt-get clean && \
-  rm -rf /var/lib/apt/lists/*
+  libgl1 \
+  && fc-cache -f \
+  && apt-get clean \
+  && rm -rf \
+  /var/lib/apt/lists/* \
+  /root/.cache \
+  /tmp/*
 
-# Install mineru latest
-RUN python3 -m pip install -U 'mineru[core]>=3.4.0' --break-system-packages && \
-  python3 -m pip cache purge
+RUN python3 -m pip install \
+  --no-cache-dir \
+  --upgrade \
+  "mineru[core]==${MINERU_VERSION}" \
+  --break-system-packages \
+  && rm -rf \
+  /root/.cache \
+  /tmp/*
 
-COPY start.sh /usr/local/bin/start-mineru
-RUN chmod +x /usr/local/bin/start-mineru
-
-ENV HF_HOME=/opt/mineru-models/huggingface
-ENV HUGGINGFACE_HUB_CACHE=/opt/mineru-models/huggingface/hub
-ENV MODELSCOPE_CACHE=/opt/mineru-models/modelscope
-ENV MINERU_TOOLS_CONFIG_JSON=/root/mineru.json
-ENV MINERU_MODEL_SOURCE=local
-ENV MINERU_API_MAX_CONCURRENT_REQUESTS=1
-
-RUN mkdir -p \
-  /opt/mineru-models/huggingface \
-  /opt/mineru-models/modelscope
-
-RUN uv pip install --system --upgrade \
-  "huggingface_hub[hf_transfer]"
-
-RUN mineru-models-download \
-  -s huggingface \
-  -m all
-
-COPY start.sh /usr/local/bin/start-mineru
-RUN chmod +x /usr/local/bin/start-mineru
+COPY --chmod=0755 start.sh /usr/local/bin/start-mineru
 
 EXPOSE 8000
 

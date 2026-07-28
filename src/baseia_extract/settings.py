@@ -83,6 +83,7 @@ class Settings:
     runpod_gpu_count: int
     runpod_api_port: int
     runpod_name_prefix: str
+    network_volume_id: str
     runpod_terminate_after: str
     runpod_startup_timeout_seconds: float
     runpod_startup_poll_seconds: float
@@ -156,6 +157,10 @@ def get_settings() -> Settings:
         runpod_name_prefix=os.getenv(
             "RUNPOD_NAME_PREFIX",
             "baseia-mineru",
+        ).strip(),
+        network_volume_id=os.getenv(
+            "NETWORK_VOLUME_ID",
+            "",
         ).strip(),
         runpod_terminate_after=os.getenv(
             "RUNPOD_TERMINATE_AFTER",
