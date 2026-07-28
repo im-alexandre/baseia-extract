@@ -89,6 +89,7 @@ class Settings:
     runpod_gpu_count: int
     runpod_api_port: int
     runpod_name_prefix: str
+    runpod_volume_mount_path: str
     network_volume_id: str
     runpod_terminate_after: str
     runpod_startup_timeout_seconds: float
@@ -185,6 +186,10 @@ def get_settings() -> Settings:
             "RUNPOD_NAME_PREFIX",
             "baseia-mineru",
         ).strip(),
+        runpod_volume_mount_path=os.getenv(
+            "RUNPOD_VOLUME_MOUNT_PATH",
+            "/workspace",
+        ).strip().rstrip("/"),
         network_volume_id=os.getenv(
             "NETWORK_VOLUME_ID",
             "",
@@ -209,9 +214,19 @@ def get_settings() -> Settings:
         ("MINERU_VENV", result.mineru_remote_venv),
         ("MINERU_MODELS_ROOT", result.mineru_remote_models_root),
         ("MINERU_API_OUTPUT_ROOT", result.mineru_remote_output_root),
+        ("RUNPOD_VOLUME_MOUNT_PATH", result.runpod_volume_mount_path),
     ):
         if not value.startswith("/"):
             raise ValueError(f"{name} deve ser um caminho absoluto no pod.")
+    persistent_prefix = f"{result.runpod_volume_mount_path}/"
+    for name, value in (
+        ("MINERU_VENV", result.mineru_remote_venv),
+        ("MINERU_MODELS_ROOT", result.mineru_remote_models_root),
+    ):
+        if not value.startswith(persistent_prefix):
+            raise ValueError(
+                f"{name} deve ficar abaixo de RUNPOD_VOLUME_MOUNT_PATH."
+            )
     if result.mineru_workers_per_pod < 1:
         raise ValueError("MINERU_WORKERS_PER_POD deve ser maior que zero.")
     if result.mineru_retries < 0:
