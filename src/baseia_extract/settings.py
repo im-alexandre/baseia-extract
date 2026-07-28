@@ -65,6 +65,7 @@ class Settings:
     structure_dir: Path
     chunks_dir: Path
     mineru_api_urls: tuple[str, ...]
+    mineru_version: str
     mineru_workers_per_pod: int
     mineru_retries: int
     mineru_backend: str
@@ -107,6 +108,7 @@ def get_settings() -> Settings:
         structure_dir=data_dir / "structure",
         chunks_dir=data_dir / "chunks",
         mineru_api_urls=(),
+        mineru_version=os.getenv("MINERU_VERSION", "3.4.0").strip(),
         mineru_workers_per_pod=_int_env("MINERU_WORKERS_PER_POD", 8),
         mineru_retries=_int_env("MINERU_RETRIES", 2),
         mineru_backend=os.getenv("MINERU_BACKEND", "pipeline"),
@@ -176,6 +178,8 @@ def get_settings() -> Settings:
         ),
     )
 
+    if not result.mineru_version:
+        raise ValueError("MINERU_VERSION não pode ficar vazio.")
     if result.mineru_workers_per_pod < 1:
         raise ValueError("MINERU_WORKERS_PER_POD deve ser maior que zero.")
     if result.mineru_retries < 0:
