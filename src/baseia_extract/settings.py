@@ -16,9 +16,7 @@ def _load_dotenv(path: Path) -> None:
         if not line or line.startswith("#") or "=" not in line:
             continue
         key, value = line.split("=", 1)
-        key = key.strip()
-        value = value.strip().strip('"').strip("'")
-        os.environ.setdefault(key, value)
+        os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
 
 
 def _project_root() -> Path:
@@ -86,6 +84,15 @@ class Settings:
     mineru_poll_interval_seconds: float
     mineru_task_timeout_seconds: float
     mineru_result_timeout_seconds: float
+    runpod_template_name: str
+    runpod_gpu_id: str
+    runpod_pod_count: int
+    runpod_gpu_count: int
+    runpod_api_port: int
+    runpod_cloud_type: str
+    runpod_terminate_after: str
+    runpod_startup_timeout_seconds: float
+    runpod_poll_interval_seconds: float
 
 
 def get_settings() -> Settings:
@@ -94,51 +101,52 @@ def get_settings() -> Settings:
     artifacts_dir = _path_env("BASEIA_ARTIFACTS_DIR", project_root / "artifacts")
     inventory_dir = _path_env("BASEIA_INVENTORY_DIR", data_dir / "inventory")
 
-    settings = Settings(
+    result = Settings(
         project_root=project_root,
         corpus_dir=_path_env("BASEIA_CORPUS_DIR", project_root / "corpus"),
         data_dir=data_dir,
         artifacts_dir=artifacts_dir,
         inventory_dir=inventory_dir,
-        inventory_path=_path_env(
-            "BASEIA_INVENTORY_PATH", inventory_dir / "inventory.csv"
-        ),
+        inventory_path=_path_env("BASEIA_INVENTORY_PATH", inventory_dir / "inventory.csv"),
         mineru_output_dir=_path_env(
             "BASEIA_MINERU_OUTPUT_DIR", artifacts_dir / "mineru" / "extraction"
         ),
         ir_dir=_path_env("BASEIA_IR_DIR", artifacts_dir / "ir"),
-        structure_dir=_path_env(
-            "BASEIA_STRUCTURE_DIR", artifacts_dir / "structure"
-        ),
+        structure_dir=_path_env("BASEIA_STRUCTURE_DIR", artifacts_dir / "structure"),
         chunks_dir=_path_env("BASEIA_CHUNKS_DIR", artifacts_dir / "chunks"),
         mineru_api_urls=_urls_env("MINERU_API_URLS"),
         mineru_workers_per_pod=_int_env("MINERU_WORKERS_PER_POD", 8),
         mineru_retries=_int_env("MINERU_RETRIES", 2),
         mineru_backend=os.getenv("MINERU_BACKEND", "pipeline"),
         mineru_overwrite=_bool_env("MINERU_OVERWRITE", False),
-        mineru_health_timeout_seconds=_float_env(
-            "MINERU_HEALTH_TIMEOUT_SECONDS", 30.0
-        ),
-        mineru_submit_timeout_seconds=_float_env(
-            "MINERU_SUBMIT_TIMEOUT_SECONDS", 300.0
-        ),
-        mineru_poll_interval_seconds=_float_env(
-            "MINERU_POLL_INTERVAL_SECONDS", 1.0
-        ),
-        mineru_task_timeout_seconds=_float_env(
-            "MINERU_TASK_TIMEOUT_SECONDS", 3600.0
-        ),
-        mineru_result_timeout_seconds=_float_env(
-            "MINERU_RESULT_TIMEOUT_SECONDS", 300.0
-        ),
+        mineru_health_timeout_seconds=_float_env("MINERU_HEALTH_TIMEOUT_SECONDS", 30.0),
+        mineru_submit_timeout_seconds=_float_env("MINERU_SUBMIT_TIMEOUT_SECONDS", 300.0),
+        mineru_poll_interval_seconds=_float_env("MINERU_POLL_INTERVAL_SECONDS", 1.0),
+        mineru_task_timeout_seconds=_float_env("MINERU_TASK_TIMEOUT_SECONDS", 3600.0),
+        mineru_result_timeout_seconds=_float_env("MINERU_RESULT_TIMEOUT_SECONDS", 300.0),
+        runpod_template_name=os.getenv("RUNPOD_TEMPLATE_NAME", "").strip(),
+        runpod_gpu_id=os.getenv("RUNPOD_GPU_ID", "NVIDIA GeForce RTX 5090").strip(),
+        runpod_pod_count=_int_env("RUNPOD_POD_COUNT", 1),
+        runpod_gpu_count=_int_env("RUNPOD_GPU_COUNT", 1),
+        runpod_api_port=_int_env("RUNPOD_API_PORT", 8000),
+        runpod_cloud_type=os.getenv("RUNPOD_CLOUD_TYPE", "COMMUNITY").strip().upper(),
+        runpod_terminate_after=os.getenv("RUNPOD_TERMINATE_AFTER", "12h").strip(),
+        runpod_startup_timeout_seconds=_float_env("RUNPOD_STARTUP_TIMEOUT_SECONDS", 1800.0),
+        runpod_poll_interval_seconds=_float_env("RUNPOD_POLL_INTERVAL_SECONDS", 10.0),
     )
 
-    if settings.mineru_workers_per_pod < 1:
+    if result.mineru_workers_per_pod < 1:
         raise ValueError("MINERU_WORKERS_PER_POD deve ser maior que zero.")
-    if settings.mineru_retries < 0:
+    if result.mineru_retries < 0:
         raise ValueError("MINERU_RETRIES não pode ser negativo.")
+    if result.runpod_pod_count < 1:
+        raise ValueError("RUNPOD_POD_COUNT deve ser maior que zero.")
+    if result.runpod_gpu_count < 1:
+        raise ValueError("RUNPOD_GPU_COUNT deve ser maior que zero.")
+    if result.runpod_cloud_type not in {"SECURE", "COMMUNITY"}:
+        raise ValueError("RUNPOD_CLOUD_TYPE deve ser SECURE ou COMMUNITY.")
 
-    return settings
+    return result
 
 
 settings = get_settings()
