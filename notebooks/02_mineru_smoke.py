@@ -6,281 +6,238 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.19.5
-#   kernelspec:
-#     display_name: Python 3 (ipykernel)
-#     language: python
-#     name: python3
 # ---
 
 # %% [markdown]
-# # Benchmark MinerU remoto — 3 pods, de 3 a 24 workers
+# # 02 — Executor MinerU remoto
 #
-# Este notebook mede o throughput do MinerU com três APIs remotas.
+# Executor de produção para processar o inventário completo em um conjunto
+# variável de pods MinerU.
 #
-# Para cada rodada, ele usa:
+# A quantidade total de workers é determinada automaticamente:
 #
-# - 3, 6, 9, 12, 15, 18, 21 e 24 workers totais;
-# - distribuição round-robin entre os três pods;
-# - limite de 1 a 8 chamadas simultâneas por pod;
-# - diretório de saída separado por rodada;
-# - CSV e Parquet separados por rodada;
-# - resumo consolidado de tempo, páginas por minuto e erros.
+#     total_workers = quantidade_de_pods * 8
 #
-# Cada `mineru-api` remoto deve estar configurado para aceitar pelo menos
-# oito requisições concorrentes na rodada de 24 workers.
+# As URLs podem ser fornecidas como argumentos posicionais ou pela variável
+# `MINERU_API_URLS`, separadas por vírgula, ponto e vírgula ou quebra de linha.
+#
+# Exemplo:
+#
+#     uv run python notebooks/02_mineru_smoke.py `
+#       https://pod-1.proxy.runpod.net `
+#       https://pod-2.proxy.runpod.net
+#
+# O executor:
+#
+# - valida todos os pods antes de começar;
+# - mantém no máximo oito tarefas concorrentes por pod;
+# - processa todo o manifesto por padrão;
+# - retoma execuções sem reprocessar documentos concluídos;
+# - redireciona retries para outros pods;
+# - ignora `status_url` e `result_url` privados devolvidos pelo RunPod;
+# - persiste o resultado de cada documento e relatórios consolidados.
 
 # %%
 from __future__ import annotations
 
+import argparse
 import json
+import os
+import re
 import shutil
 import threading
 import time
 import urllib.error
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Sequence
 
 import pandas as pd
-from IPython.display import display
 
-pd.set_option("display.max_columns", 100)
-pd.set_option("display.max_colwidth", 160)
-pd.set_option("display.width", 220)
 
 # %% [markdown]
-# ## 1. Caminhos
+# ## Configuração padrão
 
 # %%
-PROJECT_ROOT = Path.cwd()
-
-if PROJECT_ROOT.name == "notebooks":
-    PROJECT_ROOT = PROJECT_ROOT.parent
-
-
-SAMPLE_MANIFEST = PROJECT_ROOT / "data" / "inventory" / "inventory.csv"
-
-MINERU_EXE = PROJECT_ROOT / ".venv-mineru" / "Scripts" / "mineru.exe"
-
-OUTPUT_ROOT = PROJECT_ROOT / "artifacts" / "mineru" / "worker_benchmark"
-
-SUMMARY_CSV_PATH = OUTPUT_ROOT / "benchmark_summary.csv"
-SUMMARY_PARQUET_PATH = OUTPUT_ROOT / "benchmark_summary.parquet"
-
-OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
-
-print(f"MinerU: {MINERU_EXE}")
-print(f"Manifesto: {SAMPLE_MANIFEST}")
-print(f"Saída: {OUTPUT_ROOT}")
-
-# %% [markdown]
-# ## 2. Configuração
-#
-# Os valores de `WORKER_COUNTS` são múltiplos de três para manter a mesma
-# capacidade por pod:
-#
-# - 3 workers = 1 por pod;
-# - 6 workers = 2 por pod;
-# - ...
-# - 24 workers = 8 por pod.
-
-# %%
+WORKERS_PER_POD = 8
 BACKEND = "pipeline"
 
-API_URLS = (
-    "https://34ntsgihys60me-8000.proxy.runpod.net",
-    "https://8wddd5b6crg0c3-8000.proxy.runpod.net",
-    "https://0zgf7sp4qhvuc7-8000.proxy.runpod.net",
-)
-
-
-WORKER_COUNTS: tuple(int) = (24,)
-
-TEST_SLICE = 24
-OVERWRITE_BENCHMARK_OUTPUTS = True
 HEALTH_TIMEOUT_SECONDS = 30.0
+SUBMIT_TIMEOUT_SECONDS = 300.0
 TASK_POLL_INTERVAL_SECONDS = 1.0
 TASK_TIMEOUT_SECONDS = 3600.0
 RESULT_TIMEOUT_SECONDS = 300.0
 
-# O CLI pode ficar muito tempo aguardando um PDF grande.
-# `None` desativa timeout do subprocesso.
-PROCESS_TIMEOUT_SECONDS: float | None = None
+DEFAULT_RETRIES = 2
 
-print(f"Pods: {len(API_URLS)}")
-print(f"Rodadas: {WORKER_COUNTS}")
-print(f"Documentos por rodada: {TEST_SLICE}")
+PROJECT_ROOT = Path.cwd()
+if PROJECT_ROOT.name == "notebooks":
+    PROJECT_ROOT = PROJECT_ROOT.parent
+
+DEFAULT_MANIFEST = PROJECT_ROOT / "data" / "inventory" / "inventory.csv"
+DEFAULT_OUTPUT_ROOT = PROJECT_ROOT / "artifacts" / "mineru" / "extraction"
+
+
+@dataclass(frozen=True, slots=True)
+class ExecutorConfig:
+    api_urls: tuple[str, ...]
+    manifest_path: Path
+    output_root: Path
+    workers_per_pod: int
+    retries: int
+    overwrite: bool
+    limit: int | None
+
+    @property
+    def total_workers(self) -> int:
+        return len(self.api_urls) * self.workers_per_pod
+
 
 # %% [markdown]
-# ## 3. Validação inicial
+# ## CLI
 
 # %%
-if not MINERU_EXE.exists():
-    raise FileNotFoundError(f"Executável do MinerU não encontrado: {MINERU_EXE}")
+def split_api_urls(values: Sequence[str]) -> tuple[str, ...]:
+    """Normaliza URLs recebidas por CLI ou variável de ambiente."""
+    urls: list[str] = []
+    for value in values:
+        for candidate in re.split(r"[,;\s]+", value.strip()):
+            candidate = candidate.strip().rstrip("/")
+            if candidate and candidate not in urls:
+                urls.append(candidate)
+    return tuple(urls)
 
-if not SAMPLE_MANIFEST.exists():
-    raise FileNotFoundError(f"Manifesto não encontrado: {SAMPLE_MANIFEST}")
 
-if len(API_URLS) != 3:
-    raise ValueError("Este benchmark foi preparado para exatamente três pods.")
+def parse_args(argv: Sequence[str] | None = None) -> ExecutorConfig:
+    parser = argparse.ArgumentParser(
+        description=(
+            "Processa PDFs em pods MinerU remotos usando oito workers por pod."
+        )
+    )
+    parser.add_argument(
+        "api_urls",
+        nargs="*",
+        help=(
+            "URLs públicas dos pods. Quando omitidas, usa MINERU_API_URLS."
+        ),
+    )
+    parser.add_argument(
+        "--manifest",
+        type=Path,
+        default=DEFAULT_MANIFEST,
+        help=f"Manifesto CSV. Padrão: {DEFAULT_MANIFEST}",
+    )
+    parser.add_argument(
+        "--output-root",
+        type=Path,
+        default=DEFAULT_OUTPUT_ROOT,
+        help=f"Diretório de saída. Padrão: {DEFAULT_OUTPUT_ROOT}",
+    )
+    parser.add_argument(
+        "--workers-per-pod",
+        type=int,
+        default=WORKERS_PER_POD,
+        help="Concorrência por pod. Padrão operacional: 8.",
+    )
+    parser.add_argument(
+        "--retries",
+        type=int,
+        default=DEFAULT_RETRIES,
+        help="Quantidade de novas tentativas após a primeira execução.",
+    )
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="Apaga e reprocessa saídas já concluídas.",
+    )
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        help="Limita documentos apenas para diagnóstico. O padrão processa todos.",
+    )
 
-if any(worker_count % len(API_URLS) != 0 for worker_count in WORKER_COUNTS):
-    raise ValueError(
-        "Todos os valores de WORKER_COUNTS devem ser múltiplos do número de pods."
+    args = parser.parse_args(argv)
+    env_urls = os.environ.get("MINERU_API_URLS", "")
+    api_urls = split_api_urls(args.api_urls or ([env_urls] if env_urls else []))
+
+    if not api_urls:
+        parser.error(
+            "Informe ao menos uma URL de pod como argumento ou em MINERU_API_URLS."
+        )
+    if args.workers_per_pod < 1:
+        parser.error("--workers-per-pod deve ser maior que zero.")
+    if args.retries < 0:
+        parser.error("--retries não pode ser negativo.")
+    if args.limit is not None and args.limit < 1:
+        parser.error("--limit deve ser maior que zero.")
+
+    return ExecutorConfig(
+        api_urls=api_urls,
+        manifest_path=args.manifest.expanduser().resolve(),
+        output_root=args.output_root.expanduser().resolve(),
+        workers_per_pod=args.workers_per_pod,
+        retries=args.retries,
+        overwrite=args.overwrite,
+        limit=args.limit,
     )
 
 
-sample = pd.read_csv(SAMPLE_MANIFEST).reset_index(drop=True)
-
-if sample.empty:
-    raise RuntimeError("A amostra está vazia.")
-
-required_columns = {"path", "filename", "page_count"}
-missing_columns = required_columns.difference(sample.columns)
-
-if missing_columns:
-    raise ValueError(f"Colunas ausentes no manifesto: {sorted(missing_columns)}")
-
-print(f"Documentos carregados: {len(sample)}")
-
-display(
-    sample[
-        [
-            "filename",
-            "page_count",
-            "size_mb",
-            "path",
-        ]
-    ]
-)
-
 # %% [markdown]
-# ## 4. Health check dos três pods
-
+# ## HTTP MinerU
 
 # %%
-def get_api_health(
-    api_url: str,
-    timeout_seconds: float = HEALTH_TIMEOUT_SECONDS,
+def read_json_response(
+    request: urllib.request.Request,
+    *,
+    timeout_seconds: float,
 ) -> dict[str, Any]:
-    health_url = f"{api_url.rstrip('/')}/health"
-
-    request = urllib.request.Request(
-        health_url,
-        headers={
-            "Accept": "application/json",
-            "User-Agent": "BaseIA-MinerU-HealthCheck/1.0",
-        },
-        method="GET",
-    )
-
     try:
-        with urllib.request.urlopen(
-            request,
-            timeout=timeout_seconds,
-        ) as response:
+        with urllib.request.urlopen(request, timeout=timeout_seconds) as response:
             payload = response.read().decode("utf-8")
-
     except urllib.error.HTTPError as error:
         body = error.read().decode("utf-8", errors="replace")
         raise RuntimeError(
-            f"MinerU API respondeu HTTP {error.code}: {health_url}. "
-            f"Resposta: {body[:500]}"
+            f"MinerU respondeu HTTP {error.code}: {request.full_url}. "
+            f"Resposta: {body[:1000]}"
         ) from error
-
     except urllib.error.URLError as error:
         raise RuntimeError(
-            f"Não foi possível acessar {health_url}: {error.reason}"
+            f"Não foi possível acessar {request.full_url}: {error.reason}"
         ) from error
 
-    data = json.loads(payload)
+    try:
+        data = json.loads(payload)
+    except json.JSONDecodeError as error:
+        raise RuntimeError(
+            f"Resposta inválida de {request.full_url}: {payload[:1000]}"
+        ) from error
 
     if not isinstance(data, dict):
-        raise TypeError(f"A resposta de {health_url} não é um objeto JSON.")
-
+        raise TypeError(f"A resposta de {request.full_url} não é um objeto JSON.")
     return data
 
 
-health_rows: list[dict[str, Any]] = []
-
-for pod_index, api_url in enumerate(API_URLS, start=1):
-    try:
-        health = get_api_health(api_url)
-        health_rows.append(
-            {
-                "pod": pod_index,
-                "api_url": api_url,
-                "status": "ok",
-                "error": None,
-                "health": health,
-            }
-        )
-    except Exception as error:
-        health_rows.append(
-            {
-                "pod": pod_index,
-                "api_url": api_url,
-                "status": "error",
-                "error": f"{type(error).__name__}: {error}",
-                "health": None,
-            }
-        )
-
-health_df = pd.DataFrame(health_rows)
-display(health_df[["pod", "api_url", "status", "error"]])
-
-if not health_df["status"].eq("ok").all():
-    raise RuntimeError(
-        "Ao menos um pod falhou no health check. Corrija antes do benchmark."
+def get_api_health(api_url: str) -> dict[str, Any]:
+    request = urllib.request.Request(
+        f"{api_url}/health",
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "BaseIA-MinerU-Executor/1.0",
+        },
+        method="GET",
     )
-
-# %% [markdown]
-# ## 5. Funções auxiliares
+    return read_json_response(request, timeout_seconds=HEALTH_TIMEOUT_SECONDS)
 
 
-# %%
-def safe_directory_name(row: pd.Series) -> str:
-    document_id = str(row.get("document_id") or "").strip()
-    sha256 = str(row.get("sha256") or "").strip()
-
-    if document_id and document_id.lower() != "nan":
-        return document_id
-
-    if sha256 and sha256.lower() != "nan":
-        return sha256[:16]
-
-    return Path(str(row["path"])).stem
-
-
-def count_generated_files(output_dir: Path) -> int:
-    if not output_dir.exists():
-        return 0
-
-    return sum(1 for path in output_dir.rglob("*") if path.is_file())
-
-
-def has_completed_output(output_dir: Path) -> bool:
-    return output_dir.exists() and any(output_dir.rglob("*_middle.json"))
-
-
-# %% [markdown]
-# ## 6. Execução de uma chamada MinerU
-#
-# O stdout do processo é gravado diretamente no log do documento. Isso evita
-# deadlock por buffer cheio e impede que logs de vários workers se misturem no
-# notebook.
-
-
-# %%
 def encode_multipart_form(
     *,
     pdf_path: Path,
     fields: dict[str, str],
 ) -> tuple[bytes, str]:
-    """Monta um corpo multipart/form-data sem dependências externas."""
     boundary = f"----BaseIAMinerU{time.time_ns():x}"
     body = bytearray()
 
@@ -288,7 +245,8 @@ def encode_multipart_form(
         body.extend(f"--{boundary}\r\n".encode())
         body.extend(
             (
-                f'Content-Disposition: form-data; name="{name}"\r\n\r\n{value}\r\n'
+                f'Content-Disposition: form-data; name="{name}"\r\n\r\n'
+                f"{value}\r\n"
             ).encode("utf-8")
         )
 
@@ -297,56 +255,16 @@ def encode_multipart_form(
         (
             'Content-Disposition: form-data; name="files"; '
             f'filename="{pdf_path.name}"\r\n'
-            "Content-Type: application/pdf\r\n"
-            "\r\n"
+            "Content-Type: application/pdf\r\n\r\n"
         ).encode("utf-8")
     )
     body.extend(pdf_path.read_bytes())
     body.extend(b"\r\n")
     body.extend(f"--{boundary}--\r\n".encode())
-
     return bytes(body), f"multipart/form-data; boundary={boundary}"
 
 
-def read_json_response(
-    request: urllib.request.Request,
-    *,
-    timeout_seconds: float,
-) -> dict[str, Any]:
-    """Executa uma requisição e exige um objeto JSON como resposta."""
-    try:
-        with urllib.request.urlopen(
-            request,
-            timeout=timeout_seconds,
-        ) as response:
-            payload = response.read().decode("utf-8")
-
-    except urllib.error.HTTPError as error:
-        body = error.read().decode("utf-8", errors="replace")
-        raise RuntimeError(
-            f"MinerU API respondeu HTTP {error.code}: "
-            f"{request.full_url}. Resposta: {body[:1000]}"
-        ) from error
-
-    except urllib.error.URLError as error:
-        raise RuntimeError(
-            f"Não foi possível acessar {request.full_url}: {error.reason}"
-        ) from error
-
-    data = json.loads(payload)
-
-    if not isinstance(data, dict):
-        raise TypeError(f"A resposta de {request.full_url} não é um objeto JSON.")
-
-    return data
-
-
-def submit_mineru_task(
-    *,
-    pdf_path: Path,
-    api_url: str,
-) -> dict[str, Any]:
-    """Envia um PDF para o endpoint assíncrono do MinerU."""
+def submit_mineru_task(pdf_path: Path, api_url: str) -> dict[str, Any]:
     body, content_type = encode_multipart_form(
         pdf_path=pdf_path,
         fields={
@@ -362,37 +280,22 @@ def submit_mineru_task(
             "response_format_zip": "false",
         },
     )
-
     request = urllib.request.Request(
-        f"{api_url.rstrip('/')}/tasks",
+        f"{api_url}/tasks",
         data=body,
         headers={
             "Accept": "application/json",
             "Content-Type": content_type,
-            "User-Agent": "BaseIA-MinerU-Client/1.0",
+            "User-Agent": "BaseIA-MinerU-Executor/1.0",
         },
         method="POST",
     )
-
-    return read_json_response(
-        request,
-        timeout_seconds=RESULT_TIMEOUT_SECONDS,
-    )
+    return read_json_response(request, timeout_seconds=SUBMIT_TIMEOUT_SECONDS)
 
 
-def wait_for_mineru_task(
-    *,
-    api_url: str,
-    task_id: str,
-) -> dict[str, Any]:
-    """
-    Aguarda a tarefa terminar.
-
-    A URL é deliberadamente reconstruída a partir de `api_url`.
-    `status_url` devolvido pelo servidor é ignorado porque pode conter
-    endereço privado do pod.
-    """
-    status_url = f"{api_url.rstrip('/')}/tasks/{task_id}"
+def wait_for_mineru_task(api_url: str, task_id: str) -> dict[str, Any]:
+    """Ignora status_url privado e reconstrói a URL pública."""
+    status_url = f"{api_url}/tasks/{task_id}"
     deadline = time.monotonic() + TASK_TIMEOUT_SECONDS
 
     while True:
@@ -400,74 +303,72 @@ def wait_for_mineru_task(
             status_url,
             headers={
                 "Accept": "application/json",
-                "User-Agent": "BaseIA-MinerU-Client/1.0",
+                "User-Agent": "BaseIA-MinerU-Executor/1.0",
             },
             method="GET",
         )
-
-        status_payload = read_json_response(
+        payload = read_json_response(
             request,
             timeout_seconds=HEALTH_TIMEOUT_SECONDS,
         )
-
-        status = str(status_payload.get("status", "")).lower()
+        status = str(payload.get("status", "")).lower()
 
         if status == "completed":
-            return status_payload
-
+            return payload
         if status in {"failed", "error", "cancelled"}:
             raise RuntimeError(
-                f"Tarefa MinerU {task_id} terminou com status "
-                f"{status!r}: {status_payload.get('error') or status_payload}"
+                f"Tarefa {task_id} terminou com status {status!r}: "
+                f"{payload.get('error') or payload}"
             )
-
         if time.monotonic() >= deadline:
             raise TimeoutError(
-                f"Tarefa MinerU {task_id} excedeu {TASK_TIMEOUT_SECONDS:.0f} segundos."
+                f"Tarefa {task_id} excedeu {TASK_TIMEOUT_SECONDS:.0f} segundos."
             )
-
         time.sleep(TASK_POLL_INTERVAL_SECONDS)
 
 
-def download_mineru_result(
-    *,
-    api_url: str,
-    task_id: str,
-) -> dict[str, Any]:
-    """
-    Baixa o resultado usando a URL pública reconstruída.
-
-    `result_url` devolvido pela API também é ignorado.
-    """
-    result_url = f"{api_url.rstrip('/')}/tasks/{task_id}/result"
-
+def download_mineru_result(api_url: str, task_id: str) -> dict[str, Any]:
+    """Ignora result_url privado e reconstrói a URL pública."""
     request = urllib.request.Request(
-        result_url,
+        f"{api_url}/tasks/{task_id}/result",
         headers={
             "Accept": "application/json",
-            "User-Agent": "BaseIA-MinerU-Client/1.0",
+            "User-Agent": "BaseIA-MinerU-Executor/1.0",
         },
         method="GET",
     )
-
-    return read_json_response(
-        request,
-        timeout_seconds=RESULT_TIMEOUT_SECONDS,
-    )
+    return read_json_response(request, timeout_seconds=RESULT_TIMEOUT_SECONDS)
 
 
-def save_mineru_result(
-    *,
-    result: dict[str, Any],
-    output_dir: Path,
-) -> None:
-    """Salva o Markdown e o middle JSON no formato esperado pelo benchmark."""
+# %% [markdown]
+# ## Persistência
+
+# %%
+def safe_directory_name(row: pd.Series) -> str:
+    for key in ("document_id", "sha256"):
+        value = str(row.get(key) or "").strip()
+        if value and value.lower() != "nan":
+            return value if key == "document_id" else value[:16]
+    return Path(str(row["path"])).stem
+
+
+def count_generated_files(output_dir: Path) -> int:
+    if not output_dir.exists():
+        return 0
+    return sum(1 for path in output_dir.rglob("*") if path.is_file())
+
+
+def has_completed_output(output_dir: Path) -> bool:
+    return output_dir.exists() and any(output_dir.rglob("*_middle.json"))
+
+
+def save_mineru_result(result: dict[str, Any], output_dir: Path) -> None:
     results = result.get("results")
-
     if not isinstance(results, dict) or not results:
         raise ValueError("A resposta MinerU não contém resultados.")
 
     output_dir.mkdir(parents=True, exist_ok=True)
+    saved_middle_json = False
 
     for document_name, document_result in results.items():
         if not isinstance(document_result, dict):
@@ -486,548 +387,359 @@ def save_mineru_result(
         middle_json = document_result.get("middle_json")
         if isinstance(middle_json, str):
             try:
-                parsed_middle_json = json.loads(middle_json)
+                middle_json = json.loads(middle_json)
             except json.JSONDecodeError:
-                parsed_middle_json = middle_json
+                pass
 
+        if middle_json is not None:
             with (document_dir / f"{document_name}_middle.json").open(
-                "w",
-                encoding="utf-8",
+                "w", encoding="utf-8"
             ) as file:
-                json.dump(
-                    parsed_middle_json,
-                    file,
-                    ensure_ascii=False,
-                    indent=2,
-                )
-        elif middle_json is not None:
-            with (document_dir / f"{document_name}_middle.json").open(
-                "w",
-                encoding="utf-8",
-            ) as file:
-                json.dump(
-                    middle_json,
-                    file,
-                    ensure_ascii=False,
-                    indent=2,
-                )
+                json.dump(middle_json, file, ensure_ascii=False, indent=2)
+            saved_middle_json = True
 
-    with (output_dir / "api_result.json").open(
-        "w",
-        encoding="utf-8",
-    ) as file:
-        json.dump(
-            result,
-            file,
-            ensure_ascii=False,
-            indent=2,
-        )
+    with (output_dir / "api_result.json").open("w", encoding="utf-8") as file:
+        json.dump(result, file, ensure_ascii=False, indent=2)
+
+    if not saved_middle_json:
+        raise ValueError("O resultado não produziu nenhum middle JSON.")
 
 
-def run_mineru(
+def append_json_line(path: Path, payload: dict[str, Any], lock: threading.Lock) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with lock:
+        with path.open("a", encoding="utf-8") as file:
+            file.write(json.dumps(payload, ensure_ascii=False) + "\n")
+
+
+# %% [markdown]
+# ## Execução de documentos
+
+# %%
+def run_single_attempt(
+    *,
     pdf_path: Path,
     output_dir: Path,
     log_path: Path,
     api_url: str,
-) -> dict[str, object]:
-    """
-    Executa uma tarefa MinerU diretamente pela API.
-
-    Não utiliza o CLI porque ele segue `status_url` e `result_url`
-    internos devolvidos pelo RunPod.
-    """
+    pod_number: int,
+    attempt: int,
+) -> dict[str, Any]:
     started_at = datetime.now(timezone.utc)
     started_counter = time.perf_counter()
 
-    output_dir.mkdir(parents=True, exist_ok=True)
-    log_path.parent.mkdir(parents=True, exist_ok=True)
-
-    submission = submit_mineru_task(
-        pdf_path=pdf_path,
-        api_url=api_url,
-    )
-
+    submission = submit_mineru_task(pdf_path, api_url)
     task_id = submission.get("task_id")
-
     if not isinstance(task_id, str) or not task_id:
-        raise ValueError(f"A submissão não devolveu um task_id válido: {submission}")
+        raise ValueError(f"A submissão não devolveu task_id: {submission}")
 
-    with log_path.open("w", encoding="utf-8") as log_file:
-        log_file.write(
-            json.dumps(
-                {
-                    "event": "submitted",
-                    "api_url": api_url,
-                    "task_id": task_id,
-                    "submission": submission,
-                },
-                ensure_ascii=False,
-                indent=2,
-            )
-        )
-        log_file.write("\n")
-
-    status_payload = wait_for_mineru_task(
-        api_url=api_url,
-        task_id=task_id,
+    append_json_line(
+        log_path,
+        {
+            "event": "submitted",
+            "attempt": attempt,
+            "pod_number": pod_number,
+            "api_url": api_url,
+            "task_id": task_id,
+            "timestamp": started_at.isoformat(),
+        },
+        threading.Lock(),
     )
 
-    result = download_mineru_result(
-        api_url=api_url,
-        task_id=task_id,
-    )
+    status_payload = wait_for_mineru_task(api_url, task_id)
+    result = download_mineru_result(api_url, task_id)
+    save_mineru_result(result, output_dir)
 
-    save_mineru_result(
-        result=result,
-        output_dir=output_dir,
-    )
-
-    duration_seconds = time.perf_counter() - started_counter
+    duration = time.perf_counter() - started_counter
     completed_at = datetime.now(timezone.utc)
-
-    with log_path.open("a", encoding="utf-8") as log_file:
-        log_file.write(
-            json.dumps(
-                {
-                    "event": "completed",
-                    "task_id": task_id,
-                    "status": status_payload,
-                    "duration_seconds": duration_seconds,
-                },
-                ensure_ascii=False,
-                indent=2,
-            )
-        )
-        log_file.write("\n")
-
     return {
         "status": "ok",
-        "return_code": 0,
         "task_id": task_id,
+        "attempts": attempt,
+        "pod_number": pod_number,
+        "api_url": api_url,
         "started_at": started_at.isoformat(),
         "completed_at": completed_at.isoformat(),
-        "duration_seconds": round(duration_seconds, 3),
-        "output_dir": str(output_dir.resolve()),
-        "log_path": str(log_path.resolve()),
+        "duration_seconds": round(duration, 3),
         "generated_files": count_generated_files(output_dir),
+        "error": None,
     }
 
 
-# %% [markdown]
-# ## 7. Processamento de um documento
-
-
-# %%
 def process_document(
-    document_position: int,
-    row: pd.Series,
     *,
-    api_url: str,
-    pod_number: int,
-    benchmark_output_root: Path,
-    pod_semaphore: threading.Semaphore,
-) -> dict[str, object]:
+    position: int,
+    total_documents: int,
+    row: pd.Series,
+    initial_pod_index: int,
+    config: ExecutorConfig,
+    pod_semaphores: dict[str, threading.Semaphore],
+    log_lock: threading.Lock,
+) -> dict[str, Any]:
     pdf_path = Path(str(row["path"])).expanduser().resolve()
     document_key = safe_directory_name(row)
+    output_dir = config.output_root / "documents" / document_key
+    log_path = output_dir / "mineru.log.jsonl"
 
-    document_output = benchmark_output_root / "documents" / document_key
-    log_path = document_output / "mineru.log"
-
-    base_result: dict[str, object] = {
-        "document_position": document_position,
+    page_count = pd.to_numeric(
+        pd.Series([row.get("page_count")]), errors="coerce"
+    ).iloc[0]
+    base = {
+        "document_position": position,
         "document_id": row.get("document_id"),
         "sha256": row.get("sha256"),
         "filename": row.get("filename"),
         "path": str(pdf_path),
-        "page_count": pd.to_numeric(
-            pd.Series([row.get("page_count")]),
-            errors="coerce",
-        ).iloc[0],
+        "page_count": page_count,
         "size_mb": row.get("size_mb"),
-        "pod_number": pod_number,
-        "api_url": api_url,
         "backend": BACKEND,
+        "output_dir": str(output_dir),
+        "log_path": str(log_path),
     }
 
     if not pdf_path.exists():
         return {
-            **base_result,
+            **base,
             "status": "error",
-            "return_code": None,
-            "started_at": None,
-            "completed_at": None,
-            "duration_seconds": None,
-            "output_dir": str(document_output.resolve()),
-            "log_path": str(log_path.resolve()),
+            "attempts": 0,
             "generated_files": 0,
             "error": "Arquivo PDF não encontrado",
-            "seconds_per_page": None,
         }
 
-    if has_completed_output(document_output) and not OVERWRITE_BENCHMARK_OUTPUTS:
+    if has_completed_output(output_dir) and not config.overwrite:
         return {
-            **base_result,
+            **base,
             "status": "skipped",
-            "return_code": 0,
-            "started_at": None,
-            "completed_at": None,
-            "duration_seconds": None,
-            "output_dir": str(document_output.resolve()),
-            "log_path": str(log_path.resolve()),
-            "generated_files": count_generated_files(document_output),
+            "attempts": 0,
+            "generated_files": count_generated_files(output_dir),
             "error": None,
-            "seconds_per_page": None,
         }
 
-    try:
-        with pod_semaphore:
-            print(
-                f"[{document_position + 1:02d}/{len(sample):02d}] "
-                f"pod={pod_number} | {pdf_path.name}"
+    if output_dir.exists() and config.overwrite:
+        shutil.rmtree(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    errors: list[str] = []
+    for attempt in range(1, config.retries + 2):
+        pod_index = (initial_pod_index + attempt - 1) % len(config.api_urls)
+        api_url = config.api_urls[pod_index]
+        pod_number = pod_index + 1
+
+        try:
+            with pod_semaphores[api_url]:
+                print(
+                    f"[{position + 1:04d}/{total_documents:04d}] "
+                    f"pod={pod_number} tentativa={attempt} | {pdf_path.name}"
+                )
+                run = run_single_attempt(
+                    pdf_path=pdf_path,
+                    output_dir=output_dir,
+                    log_path=log_path,
+                    api_url=api_url,
+                    pod_number=pod_number,
+                    attempt=attempt,
+                )
+            duration = run.get("duration_seconds")
+            seconds_per_page = None
+            if duration is not None and pd.notna(page_count) and float(page_count) > 0:
+                seconds_per_page = round(float(duration) / float(page_count), 4)
+            return {**base, **run, "seconds_per_page": seconds_per_page}
+        except Exception as error:
+            message = f"{type(error).__name__}: {error}"
+            errors.append(f"pod={pod_number} tentativa={attempt}: {message}")
+            append_json_line(
+                log_path,
+                {
+                    "event": "attempt_failed",
+                    "attempt": attempt,
+                    "pod_number": pod_number,
+                    "api_url": api_url,
+                    "error": message,
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                },
+                log_lock,
             )
-
-            run = run_mineru(
-                pdf_path=pdf_path,
-                output_dir=document_output,
-                log_path=log_path,
-                api_url=api_url,
-            )
-
-        run["error"] = None
-
-    except Exception as error:
-        run = {
-            "status": "error",
-            "return_code": None,
-            "started_at": None,
-            "completed_at": datetime.now(timezone.utc).isoformat(),
-            "duration_seconds": None,
-            "output_dir": str(document_output.resolve()),
-            "log_path": str(log_path.resolve()),
-            "generated_files": count_generated_files(document_output),
-            "error": f"{type(error).__name__}: {error}",
-        }
-
-    duration = run.get("duration_seconds")
-    page_count = base_result["page_count"]
-    seconds_per_page = None
-
-    if duration is not None and pd.notna(page_count) and float(page_count) > 0:
-        seconds_per_page = round(
-            float(duration) / float(page_count),
-            4,
-        )
 
     return {
-        **base_result,
-        **run,
-        "seconds_per_page": seconds_per_page,
+        **base,
+        "status": "error",
+        "attempts": config.retries + 1,
+        "generated_files": count_generated_files(output_dir),
+        "completed_at": datetime.now(timezone.utc).isoformat(),
+        "error": " | ".join(errors),
+        "seconds_per_page": None,
     }
 
 
 # %% [markdown]
-# ## 8. Execução de uma rodada
-#
-# O semáforo por pod garante que a rodada de 24 workers nunca envie mais de
-# oito chamadas simultâneas para uma mesma API.
-
+# ## Executor
 
 # %%
-def run_benchmark(worker_count: int) -> tuple[pd.DataFrame, dict[str, object]]:
-    if worker_count % len(API_URLS) != 0:
-        raise ValueError("worker_count deve ser múltiplo do número de pods.")
+def load_manifest(config: ExecutorConfig) -> pd.DataFrame:
+    if not config.manifest_path.exists():
+        raise FileNotFoundError(f"Manifesto não encontrado: {config.manifest_path}")
 
-    requests_per_pod = worker_count // len(API_URLS)
+    manifest = pd.read_csv(config.manifest_path).reset_index(drop=True)
+    required = {"path", "filename", "page_count"}
+    missing = required.difference(manifest.columns)
+    if missing:
+        raise ValueError(f"Colunas ausentes no manifesto: {sorted(missing)}")
+    if manifest.empty:
+        raise RuntimeError("O manifesto está vazio.")
+    if config.limit is not None:
+        manifest = manifest.head(config.limit).copy()
+    return manifest
 
-    benchmark_output_root = OUTPUT_ROOT / f"workers_{worker_count:02d}"
 
-    if benchmark_output_root.exists() and OVERWRITE_BENCHMARK_OUTPUTS:
-        shutil.rmtree(benchmark_output_root)
+def validate_pods(config: ExecutorConfig) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for pod_number, api_url in enumerate(config.api_urls, start=1):
+        started = time.perf_counter()
+        try:
+            health = get_api_health(api_url)
+            rows.append(
+                {
+                    "pod_number": pod_number,
+                    "api_url": api_url,
+                    "status": "ok",
+                    "latency_seconds": round(time.perf_counter() - started, 3),
+                    "health": health,
+                    "error": None,
+                }
+            )
+        except Exception as error:
+            rows.append(
+                {
+                    "pod_number": pod_number,
+                    "api_url": api_url,
+                    "status": "error",
+                    "latency_seconds": round(time.perf_counter() - started, 3),
+                    "health": None,
+                    "error": f"{type(error).__name__}: {error}",
+                }
+            )
 
-    benchmark_output_root.mkdir(parents=True, exist_ok=True)
+    failed = [row for row in rows if row["status"] != "ok"]
+    if failed:
+        details = "\n".join(
+            f"- {row['api_url']}: {row['error']}" for row in failed
+        )
+        raise RuntimeError(f"Pods indisponíveis no health check:\n{details}")
+    return rows
 
-    runs_path = benchmark_output_root / "runs.parquet"
-    runs_csv_path = benchmark_output_root / "runs.csv"
+
+def persist_runs(runs: list[dict[str, Any]], config: ExecutorConfig) -> pd.DataFrame:
+    runs_df = pd.DataFrame(runs)
+    if not runs_df.empty:
+        runs_df = runs_df.sort_values("document_position").reset_index(drop=True)
+    runs_df.to_csv(config.output_root / "runs.csv", index=False, encoding="utf-8-sig")
+    try:
+        runs_df.to_parquet(config.output_root / "runs.parquet", index=False)
+    except (ImportError, ValueError):
+        pass
+    return runs_df
+
+
+def execute(config: ExecutorConfig) -> tuple[pd.DataFrame, dict[str, Any]]:
+    config.output_root.mkdir(parents=True, exist_ok=True)
+    manifest = load_manifest(config)
+    health_rows = validate_pods(config)
+    write_path = config.output_root / "pods.json"
+    write_path.write_text(
+        json.dumps(health_rows, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+
+    print(f"Pods: {len(config.api_urls)}")
+    print(f"Workers por pod: {config.workers_per_pod}")
+    print(f"Workers totais: {config.total_workers}")
+    print(f"Documentos: {len(manifest)}")
+    print(f"Saída: {config.output_root}")
 
     pod_semaphores = {
-        api_url: threading.Semaphore(requests_per_pod) for api_url in API_URLS
+        url: threading.Semaphore(config.workers_per_pod) for url in config.api_urls
     }
-
-    runs: list[dict[str, object]] = []
+    log_lock = threading.Lock()
+    runs: list[dict[str, Any]] = []
     started_at = datetime.now(timezone.utc)
     started_counter = time.perf_counter()
 
-    print()
-    print("=" * 100)
-    print(f"RODADA: {worker_count} workers totais | {requests_per_pod} por pod")
-    print("=" * 100)
-
-    with ThreadPoolExecutor(max_workers=worker_count) as executor:
-        futures = {}
-
-        for document_position, row in sample.iterrows():
-            pod_index = document_position % len(API_URLS)
-            api_url = API_URLS[pod_index]
-
-            future = executor.submit(
+    with ThreadPoolExecutor(max_workers=config.total_workers) as executor:
+        futures = {
+            executor.submit(
                 process_document,
-                document_position,
-                row.copy(),
-                api_url=api_url,
-                pod_number=pod_index + 1,
-                benchmark_output_root=benchmark_output_root,
-                pod_semaphore=pod_semaphores[api_url],
-            )
+                position=position,
+                total_documents=len(manifest),
+                row=row.copy(),
+                initial_pod_index=position % len(config.api_urls),
+                config=config,
+                pod_semaphores=pod_semaphores,
+                log_lock=log_lock,
+            ): position
+            for position, row in manifest.iterrows()
+        }
 
-            futures[future] = document_position
-
-        for completed_count, future in enumerate(
-            as_completed(futures),
-            start=1,
-        ):
-            document_position = futures[future]
-
+        for completed_count, future in enumerate(as_completed(futures), start=1):
+            position = futures[future]
             try:
                 result = future.result()
             except Exception as error:
                 result = {
-                    "document_position": document_position,
-                    "document_id": None,
-                    "sha256": None,
-                    "filename": None,
-                    "path": None,
-                    "page_count": None,
-                    "size_mb": None,
-                    "pod_number": None,
-                    "api_url": None,
-                    "backend": BACKEND,
+                    "document_position": position,
                     "status": "error",
-                    "return_code": None,
-                    "started_at": None,
-                    "completed_at": datetime.now(timezone.utc).isoformat(),
-                    "duration_seconds": None,
-                    "output_dir": None,
-                    "log_path": None,
-                    "generated_files": 0,
-                    "error": (
-                        f"Falha não tratada no documento {document_position}: "
-                        f"{type(error).__name__}: {error}"
-                    ),
-                    "seconds_per_page": None,
+                    "error": f"Falha não tratada: {type(error).__name__}: {error}",
                 }
-
             runs.append(result)
-
-            runs_df = (
-                pd.DataFrame(runs)
-                .sort_values("document_position")
-                .reset_index(drop=True)
-            )
-
-            runs_df.to_parquet(runs_path, index=False)
-            runs_df.to_csv(
-                runs_csv_path,
-                index=False,
-                encoding="utf-8-sig",
-            )
-
+            persist_runs(runs, config)
             print(
-                f"Concluídos: {completed_count}/{len(sample)} | "
-                f"último status: {result['status']}"
+                f"Concluídos: {completed_count}/{len(manifest)} | "
+                f"ok={sum(row.get('status') == 'ok' for row in runs)} "
+                f"skip={sum(row.get('status') == 'skipped' for row in runs)} "
+                f"erro={sum(row.get('status') == 'error' for row in runs)}"
             )
 
-    elapsed_seconds = time.perf_counter() - started_counter
-    completed_at = datetime.now(timezone.utc)
-
-    runs_df = pd.DataFrame(runs).sort_values("document_position").reset_index(drop=True)
-
-    ok_df = runs_df[runs_df["status"] == "ok"].copy()
-    skipped_df = runs_df[runs_df["status"] == "skipped"].copy()
-    error_df = runs_df[runs_df["status"] == "error"].copy()
-
-    total_pages = pd.to_numeric(
-        ok_df["page_count"],
-        errors="coerce",
-    ).sum()
-
-    pages_per_minute = (
-        float(total_pages) / elapsed_seconds * 60 if elapsed_seconds > 0 else None
-    )
+    elapsed = time.perf_counter() - started_counter
+    runs_df = persist_runs(runs, config)
+    ok_df = runs_df[runs_df["status"] == "ok"] if not runs_df.empty else runs_df
+    total_pages = pd.to_numeric(ok_df.get("page_count"), errors="coerce").sum()
+    throughput = float(total_pages) / elapsed * 60 if elapsed > 0 else None
 
     summary = {
-        "worker_count": worker_count,
-        "pod_count": len(API_URLS),
-        "requests_per_pod": requests_per_pod,
-        "document_count": len(sample),
-        "ok_count": len(ok_df),
-        "skipped_count": len(skipped_df),
-        "error_count": len(error_df),
+        "pod_count": len(config.api_urls),
+        "workers_per_pod": config.workers_per_pod,
+        "total_workers": config.total_workers,
+        "document_count": len(manifest),
+        "ok_count": int((runs_df["status"] == "ok").sum()),
+        "skipped_count": int((runs_df["status"] == "skipped").sum()),
+        "error_count": int((runs_df["status"] == "error").sum()),
         "total_pages_ok": float(total_pages),
         "started_at": started_at.isoformat(),
-        "completed_at": completed_at.isoformat(),
-        "elapsed_seconds": round(elapsed_seconds, 3),
-        "pages_per_minute": (
-            round(pages_per_minute, 3) if pages_per_minute is not None else None
-        ),
-        "mean_document_seconds": (
-            round(ok_df["duration_seconds"].mean(), 3) if not ok_df.empty else None
-        ),
-        "median_document_seconds": (
-            round(ok_df["duration_seconds"].median(), 3) if not ok_df.empty else None
-        ),
-        "runs_path": str(runs_path.resolve()),
-        "runs_csv_path": str(runs_csv_path.resolve()),
+        "completed_at": datetime.now(timezone.utc).isoformat(),
+        "elapsed_seconds": round(elapsed, 3),
+        "pages_per_minute": round(throughput, 3) if throughput is not None else None,
+        "manifest_path": str(config.manifest_path),
+        "output_root": str(config.output_root),
+        "api_urls": list(config.api_urls),
     }
+    (config.output_root / "summary.json").write_text(
+        json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
 
-    print()
-    print(f"Workers: {worker_count}")
-    print(f"Requests por pod: {requests_per_pod}")
-    print(f"Tempo total: {elapsed_seconds:.2f} s")
-    print(f"Páginas concluídas: {total_pages:.0f}")
-    print(f"Throughput: {pages_per_minute:.2f} páginas/min")
-    print(f"Erros: {len(error_df)}")
-
+    errors_df = runs_df[runs_df["status"] == "error"].copy()
+    errors_df.to_csv(
+        config.output_root / "errors.csv", index=False, encoding="utf-8-sig"
+    )
     return runs_df, summary
 
 
-# %% [markdown]
-# ## 9. Executar todas as rodadas
-#
-# Cada rodada processa os mesmos 24 documentos em um diretório independente.
-
 # %%
-benchmark_summaries: list[dict[str, object]] = []
-benchmark_runs: dict[int, pd.DataFrame] = {}
+def main(argv: Sequence[str] | None = None) -> int:
+    config = parse_args(argv)
+    _, summary = execute(config)
 
-for worker_count in WORKER_COUNTS:
-    runs_df, summary = run_benchmark(worker_count)
+    print("\nExtração concluída.")
+    print(json.dumps(summary, ensure_ascii=False, indent=2))
+    return 1 if summary["error_count"] else 0
 
-    benchmark_runs[worker_count] = runs_df
-    benchmark_summaries.append(summary)
 
-    benchmark_summary_df = pd.DataFrame(benchmark_summaries)
-
-    benchmark_summary_df.to_csv(
-        SUMMARY_CSV_PATH,
-        index=False,
-        encoding="utf-8-sig",
-    )
-
-    benchmark_summary_df.to_parquet(
-        SUMMARY_PARQUET_PATH,
-        index=False,
-    )
-
-# %% [markdown]
-# ## 10. Resultado consolidado
-
-# %%
-benchmark_summary_df = (
-    pd.DataFrame(benchmark_summaries).sort_values("worker_count").reset_index(drop=True)
-)
-
-benchmark_summary_df[
-    [
-        "worker_count",
-        "requests_per_pod",
-        "ok_count",
-        "error_count",
-        "total_pages_ok",
-        "elapsed_seconds",
-        "pages_per_minute",
-        "mean_document_seconds",
-        "median_document_seconds",
-    ]
-]
-
-# %%
-best_successful = benchmark_summary_df[
-    benchmark_summary_df["error_count"] == 0
-].sort_values(
-    "pages_per_minute",
-    ascending=False,
-)
-
-if best_successful.empty:
-    print("Nenhuma rodada terminou sem erros.")
-else:
-    best_row = best_successful.iloc[0]
-
-    print(
-        "Melhor rodada sem erros: "
-        f"{int(best_row['worker_count'])} workers, "
-        f"{best_row['pages_per_minute']:.2f} páginas/min."
-    )
-
-# %% [markdown]
-# ## 11. Distribuição de resultados por pod
-
-# %%
-pod_summary_rows: list[dict[str, object]] = []
-
-for worker_count, runs_df in benchmark_runs.items():
-    grouped = (
-        runs_df.groupby(
-            ["pod_number", "api_url"],
-            dropna=False,
-        )
-        .agg(
-            documentos=("filename", "size"),
-            sucessos=("status", lambda values: int((values == "ok").sum())),
-            erros=("status", lambda values: int((values == "error").sum())),
-            paginas=(
-                "page_count",
-                lambda values: float(pd.to_numeric(values, errors="coerce").sum()),
-            ),
-            duracao_media_s=("duration_seconds", "mean"),
-        )
-        .reset_index()
-    )
-
-    grouped.insert(0, "worker_count", worker_count)
-    pod_summary_rows.extend(grouped.to_dict(orient="records"))
-
-pod_summary_df = pd.DataFrame(pod_summary_rows)
-pod_summary_df
-
-# %% [markdown]
-# ## 12. Erros encontrados
-
-# %%
-error_frames: list[pd.DataFrame] = []
-
-for worker_count, runs_df in benchmark_runs.items():
-    errors = runs_df[runs_df["status"] == "error"].copy()
-
-    if errors.empty:
-        continue
-
-    errors.insert(0, "worker_count", worker_count)
-    error_frames.append(errors)
-
-if error_frames:
-    errors_df = pd.concat(error_frames, ignore_index=True)
-    display(
-        errors_df[
-            [
-                "worker_count",
-                "filename",
-                "pod_number",
-                "api_url",
-                "return_code",
-                "error",
-                "log_path",
-            ]
-        ]
-    )
-else:
-    errors_df = pd.DataFrame()
-    print("Nenhum erro registrado.")
-
-# %% [markdown]
-# ## 13. Caminhos dos relatórios
-
-# %%
-print(SUMMARY_CSV_PATH.resolve())
-print(SUMMARY_PARQUET_PATH.resolve())
-print(OUTPUT_ROOT.resolve())
+if __name__ == "__main__":
+    raise SystemExit(main())
