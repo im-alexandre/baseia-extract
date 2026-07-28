@@ -8,12 +8,12 @@ import urllib.error
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 import pandas as pd
 
+from .runpod import managed_mineru_pods
 from .settings import settings
 
 
@@ -111,7 +111,7 @@ def _submit(pdf_path: Path, api_url: str) -> dict[str, Any]:
     return _read_json(request, settings.mineru_submit_timeout_seconds)
 
 
-def _wait(api_url: str, task_id: str) -> dict[str, Any]:
+def _wait(api_url: str, task_id: str) -> None:
     deadline = time.monotonic() + settings.mineru_task_timeout_seconds
     url = f"{api_url}/tasks/{task_id}"
     while True:
@@ -123,7 +123,7 @@ def _wait(api_url: str, task_id: str) -> dict[str, Any]:
         payload = _read_json(request, settings.mineru_health_timeout_seconds)
         status = str(payload.get("status", "")).lower()
         if status == "completed":
-            return payload
+            return
         if status in {"failed", "error", "cancelled"}:
             raise RuntimeError(f"Tarefa {task_id} terminou com status {status}: {payload}")
         if time.monotonic() >= deadline:
@@ -238,48 +238,25 @@ def _process(
     return {**base, "status": "error", "attempts": config.retries + 1, "error": " | ".join(errors)}
 
 
-def extract(
-    manifest: str | Path | None = None,
-    output: str | Path | None = None,
-    workers_per_pod: int | None = None,
-    retries: int | None = None,
-    overwrite: bool | None = None,
-    limit: int | None = None,
-) -> dict[str, Any]:
-    api_urls = settings.mineru_api_urls
-    if not api_urls:
-        raise ValueError("MINERU_API_URLS não foi configurado no .env.")
-
-    config = ExtractionConfig(
-        api_urls=api_urls,
-        manifest_path=Path(manifest).expanduser().resolve() if manifest else settings.inventory_path,
-        output_root=Path(output).expanduser().resolve() if output else settings.mineru_output_dir,
-        workers_per_pod=workers_per_pod or settings.mineru_workers_per_pod,
-        retries=settings.mineru_retries if retries is None else retries,
-        overwrite=settings.mineru_overwrite if overwrite is None else overwrite,
-        limit=limit,
-    )
-    if config.workers_per_pod < 1:
-        raise ValueError("workers_per_pod deve ser maior que zero.")
-
+def _execute(config: ExtractionConfig) -> dict[str, Any]:
     manifest_df = pd.read_csv(config.manifest_path).reset_index(drop=True)
-    if limit is not None:
-        manifest_df = manifest_df.head(limit).copy()
+    if config.limit is not None:
+        manifest_df = manifest_df.head(config.limit).copy()
     if manifest_df.empty:
         raise RuntimeError("Manifesto vazio.")
 
-    health = []
-    for index, api_url in enumerate(api_urls, start=1):
-        health.append({"pod_number": index, "api_url": api_url, "health": _health(api_url)})
-
     config.output_root.mkdir(parents=True, exist_ok=True)
+    health = [
+        {"pod_number": index, "api_url": url, "health": _health(url)}
+        for index, url in enumerate(config.api_urls, start=1)
+    ]
     (config.output_root / "pods.json").write_text(
         json.dumps(health, ensure_ascii=False, indent=2), encoding="utf-8"
     )
-    semaphores = {url: threading.Semaphore(config.workers_per_pod) for url in api_urls}
+
+    semaphores = {url: threading.Semaphore(config.workers_per_pod) for url in config.api_urls}
     runs: list[dict[str, Any]] = []
     started = time.perf_counter()
-
     with ThreadPoolExecutor(max_workers=config.total_workers) as executor:
         futures = {
             executor.submit(_process, position, len(manifest_df), row.copy(), config, semaphores): position
@@ -296,7 +273,7 @@ def extract(
     elapsed = time.perf_counter() - started
     pages = pd.to_numeric(ok_df.get("page_count"), errors="coerce").sum()
     summary = {
-        "pod_count": len(api_urls),
+        "pod_count": len(config.api_urls),
         "workers_per_pod": config.workers_per_pod,
         "total_workers": config.total_workers,
         "document_count": len(runs_df),
@@ -314,3 +291,27 @@ def extract(
     )
     print(json.dumps(summary, ensure_ascii=False, indent=2))
     return summary
+
+
+def extract(
+    manifest: str | Path | None = None,
+    output: str | Path | None = None,
+    workers_per_pod: int | None = None,
+    retries: int | None = None,
+    overwrite: bool | None = None,
+    limit: int | None = None,
+) -> dict[str, Any]:
+    """Cria pods temporários, executa o MinerU e sempre encerra os pods."""
+    with managed_mineru_pods() as pods:
+        config = ExtractionConfig(
+            api_urls=tuple(pod.api_url for pod in pods),
+            manifest_path=Path(manifest).expanduser().resolve() if manifest else settings.inventory_path,
+            output_root=Path(output).expanduser().resolve() if output else settings.mineru_output_dir,
+            workers_per_pod=workers_per_pod or settings.mineru_workers_per_pod,
+            retries=settings.mineru_retries if retries is None else retries,
+            overwrite=settings.mineru_overwrite if overwrite is None else overwrite,
+            limit=limit,
+        )
+        if config.workers_per_pod < 1:
+            raise ValueError("workers_per_pod deve ser maior que zero.")
+        return _execute(config)
