@@ -152,39 +152,117 @@ class BlockUnit:
 
 
 def build_units(
-    document: dict[str, Any], structure: dict[str, Any]
+    document: dict[str, Any],
+    structure: dict[str, Any],
 ) -> tuple[list[BlockUnit], dict[str, list[str]]]:
-    block_index = {
-        block.get("id"): block
-        for block in iter_page_blocks(document)
-        if block.get("id")
-    }
+    """
+    Reconcilia os blocos do DocumentIR com as anotações estruturais.
+
+    O structure_ir possui IDs determinísticos, mas os document_ir.json
+    antigos podem não conter esses IDs persistidos. Como a etapa 06 cria
+    as anotações na mesma ordem dos blocos de conteúdo, associamos ambos
+    por `reading_order`.
+    """
+    raw_content_blocks: list[dict[str, Any]] = []
+
+    for page in document.get("pages", []) or []:
+        page_id = page.get("id")
+        page_number = page.get("page")
+
+        for block in page.get("blocks", []) or []:
+            item = dict(block)
+            item["_page_id"] = page_id
+            item["_page"] = page_number
+            raw_content_blocks.append(item)
+
+    ordered_annotations = sorted(
+        (
+            item
+            for item in structure.get("annotations", []) or []
+            if isinstance(item, dict)
+        ),
+        key=lambda item: int(item.get("reading_order", 0)),
+    )
+
+    if len(raw_content_blocks) != len(ordered_annotations):
+        raise ValueError(
+            "Não foi possível reconciliar DocumentIR e StructureIR: "
+            f"{len(raw_content_blocks)} blocos de conteúdo contra "
+            f"{len(ordered_annotations)} anotações."
+        )
+
+    block_index: dict[str, dict[str, Any]] = {}
+
+    for block, annotation in zip(
+        raw_content_blocks,
+        ordered_annotations,
+        strict=True,
+    ):
+        block_id = annotation.get("block_id")
+
+        if not isinstance(block_id, str) or not block_id:
+            raise ValueError(f"Anotação estrutural sem block_id válido: {annotation}")
+
+        block["_page_id"] = annotation.get(
+            "page_id",
+            block.get("_page_id"),
+        )
+        block["_page"] = annotation.get(
+            "page",
+            block.get("_page"),
+        )
+        block["id"] = block_id
+
+        block_index[block_id] = block
+
     annotations = {
-        item.get("block_id"): item
-        for item in structure.get("annotations", []) or []
-        if isinstance(item, dict) and item.get("block_id")
+        item["block_id"]: item for item in ordered_annotations if item.get("block_id")
     }
+
     assets_by_block: dict[str, list[str]] = defaultdict(list)
+
     for asset in structure.get("assets", []) or []:
-        if isinstance(asset, dict) and asset.get("block_id") and asset.get("id"):
-            assets_by_block[asset["block_id"]].append(asset["id"])
+        if not isinstance(asset, dict):
+            continue
+
+        block_id = asset.get("block_id")
+        asset_id = asset.get("id")
+
+        if block_id and asset_id:
+            assets_by_block[str(block_id)].append(str(asset_id))
 
     units: list[BlockUnit] = []
-    for block_id in structure.get("primary_flow_block_ids", []) or []:
+
+    for block_id in (
+        structure.get(
+            "primary_flow_block_ids",
+            [],
+        )
+        or []
+    ):
         block = block_index.get(block_id)
+
         if block is None:
-            continue
-        annotation = annotations.get(block_id, {})
+            raise KeyError(f"Bloco do fluxo principal não encontrado: {block_id}")
+
+        annotation = annotations.get(block_id)
+
+        if annotation is None:
+            raise KeyError(f"Anotação não encontrada para o bloco: {block_id}")
+
         role = str(annotation.get("role") or block.get("type") or "other").lower()
+
         source_type = str(
             annotation.get("source_type") or block.get("type") or "unknown"
         ).lower()
+
         text = "" if role in EXCLUDED_TEXT_ROLES else extract_block_text(block)
+
         units.append(
             BlockUnit(
                 block_id=block_id,
-                page_id=annotation.get("page_id") or block.get("_page_id"),
-                page=annotation.get("page") or block.get("_page"),
+                page_id=annotation.get("page_id"),
+                page=annotation.get("page"),
                 section_id=annotation.get("section_id"),
                 role=role,
                 source_type=source_type,
@@ -192,6 +270,7 @@ def build_units(
                 asset_ids=assets_by_block.get(block_id, []),
             )
         )
+
     return units, build_section_paths(structure)
 
 
@@ -367,6 +446,14 @@ def main() -> None:
         document = load_json(find_document_ir(structure_path))
         structure = load_json(structure_path)
         chunks = build_chunks_for_document(document, structure)
+        if not chunks:
+            raise RuntimeError(
+                f"Nenhum chunk foi produzido para "
+                f"{document.get('source_name')}. "
+                f"primary_flow_block_ids="
+                f"{len(structure.get('primary_flow_block_ids', []))}"
+            )
+
         validation = validate_document_chunks(document, structure, chunks)
 
         relative_dir = structure_path.relative_to(STRUCTURE_ROOT).parent
