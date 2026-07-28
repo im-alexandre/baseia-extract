@@ -32,3 +32,5 @@ tempCodeRunnerFile.py
 # Sistema operacional
 .DS_Store
 Thumbs.db
+/pdf_dataset
+/bib_sources
