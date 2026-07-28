@@ -21,6 +21,7 @@ O Poe the Poet é usado globalmente e não faz parte das dependências do projet
 corpus/                 PDFs da coleção; ignorado pelo Git
 data/                   todos os dados produzidos; ignorado pelo Git
 src/baseia_extract/     código Python do pipeline
+mineru-server/          imagem e bootstrap da API MinerU remota
 ```
 
 Por padrão, o corpus fica em `corpus/`. Todos os resultados ficam abaixo de
@@ -102,11 +103,13 @@ A task:
 1. audita o inventário e usa apenas documentos válidos e únicos;
 2. resolve o template privado do RunPod pelo nome;
 3. cria a quantidade configurada de pods;
-4. aguarda o MinerU responder em `/health`;
-5. processa todo o manifesto deduplicado;
-6. persiste continuamente o progresso;
-7. encerra os pods em `finally`;
-8. executa a auditoria completa sem GPU.
+4. injeta versão, porta, concorrência e retenção do MinerU em cada pod;
+5. aguarda `/openapi.json` expor o contrato real do `mineru-api`;
+6. valida `/health`, versão e configuração efetiva do servidor;
+7. processa todo o manifesto deduplicado;
+8. persiste continuamente o progresso;
+9. encerra os pods em `finally`;
+10. executa a auditoria completa sem GPU.
 
 Não existe modo limitado na task operacional. `poe extract` sempre processa
 todo o manifesto, pulando documentos já concluídos quando
@@ -117,6 +120,53 @@ A concorrência total é:
 ```text
 RUNPOD_POD_COUNT × MINERU_WORKERS_PER_POD
 ```
+
+`MINERU_WORKERS_PER_POD` também é enviado para
+`MINERU_API_MAX_CONCURRENT_REQUESTS` no servidor. O cliente e o pod, portanto,
+usam o mesmo limite.
+
+## Servidor MinerU no RunPod
+
+A imagem em `mineru-server/` contém somente o sistema operacional, CUDA/PyTorch
+da imagem-base, bibliotecas nativas e o bootstrap. O ambiente Python do MinerU
+e os modelos `pipeline` ficam no volume compartilhado montado em `/workspace`.
+
+Na primeira execução de uma versão, um pod:
+
+1. cria `/workspace/.venv`;
+2. instala `mineru[pipeline]==MINERU_VERSION`;
+3. baixa somente os modelos do backend `pipeline`;
+4. grava marcadores versionados no volume.
+
+Os demais pods aguardam os locks no volume. Nas execuções seguintes, o ambiente
+e os modelos são reutilizados.
+
+As saídas internas da API ficam no disco efêmero do container, em
+`/tmp/mineru-api-output`, porque o cliente já persiste cada resultado em
+`data/mineru/`. Para impedir que milhares de tarefas ocupem o disco do pod, os
+defaults são:
+
+```env
+MINERU_API_TASK_RETENTION_SECONDS=600
+MINERU_API_TASK_CLEANUP_INTERVAL_SECONDS=60
+```
+
+O template privado do RunPod deve:
+
+- apontar para a imagem construída com `mineru-server/Dockerfile`;
+- montar o network volume em `/workspace`;
+- expor `8000/http`;
+- deixar **Docker Entrypoint** e **Docker Start Command** vazios.
+
+O último requisito é importante: um entrypoint configurado no template
+sobrescreve o entrypoint da imagem e pode iniciar o servidor OpenAI do vLLM no
+lugar do `mineru-api`.
+
+O provisionador não considera mais qualquer `/health` como sucesso. Ele exige as
+rotas `/tasks`, `/tasks/{task_id}`, `/tasks/{task_id}/result` e `/file_parse`,
+além da versão, concorrência e retenção esperadas no `/health`. Caso outro
+serviço — por exemplo, o vLLM — ocupe a porta 8000, a execução falha
+imediatamente e os pods são encerrados.
 
 ## Saídas canônicas
 
