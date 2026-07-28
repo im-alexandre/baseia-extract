@@ -43,5 +43,9 @@ args = [
 ]
 
 [tool.poe.tasks.extract]
-help = "Cria pods temporários, extrai todo o manifesto e encerra os pods ao final."
+help = "Audita o inventário, cria pods temporários, extrai tudo e audita a saída."
 script = "baseia_extract.tasks:extract()"
+
+[tool.poe.tasks.audit]
+help = "Audita o inventário e, quando existir, toda a extração MinerU."
+script = "baseia_extract.audit:audit()"

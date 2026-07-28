@@ -2,7 +2,9 @@
 
 Camada de extração documental do BaseIA.
 
-O código operacional vive em `src/baseia_extract`. A configuração fica no `.env`; caminhos e defaults são resolvidos exclusivamente por `baseia_extract.settings`.
+O código operacional vive em `src/baseia_extract`. A configuração fica no
+`.env`; caminhos e defaults são resolvidos exclusivamente por
+`baseia_extract.settings`.
 
 ## Instalação
 
@@ -21,7 +23,8 @@ data/                   todos os dados produzidos; ignorado pelo Git
 src/baseia_extract/     código Python do pipeline
 ```
 
-Por padrão, o corpus fica em `corpus/`. Todos os resultados ficam abaixo de `data/`.
+Por padrão, o corpus fica em `corpus/`. Todos os resultados ficam abaixo de
+`data/`.
 
 ## Pipeline operacional
 
@@ -56,7 +59,39 @@ Saída:
 data/inventory/sample.csv
 ```
 
-### 3. Extração completa
+### 3. Auditoria
+
+```powershell
+poe audit
+```
+
+Antes da extração, a task valida o inventário, deduplica por `document_id` e
+gera:
+
+```text
+data/audit/inventory/extraction_manifest.csv
+data/audit/inventory/invalid_documents.csv
+data/audit/inventory/duplicate_documents.csv
+data/audit/inventory/summary.json
+```
+
+Depois da extração, a mesma task também verifica os `middle.json`, compara
+páginas, consolida o schema observado e gera:
+
+```text
+data/audit/extraction/documents.csv
+data/audit/extraction/failures.csv
+data/audit/extraction/warnings.csv
+data/audit/extraction/retry_manifest.csv
+data/audit/extraction/schema_observed.json
+data/audit/extraction/outliers.csv
+data/audit/extraction/review_sample.csv
+data/audit/extraction/summary.json
+```
+
+A auditoria não sobe GPU nem cria pods.
+
+### 4. Extração completa
 
 ```powershell
 poe extract
@@ -64,14 +99,18 @@ poe extract
 
 A task:
 
-1. resolve o template privado do RunPod pelo nome;
-2. cria a quantidade configurada de pods;
-3. aguarda o MinerU responder em `/health`;
-4. processa todo o `data/inventory/inventory.csv`;
-5. persiste continuamente o progresso;
-6. encerra os pods em `finally`.
+1. audita o inventário e usa apenas documentos válidos e únicos;
+2. resolve o template privado do RunPod pelo nome;
+3. cria a quantidade configurada de pods;
+4. aguarda o MinerU responder em `/health`;
+5. processa todo o manifesto deduplicado;
+6. persiste continuamente o progresso;
+7. encerra os pods em `finally`;
+8. executa a auditoria completa sem GPU.
 
-Não existe modo limitado na task operacional. `poe extract` sempre processa o manifesto completo, pulando documentos já concluídos quando `MINERU_OVERWRITE=false`.
+Não existe modo limitado na task operacional. `poe extract` sempre processa
+todo o manifesto, pulando documentos já concluídos quando
+`MINERU_OVERWRITE=false`.
 
 A concorrência total é:
 
@@ -88,6 +127,8 @@ data/mineru/runs.csv
 data/mineru/errors.csv
 data/mineru/summary.json
 data/mineru/pods.json
+data/audit/inventory/
+data/audit/extraction/
 data/ir/
 data/structure/
 data/chunks/
@@ -101,4 +142,5 @@ O comportamento é controlado somente no `.env`:
 MINERU_OVERWRITE=false
 ```
 
-Com `false`, documentos já concluídos são preservados e ignorados. Com `true`, suas saídas são removidas e recriadas.
+Com `false`, documentos já concluídos e válidos são preservados e ignorados.
+Com `true`, suas saídas são removidas e recriadas.

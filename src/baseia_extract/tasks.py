@@ -1,22 +1,33 @@
 from __future__ import annotations
 
-from dataclasses import replace
+from pathlib import Path
 from typing import Any
 
 from . import mineru
+from .audit import audit, audit_inventory
 from .runpod import managed_mineru_pods
 
 
 def extract() -> dict[str, Any]:
-    """Executa a extração completa com pods RunPod temporários e gerenciados."""
-    original_settings = mineru.settings
+    """
+    Audita o inventário, cria pods temporários, extrai e audita a saída.
 
-    with managed_mineru_pods() as pods:
-        mineru.settings = replace(
-            original_settings,
-            mineru_api_urls=tuple(pod.api_url for pod in pods),
-        )
-        try:
-            return mineru.extract()
-        finally:
-            mineru.settings = original_settings
+    A auditoria final roda depois que o contexto do RunPod encerra os pods.
+    """
+    inventory_summary = audit_inventory()
+    manifest_path = Path(inventory_summary["extraction_manifest_path"])
+
+    extraction_summary: dict[str, Any] | None = None
+    try:
+        with managed_mineru_pods() as pods:
+            extraction_summary = mineru.extract(
+                api_urls=tuple(pod.api_url for pod in pods),
+                manifest_path=manifest_path,
+            )
+    finally:
+        audit_summary = audit()
+
+    return {
+        "extraction": extraction_summary,
+        "audit": audit_summary,
+    }
