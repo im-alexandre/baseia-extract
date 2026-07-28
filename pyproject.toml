@@ -27,33 +27,21 @@ dependencies = [
 packages = ["src/baseia_extract"]
 
 [tool.poe.tasks.inventory]
-help = "Cria o manifesto completo de uma coleção de PDFs."
-script = "baseia_extract.inventory:build_inventory(corpus_dir or None, output or None, workers or None, recursive)"
+help = "Inventaria todos os PDFs de corpus/ em data/inventory/inventory.csv."
+script = "baseia_extract.inventory:build_inventory(workers or None, recursive)"
 args = [
-  { name = "corpus_dir", options = ["--corpus"], default = "" },
-  { name = "output", options = ["--output"], default = "" },
   { name = "workers", options = ["--workers"], type = "integer", default = 0 },
   { name = "recursive", options = ["--recursive"], type = "boolean", default = true },
 ]
 
 [tool.poe.tasks.sample]
-help = "Gera uma amostra reprodutível do manifesto da coleção."
-script = "baseia_extract.inventory:sample_inventory(size, source or None, output or None, seed)"
+help = "Gera uma amostra reprodutível em data/inventory/sample.csv."
+script = "baseia_extract.inventory:sample_inventory(size, seed)"
 args = [
   { name = "size", options = ["--size"], type = "integer", default = 100 },
-  { name = "source", options = ["--source"], default = "" },
-  { name = "output", options = ["--output"], default = "" },
   { name = "seed", options = ["--seed"], type = "integer", default = 42 },
 ]
 
 [tool.poe.tasks.extract]
-help = "Cria pods RunPod temporários, executa o MinerU e encerra os pods ao final."
-script = "baseia_extract.tasks:extract(manifest or None, output or None, workers_per_pod or None, retries if retries >= 0 else None, overwrite, limit or None)"
-args = [
-  { name = "manifest", options = ["--manifest"], default = "" },
-  { name = "output", options = ["--output"], default = "" },
-  { name = "workers_per_pod", options = ["--workers-per-pod"], type = "integer", default = 0 },
-  { name = "retries", options = ["--retries"], type = "integer", default = -1 },
-  { name = "overwrite", options = ["--overwrite"], type = "boolean", default = false },
-  { name = "limit", options = ["--limit"], type = "integer", default = 0 },
-]
+help = "Cria pods temporários, extrai todo o manifesto e encerra os pods ao final."
+script = "baseia_extract.tasks:extract()"
