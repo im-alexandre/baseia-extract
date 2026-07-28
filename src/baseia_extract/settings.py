@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import os
-import re
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -48,16 +47,6 @@ def _bool_env(name: str, default: bool = False) -> bool:
     return value.strip().lower() in {"1", "true", "yes", "on"}
 
 
-def _urls_env(name: str) -> tuple[str, ...]:
-    value = os.getenv(name, "")
-    urls: list[str] = []
-    for candidate in re.split(r"[,;\s]+", value):
-        normalized = candidate.strip().rstrip("/")
-        if normalized and normalized not in urls:
-            urls.append(normalized)
-    return tuple(urls)
-
-
 PROJECT_ROOT = _project_root()
 _load_dotenv(PROJECT_ROOT / ".env")
 
@@ -67,14 +56,13 @@ class Settings:
     project_root: Path
     corpus_dir: Path
     data_dir: Path
-    artifacts_dir: Path
     inventory_dir: Path
     inventory_path: Path
+    sample_path: Path
     mineru_output_dir: Path
     ir_dir: Path
     structure_dir: Path
     chunks_dir: Path
-    mineru_api_urls: tuple[str, ...]
     mineru_workers_per_pod: int
     mineru_retries: int
     mineru_backend: str
@@ -98,23 +86,19 @@ class Settings:
 def get_settings() -> Settings:
     project_root = _project_root()
     data_dir = _path_env("BASEIA_DATA_DIR", project_root / "data")
-    artifacts_dir = _path_env("BASEIA_ARTIFACTS_DIR", project_root / "artifacts")
-    inventory_dir = _path_env("BASEIA_INVENTORY_DIR", data_dir / "inventory")
+    inventory_dir = data_dir / "inventory"
 
     result = Settings(
         project_root=project_root,
         corpus_dir=_path_env("BASEIA_CORPUS_DIR", project_root / "corpus"),
         data_dir=data_dir,
-        artifacts_dir=artifacts_dir,
         inventory_dir=inventory_dir,
-        inventory_path=_path_env("BASEIA_INVENTORY_PATH", inventory_dir / "inventory.csv"),
-        mineru_output_dir=_path_env(
-            "BASEIA_MINERU_OUTPUT_DIR", artifacts_dir / "mineru" / "extraction"
-        ),
-        ir_dir=_path_env("BASEIA_IR_DIR", artifacts_dir / "ir"),
-        structure_dir=_path_env("BASEIA_STRUCTURE_DIR", artifacts_dir / "structure"),
-        chunks_dir=_path_env("BASEIA_CHUNKS_DIR", artifacts_dir / "chunks"),
-        mineru_api_urls=_urls_env("MINERU_API_URLS"),
+        inventory_path=inventory_dir / "inventory.csv",
+        sample_path=inventory_dir / "sample.csv",
+        mineru_output_dir=data_dir / "mineru",
+        ir_dir=data_dir / "ir",
+        structure_dir=data_dir / "structure",
+        chunks_dir=data_dir / "chunks",
         mineru_workers_per_pod=_int_env("MINERU_WORKERS_PER_POD", 8),
         mineru_retries=_int_env("MINERU_RETRIES", 2),
         mineru_backend=os.getenv("MINERU_BACKEND", "pipeline"),
