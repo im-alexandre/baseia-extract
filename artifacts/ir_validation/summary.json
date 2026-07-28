@@ -1,0 +1,44 @@
+{
+  "documents": 38,
+  "valid_documents": 38,
+  "invalid_documents": 0,
+  "batch_elapsed_seconds": 1.3363872999325395,
+  "documents_per_second": 28.434870641106983,
+  "pages": 286,
+  "blocks": 3514,
+  "discarded_blocks": 431,
+  "lines": 10689,
+  "spans": 11468,
+  "source_preproc_blocks_ignored": 3514,
+  "duplicated_content_blocks": 2,
+  "content_discarded_overlap": 0,
+  "timing_seconds": {
+    "mean": 0.03117194998163828,
+    "median": 0.030207799980416894,
+    "p95": 0.05391334496671331,
+    "max": 0.07480669999495149
+  },
+  "peak_memory_bytes": {
+    "mean": 2770677.0789473685,
+    "median": 2766794.5,
+    "p95": 4970695.999999999,
+    "max": 7260850
+  },
+  "source_size_bytes": {
+    "total": 25539311,
+    "mean": 672087.1315789474,
+    "max": 1475715
+  },
+  "serialized_ir_size_bytes": {
+    "total": 3375977,
+    "mean": 88841.5,
+    "max": 188766
+  },
+  "null_metrics": {
+    "blocks_without_type": 0,
+    "blocks_without_bbox": 0,
+    "lines_without_bbox": 0,
+    "spans_without_type": 0,
+    "text_spans_without_text": 9
+  }
+}

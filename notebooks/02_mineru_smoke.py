@@ -92,9 +92,9 @@ print(f"Saída: {OUTPUT_ROOT}")
 BACKEND = "pipeline"
 
 API_URLS = (
-    "https://xat0q3ikps8ho4-8000.proxy.runpod.net",
-    "https://n0r8fs4xabemtj-8000.proxy.runpod.net",
-    "https://6rrlazb7zdc96p-19123.proxy.runpod.net",
+    "https://00e1vcjtxavr7w-8000.proxy.runpod.net",
+    "https://8wddd5b6crg0c3-8000.proxy.runpod.net",
+    "https://0zgf7sp4qhvuc7-8000.proxy.runpod.net",
 )
 
 WORKER_COUNTS = tuple(range(3, 25, 3))
@@ -169,7 +169,10 @@ def get_api_health(
 
     request = urllib.request.Request(
         health_url,
-        headers={"Accept": "application/json"},
+        headers={
+            "Accept": "application/json",
+            "User-Agent": "BaseIA-MinerU-HealthCheck/1.0",
+        },
         method="GET",
     )
 

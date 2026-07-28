@@ -1,0 +1,2 @@
+﻿worker_count,pod_count,requests_per_pod,document_count,ok_count,skipped_count,error_count,total_pages_ok,started_at,completed_at,elapsed_seconds,pages_per_minute,mean_document_seconds,median_document_seconds,runs_path,runs_csv_path
+3,3,1,24,0,0,24,0.0,2026-07-28T09:03:53.996523+00:00,2026-07-28T09:06:39.158418+00:00,165.162,0.0,,,D:\baseia_v3\artifacts\mineru\worker_benchmark\workers_03\runs.parquet,D:\baseia_v3\artifacts\mineru\worker_benchmark\workers_03\runs.csv

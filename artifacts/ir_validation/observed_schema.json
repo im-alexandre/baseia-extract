@@ -1,0 +1,48 @@
+{
+  "block_types": {
+    "text": 2137,
+    "title": 548,
+    "ref_text": 317,
+    "page_number": 234,
+    "image": 186,
+    "header": 126,
+    "interline_equation": 96,
+    "table": 94,
+    "chart": 93,
+    "footer": 57,
+    "abstract": 26,
+    "list": 12,
+    "aside_text": 7,
+    "page_footnote": 7,
+    "code": 5
+  },
+  "span_types": {
+    "text": 11007,
+    "inline_equation": 365,
+    "interline_equation": 96
+  },
+  "attribute_keys": {
+    "document": {
+      "_backend": 38,
+      "_version_name": 38
+    },
+    "page": {},
+    "block": {
+      "index": 3945,
+      "bbox_fs": 2149,
+      "blocks": 378,
+      "lines_deleted": 67,
+      "sub_type": 5,
+      "guess_lang": 2
+    },
+    "line": {
+      "is_list_start_line": 37,
+      "is_list_end_line": 14
+    },
+    "span": {
+      "cross_page": 245,
+      "height": 7,
+      "width": 7
+    }
+  }
+}

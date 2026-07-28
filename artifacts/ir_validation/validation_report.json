@@ -1,0 +1,2784 @@
+[
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\0033d9791d44daff\\Chain-optimazation-pscc-2002\\auto\\Chain-optimazation-pscc-2002_middle.json",
+    "source_size_bytes": 1372090,
+    "elapsed_seconds": 0.07480669999495149,
+    "peak_memory_bytes": 5560715,
+    "source_counts": {
+      "pages": 7,
+      "blocks": 144,
+      "discarded_blocks": 0,
+      "preproc_blocks": 144
+    },
+    "ir_counts": {
+      "pages": 7,
+      "blocks": 144,
+      "discarded_blocks": 0,
+      "lines": 652,
+      "spans": 714
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "title": 8,
+      "text": 102,
+      "abstract": 1,
+      "image": 4,
+      "chart": 3,
+      "interline_equation": 9,
+      "ref_text": 17
+    },
+    "span_types": {
+      "text": 667,
+      "interline_equation": 9,
+      "inline_equation": 38
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 144,
+        "bbox_fs": 102,
+        "lines_deleted": 9,
+        "blocks": 7
+      },
+      "line": {},
+      "span": {
+        "cross_page": 54
+      }
+    },
+    "serialized_size_bytes": 159066,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\01bcb00e543fd06c\\GLT_1332\\auto\\GLT_1332_middle.json",
+    "source_size_bytes": 782749,
+    "elapsed_seconds": 0.033268800005316734,
+    "peak_memory_bytes": 3164561,
+    "source_counts": {
+      "pages": 10,
+      "blocks": 109,
+      "discarded_blocks": 13,
+      "preproc_blocks": 109
+    },
+    "ir_counts": {
+      "pages": 10,
+      "blocks": 109,
+      "discarded_blocks": 13,
+      "lines": 337,
+      "spans": 347
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "title": 26,
+      "list": 1,
+      "abstract": 1,
+      "text": 49,
+      "image": 15,
+      "ref_text": 17,
+      "header": 3,
+      "footer": 1,
+      "page_number": 9
+    },
+    "span_types": {
+      "text": 347
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 122,
+        "bbox_fs": 50,
+        "lines_deleted": 2,
+        "blocks": 15
+      },
+      "line": {
+        "is_list_start_line": 3,
+        "is_list_end_line": 2
+      },
+      "span": {
+        "cross_page": 6
+      }
+    },
+    "serialized_size_bytes": 101836,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\035ca90614af2355\\10.1080_096031096334006\\auto\\10.1080_096031096334006_middle.json",
+    "source_size_bytes": 1208431,
+    "elapsed_seconds": 0.05086019996087998,
+    "peak_memory_bytes": 4866575,
+    "source_counts": {
+      "pages": 8,
+      "blocks": 116,
+      "discarded_blocks": 21,
+      "preproc_blocks": 116
+    },
+    "ir_counts": {
+      "pages": 8,
+      "blocks": 116,
+      "discarded_blocks": 21,
+      "lines": 472,
+      "spans": 644
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "list": 2,
+      "image": 1,
+      "title": 12,
+      "text": 63,
+      "abstract": 1,
+      "interline_equation": 10,
+      "table": 4,
+      "ref_text": 23,
+      "aside_text": 7,
+      "header": 7,
+      "page_number": 7
+    },
+    "span_types": {
+      "text": 541,
+      "interline_equation": 10,
+      "inline_equation": 93
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 137,
+        "bbox_fs": 65,
+        "blocks": 5,
+        "lines_deleted": 9
+      },
+      "line": {
+        "is_list_start_line": 8
+      },
+      "span": {
+        "cross_page": 42,
+        "height": 7,
+        "width": 7
+      }
+    },
+    "serialized_size_bytes": 154382,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\0a0f57e6addd7987\\GEC_0012\\auto\\GEC_0012_middle.json",
+    "source_size_bytes": 729041,
+    "elapsed_seconds": 0.03503679996356368,
+    "peak_memory_bytes": 3083076,
+    "source_counts": {
+      "pages": 9,
+      "blocks": 114,
+      "discarded_blocks": 13,
+      "preproc_blocks": 114
+    },
+    "ir_counts": {
+      "pages": 9,
+      "blocks": 114,
+      "discarded_blocks": 13,
+      "lines": 340,
+      "spans": 342
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "title": 23,
+      "text": 81,
+      "abstract": 1,
+      "table": 1,
+      "ref_text": 7,
+      "image": 1,
+      "header": 3,
+      "page_number": 9,
+      "footer": 1
+    },
+    "span_types": {
+      "text": 342
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 127,
+        "bbox_fs": 81,
+        "lines_deleted": 2,
+        "blocks": 2
+      },
+      "line": {},
+      "span": {
+        "cross_page": 4
+      }
+    },
+    "serialized_size_bytes": 97918,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\153ff9c09ca994ca\\GTM10\\auto\\GTM10_middle.json",
+    "source_size_bytes": 637985,
+    "elapsed_seconds": 0.026284500025212765,
+    "peak_memory_bytes": 2582134,
+    "source_counts": {
+      "pages": 9,
+      "blocks": 86,
+      "discarded_blocks": 13,
+      "preproc_blocks": 86
+    },
+    "ir_counts": {
+      "pages": 9,
+      "blocks": 86,
+      "discarded_blocks": 13,
+      "lines": 252,
+      "spans": 287
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "text": 48,
+      "title": 13,
+      "chart": 7,
+      "table": 1,
+      "image": 7,
+      "ref_text": 10,
+      "header": 4,
+      "footer": 1,
+      "page_number": 8
+    },
+    "span_types": {
+      "text": 277,
+      "inline_equation": 10
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 99,
+        "bbox_fs": 48,
+        "blocks": 15,
+        "lines_deleted": 1
+      },
+      "line": {},
+      "span": {
+        "cross_page": 2
+      }
+    },
+    "serialized_size_bytes": 82426,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\169ba37b912aa8dd\\GTL_0081\\auto\\GTL_0081_middle.json",
+    "source_size_bytes": 314419,
+    "elapsed_seconds": 0.014395600068382919,
+    "peak_memory_bytes": 1266888,
+    "source_counts": {
+      "pages": 5,
+      "blocks": 40,
+      "discarded_blocks": 12,
+      "preproc_blocks": 40
+    },
+    "ir_counts": {
+      "pages": 5,
+      "blocks": 40,
+      "discarded_blocks": 12,
+      "lines": 118,
+      "spans": 145
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "title": 12,
+      "text": 20,
+      "image": 8,
+      "header": 2,
+      "footer": 6,
+      "page_number": 4
+    },
+    "span_types": {
+      "text": 145
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 52,
+        "bbox_fs": 20,
+        "blocks": 8,
+        "lines_deleted": 1
+      },
+      "line": {},
+      "span": {}
+    },
+    "serialized_size_bytes": 39309,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\1804b1295ba95d54\\GGH1\\auto\\GGH1_middle.json",
+    "source_size_bytes": 571826,
+    "elapsed_seconds": 0.027926099952310324,
+    "peak_memory_bytes": 2296516,
+    "source_counts": {
+      "pages": 7,
+      "blocks": 83,
+      "discarded_blocks": 10,
+      "preproc_blocks": 83
+    },
+    "ir_counts": {
+      "pages": 7,
+      "blocks": 83,
+      "discarded_blocks": 10,
+      "lines": 223,
+      "spans": 244
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "title": 16,
+      "text": 47,
+      "table": 1,
+      "image": 12,
+      "ref_text": 7,
+      "header": 4,
+      "page_number": 6
+    },
+    "span_types": {
+      "text": 244
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 93,
+        "bbox_fs": 47,
+        "blocks": 13
+      },
+      "line": {},
+      "span": {}
+    },
+    "serialized_size_bytes": 72113,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\1eda56df0d39f2ca\\GGH9\\auto\\GGH9_middle.json",
+    "source_size_bytes": 657075,
+    "elapsed_seconds": 0.025616199942305684,
+    "peak_memory_bytes": 2668970,
+    "source_counts": {
+      "pages": 8,
+      "blocks": 73,
+      "discarded_blocks": 11,
+      "preproc_blocks": 73
+    },
+    "ir_counts": {
+      "pages": 8,
+      "blocks": 73,
+      "discarded_blocks": 11,
+      "lines": 298,
+      "spans": 298
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 1
+    },
+    "block_types": {
+      "text": 48,
+      "title": 12,
+      "abstract": 1,
+      "chart": 5,
+      "image": 5,
+      "table": 2,
+      "header": 3,
+      "footer": 1,
+      "page_number": 7
+    },
+    "span_types": {
+      "text": 298
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 84,
+        "bbox_fs": 48,
+        "blocks": 12,
+        "lines_deleted": 2
+      },
+      "line": {},
+      "span": {
+        "cross_page": 12
+      }
+    },
+    "serialized_size_bytes": 88025,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\25838861ddfa6206\\GET17\\auto\\GET17_middle.json",
+    "source_size_bytes": 717017,
+    "elapsed_seconds": 0.033502700040116906,
+    "peak_memory_bytes": 2903804,
+    "source_counts": {
+      "pages": 8,
+      "blocks": 114,
+      "discarded_blocks": 12,
+      "preproc_blocks": 114
+    },
+    "ir_counts": {
+      "pages": 8,
+      "blocks": 114,
+      "discarded_blocks": 12,
+      "lines": 296,
+      "spans": 296
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "title": 16,
+      "text": 83,
+      "abstract": 1,
+      "list": 1,
+      "table": 5,
+      "ref_text": 7,
+      "image": 1,
+      "header": 4,
+      "footer": 1,
+      "page_number": 7
+    },
+    "span_types": {
+      "text": 296
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 126,
+        "bbox_fs": 84,
+        "blocks": 6
+      },
+      "line": {
+        "is_list_end_line": 3,
+        "is_list_start_line": 2
+      },
+      "span": {}
+    },
+    "serialized_size_bytes": 99849,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\25995c5653354c19\\GTL_1171\\auto\\GTL_1171_middle.json",
+    "source_size_bytes": 322263,
+    "elapsed_seconds": 0.014636399922892451,
+    "peak_memory_bytes": 1350728,
+    "source_counts": {
+      "pages": 5,
+      "blocks": 53,
+      "discarded_blocks": 8,
+      "preproc_blocks": 53
+    },
+    "ir_counts": {
+      "pages": 5,
+      "blocks": 53,
+      "discarded_blocks": 8,
+      "lines": 148,
+      "spans": 148
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "title": 12,
+      "text": 32,
+      "abstract": 1,
+      "image": 3,
+      "ref_text": 4,
+      "list": 1,
+      "header": 3,
+      "footer": 1,
+      "page_number": 4
+    },
+    "span_types": {
+      "text": 148
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 61,
+        "bbox_fs": 33,
+        "lines_deleted": 1,
+        "blocks": 3
+      },
+      "line": {
+        "is_list_end_line": 2,
+        "is_list_start_line": 1
+      },
+      "span": {
+        "cross_page": 2
+      }
+    },
+    "serialized_size_bytes": 42459,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\2e99573bbfc9f497\\GOP  3\\auto\\GOP  3_middle.json",
+    "source_size_bytes": 293470,
+    "elapsed_seconds": 0.02483170002233237,
+    "peak_memory_bytes": 1212584,
+    "source_counts": {
+      "pages": 6,
+      "blocks": 55,
+      "discarded_blocks": 12,
+      "preproc_blocks": 55
+    },
+    "ir_counts": {
+      "pages": 6,
+      "blocks": 55,
+      "discarded_blocks": 12,
+      "lines": 115,
+      "spans": 115
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 1
+    },
+    "block_types": {
+      "title": 12,
+      "text": 34,
+      "image": 7,
+      "table": 1,
+      "chart": 1,
+      "header": 6,
+      "footer": 1,
+      "page_number": 5
+    },
+    "span_types": {
+      "text": 115
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 67,
+        "bbox_fs": 34,
+        "blocks": 9
+      },
+      "line": {},
+      "span": {}
+    },
+    "serialized_size_bytes": 39020,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\4a9063205fe01dcd\\Risk-Sharing Contracts and risk management of bilateral contracting in electricity markets [59cd38ef]\\auto\\Risk-Sharing Contracts and risk management of bilateral contracting in electricity markets [59cd38ef]_middle.json",
+    "source_size_bytes": 147611,
+    "elapsed_seconds": 0.007773800054565072,
+    "peak_memory_bytes": 641132,
+    "source_counts": {
+      "pages": 1,
+      "blocks": 12,
+      "discarded_blocks": 9,
+      "preproc_blocks": 12
+    },
+    "ir_counts": {
+      "pages": 1,
+      "blocks": 12,
+      "discarded_blocks": 9,
+      "lines": 81,
+      "spans": 81
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "title": 3,
+      "image": 1,
+      "text": 6,
+      "list": 1,
+      "abstract": 1,
+      "header": 7,
+      "page_footnote": 1,
+      "footer": 1
+    },
+    "span_types": {
+      "text": 81
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 21,
+        "blocks": 1,
+        "bbox_fs": 7,
+        "lines_deleted": 1
+      },
+      "line": {
+        "is_list_start_line": 6
+      },
+      "span": {}
+    },
+    "serialized_size_bytes": 20529,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\5b5b6712f845eea7\\A Gaussian Processes technique for short-term load forecasting with consideration of uncertainty; [A Gaussian Processes technique for short-term load [a2560b0d]\\auto\\A Gaussian Processes technique for short-term load forecasting with consideration of uncertainty; [A Gaussian Processes technique for short-term load [a2560b0d]_middle.json",
+    "source_size_bytes": 1475715,
+    "elapsed_seconds": 0.07121449999976903,
+    "peak_memory_bytes": 7260850,
+    "source_counts": {
+      "pages": 8,
+      "blocks": 191,
+      "discarded_blocks": 25,
+      "preproc_blocks": 191
+    },
+    "ir_counts": {
+      "pages": 8,
+      "blocks": 191,
+      "discarded_blocks": 25,
+      "lines": 568,
+      "spans": 762
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "title": 12,
+      "text": 99,
+      "chart": 6,
+      "abstract": 1,
+      "interline_equation": 34,
+      "ref_text": 33,
+      "table": 4,
+      "image": 2,
+      "header": 6,
+      "page_number": 8,
+      "footer": 7,
+      "page_footnote": 4
+    },
+    "span_types": {
+      "text": 614,
+      "inline_equation": 114,
+      "interline_equation": 34
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 216,
+        "bbox_fs": 99,
+        "lines_deleted": 6,
+        "blocks": 12
+      },
+      "line": {},
+      "span": {
+        "cross_page": 22
+      }
+    },
+    "serialized_size_bytes": 188766,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\5eb3bbfd573073cc\\GAE_0970\\auto\\GAE_0970_middle.json",
+    "source_size_bytes": 359728,
+    "elapsed_seconds": 0.015087599982507527,
+    "peak_memory_bytes": 1485226,
+    "source_counts": {
+      "pages": 5,
+      "blocks": 76,
+      "discarded_blocks": 7,
+      "preproc_blocks": 76
+    },
+    "ir_counts": {
+      "pages": 5,
+      "blocks": 76,
+      "discarded_blocks": 7,
+      "lines": 146,
+      "spans": 146
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "title": 18,
+      "text": 51,
+      "image": 7,
+      "header": 2,
+      "footer": 1,
+      "page_number": 4
+    },
+    "span_types": {
+      "text": 146
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 83,
+        "bbox_fs": 51,
+        "blocks": 7
+      },
+      "line": {},
+      "span": {}
+    },
+    "serialized_size_bytes": 45862,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\64fde0a612b00eda\\New approach to financial time series forecasting - Quantum minimization regularizing BWGC and NGARCH composite model [b94dcebb]\\auto\\New approach to financial time series forecasting - Quantum minimization regularizing BWGC and NGARCH composite model [b94dcebb]_middle.json",
+    "source_size_bytes": 682650,
+    "elapsed_seconds": 0.03038040001410991,
+    "peak_memory_bytes": 2743377,
+    "source_counts": {
+      "pages": 4,
+      "blocks": 115,
+      "discarded_blocks": 0,
+      "preproc_blocks": 115
+    },
+    "ir_counts": {
+      "pages": 4,
+      "blocks": 115,
+      "discarded_blocks": 0,
+      "lines": 273,
+      "spans": 320
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "title": 15,
+      "text": 46,
+      "abstract": 2,
+      "interline_equation": 27,
+      "ref_text": 19,
+      "table": 2,
+      "chart": 4
+    },
+    "span_types": {
+      "text": 264,
+      "interline_equation": 27,
+      "inline_equation": 29
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 115,
+        "bbox_fs": 46,
+        "lines_deleted": 2,
+        "blocks": 6
+      },
+      "line": {},
+      "span": {}
+    },
+    "serialized_size_bytes": 83041,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\6eb680ccc2de2053\\GMA_0502\\auto\\GMA_0502_middle.json",
+    "source_size_bytes": 787049,
+    "elapsed_seconds": 0.036125099984928966,
+    "peak_memory_bytes": 3274880,
+    "source_counts": {
+      "pages": 10,
+      "blocks": 107,
+      "discarded_blocks": 13,
+      "preproc_blocks": 107
+    },
+    "ir_counts": {
+      "pages": 10,
+      "blocks": 107,
+      "discarded_blocks": 13,
+      "lines": 352,
+      "spans": 354
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "title": 21,
+      "text": 45,
+      "abstract": 1,
+      "table": 5,
+      "ref_text": 31,
+      "image": 4,
+      "header": 3,
+      "footer": 1,
+      "page_number": 9
+    },
+    "span_types": {
+      "text": 354
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 120,
+        "bbox_fs": 45,
+        "lines_deleted": 3,
+        "blocks": 9
+      },
+      "line": {},
+      "span": {
+        "cross_page": 7
+      }
+    },
+    "serialized_size_bytes": 113178,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\7287d66be8689f84\\GIA30\\auto\\GIA30_middle.json",
+    "source_size_bytes": 521125,
+    "elapsed_seconds": 0.02057199995033443,
+    "peak_memory_bytes": 2118277,
+    "source_counts": {
+      "pages": 8,
+      "blocks": 79,
+      "discarded_blocks": 12,
+      "preproc_blocks": 79
+    },
+    "ir_counts": {
+      "pages": 8,
+      "blocks": 79,
+      "discarded_blocks": 12,
+      "lines": 201,
+      "spans": 208
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "text": 44,
+      "title": 10,
+      "image": 7,
+      "table": 4,
+      "ref_text": 14,
+      "header": 4,
+      "footer": 1,
+      "page_number": 7
+    },
+    "span_types": {
+      "text": 208
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 91,
+        "bbox_fs": 44,
+        "lines_deleted": 1,
+        "blocks": 11
+      },
+      "line": {},
+      "span": {
+        "cross_page": 3
+      }
+    },
+    "serialized_size_bytes": 76610,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\73d77f86e23cc143\\GMI29\\auto\\GMI29_middle.json",
+    "source_size_bytes": 744797,
+    "elapsed_seconds": 0.036822999943979084,
+    "peak_memory_bytes": 3086204,
+    "source_counts": {
+      "pages": 9,
+      "blocks": 132,
+      "discarded_blocks": 15,
+      "preproc_blocks": 132
+    },
+    "ir_counts": {
+      "pages": 9,
+      "blocks": 132,
+      "discarded_blocks": 15,
+      "lines": 317,
+      "spans": 317
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 1
+    },
+    "block_types": {
+      "title": 15,
+      "text": 87,
+      "abstract": 1,
+      "image": 11,
+      "chart": 1,
+      "ref_text": 17,
+      "header": 4,
+      "footer": 3,
+      "page_number": 8
+    },
+    "span_types": {
+      "text": 317
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 147,
+        "bbox_fs": 87,
+        "lines_deleted": 2,
+        "blocks": 12
+      },
+      "line": {},
+      "span": {
+        "cross_page": 5
+      }
+    },
+    "serialized_size_bytes": 96587,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\7451a4b6ca67e0f7\\GAT 25\\auto\\GAT 25_middle.json",
+    "source_size_bytes": 738274,
+    "elapsed_seconds": 0.032873100019060075,
+    "peak_memory_bytes": 2962308,
+    "source_counts": {
+      "pages": 10,
+      "blocks": 87,
+      "discarded_blocks": 14,
+      "preproc_blocks": 87
+    },
+    "ir_counts": {
+      "pages": 10,
+      "blocks": 87,
+      "discarded_blocks": 14,
+      "lines": 272,
+      "spans": 326
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 1
+    },
+    "block_types": {
+      "title": 15,
+      "text": 51,
+      "image": 4,
+      "table": 6,
+      "chart": 7,
+      "ref_text": 4,
+      "header": 4,
+      "footer": 1,
+      "page_number": 9
+    },
+    "span_types": {
+      "text": 295,
+      "inline_equation": 31
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 101,
+        "bbox_fs": 51,
+        "lines_deleted": 1,
+        "blocks": 17
+      },
+      "line": {},
+      "span": {
+        "cross_page": 9
+      }
+    },
+    "serialized_size_bytes": 100101,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\74bfefa812175005\\GAT06\\auto\\GAT06_middle.json",
+    "source_size_bytes": 561466,
+    "elapsed_seconds": 0.025785700068809092,
+    "peak_memory_bytes": 2255076,
+    "source_counts": {
+      "pages": 8,
+      "blocks": 74,
+      "discarded_blocks": 12,
+      "preproc_blocks": 74
+    },
+    "ir_counts": {
+      "pages": 8,
+      "blocks": 74,
+      "discarded_blocks": 12,
+      "lines": 244,
+      "spans": 246
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "text": 47,
+      "title": 13,
+      "abstract": 1,
+      "image": 8,
+      "table": 1,
+      "ref_text": 4,
+      "header": 4,
+      "footer": 1,
+      "page_number": 7
+    },
+    "span_types": {
+      "text": 245,
+      "inline_equation": 1
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 86,
+        "bbox_fs": 47,
+        "lines_deleted": 1,
+        "blocks": 9
+      },
+      "line": {},
+      "span": {
+        "cross_page": 2
+      }
+    },
+    "serialized_size_bytes": 73350,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\90d74e349676936f\\GDI_0685\\auto\\GDI_0685_middle.json",
+    "source_size_bytes": 656080,
+    "elapsed_seconds": 0.028331999899819493,
+    "peak_memory_bytes": 2633532,
+    "source_counts": {
+      "pages": 9,
+      "blocks": 88,
+      "discarded_blocks": 11,
+      "preproc_blocks": 88
+    },
+    "ir_counts": {
+      "pages": 9,
+      "blocks": 88,
+      "discarded_blocks": 11,
+      "lines": 272,
+      "spans": 273
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "title": 15,
+      "list": 1,
+      "abstract": 1,
+      "text": 47,
+      "image": 17,
+      "table": 2,
+      "ref_text": 5,
+      "header": 2,
+      "footer": 1,
+      "page_number": 8
+    },
+    "span_types": {
+      "text": 273
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 99,
+        "bbox_fs": 48,
+        "blocks": 19
+      },
+      "line": {
+        "is_list_start_line": 2,
+        "is_list_end_line": 2
+      },
+      "span": {}
+    },
+    "serialized_size_bytes": 85800,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\9462cfb6c1ab2a2a\\GAT_0845\\auto\\GAT_0845_middle.json",
+    "source_size_bytes": 860175,
+    "elapsed_seconds": 0.040833799983374774,
+    "peak_memory_bytes": 3484204,
+    "source_counts": {
+      "pages": 9,
+      "blocks": 133,
+      "discarded_blocks": 12,
+      "preproc_blocks": 133
+    },
+    "ir_counts": {
+      "pages": 9,
+      "blocks": 133,
+      "discarded_blocks": 12,
+      "lines": 365,
+      "spans": 365
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "title": 19,
+      "text": 103,
+      "code": 3,
+      "image": 4,
+      "table": 2,
+      "chart": 1,
+      "ref_text": 1,
+      "header": 2,
+      "page_number": 9,
+      "footer": 1
+    },
+    "span_types": {
+      "text": 365
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 145,
+        "bbox_fs": 103,
+        "blocks": 10,
+        "sub_type": 3,
+        "guess_lang": 2,
+        "lines_deleted": 1
+      },
+      "line": {},
+      "span": {
+        "cross_page": 2
+      }
+    },
+    "serialized_size_bytes": 116631,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\946fa881c7dd8341\\GCR12\\auto\\GCR12_middle.json",
+    "source_size_bytes": 632123,
+    "elapsed_seconds": 0.02995629992801696,
+    "peak_memory_bytes": 2610658,
+    "source_counts": {
+      "pages": 7,
+      "blocks": 96,
+      "discarded_blocks": 12,
+      "preproc_blocks": 96
+    },
+    "ir_counts": {
+      "pages": 7,
+      "blocks": 96,
+      "discarded_blocks": 12,
+      "lines": 276,
+      "spans": 286
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "title": 11,
+      "text": 62,
+      "interline_equation": 6,
+      "chart": 3,
+      "table": 2,
+      "ref_text": 8,
+      "image": 4,
+      "header": 5,
+      "footer": 1,
+      "page_number": 6
+    },
+    "span_types": {
+      "text": 275,
+      "interline_equation": 6,
+      "inline_equation": 5
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 108,
+        "bbox_fs": 62,
+        "lines_deleted": 2,
+        "blocks": 9
+      },
+      "line": {},
+      "span": {
+        "cross_page": 4
+      }
+    },
+    "serialized_size_bytes": 85056,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\9b2e5cedbcf3bdca\\GCR_0376\\auto\\GCR_0376_middle.json",
+    "source_size_bytes": 899884,
+    "elapsed_seconds": 0.039359599933959544,
+    "peak_memory_bytes": 3772456,
+    "source_counts": {
+      "pages": 9,
+      "blocks": 118,
+      "discarded_blocks": 14,
+      "preproc_blocks": 118
+    },
+    "ir_counts": {
+      "pages": 9,
+      "blocks": 118,
+      "discarded_blocks": 14,
+      "lines": 426,
+      "spans": 426
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 1,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "title": 15,
+      "text": 81,
+      "list": 1,
+      "chart": 1,
+      "image": 3,
+      "table": 2,
+      "interline_equation": 3,
+      "ref_text": 12,
+      "header": 2,
+      "footer": 4,
+      "page_number": 8
+    },
+    "span_types": {
+      "text": 423,
+      "interline_equation": 3
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 132,
+        "bbox_fs": 82,
+        "lines_deleted": 5,
+        "blocks": 6
+      },
+      "line": {
+        "is_list_end_line": 3,
+        "is_list_start_line": 2
+      },
+      "span": {
+        "cross_page": 15
+      }
+    },
+    "serialized_size_bytes": 124054,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\a0558cd565596819\\GOP_0316\\auto\\GOP_0316_middle.json",
+    "source_size_bytes": 695250,
+    "elapsed_seconds": 0.03106459998525679,
+    "peak_memory_bytes": 2790212,
+    "source_counts": {
+      "pages": 8,
+      "blocks": 75,
+      "discarded_blocks": 12,
+      "preproc_blocks": 75
+    },
+    "ir_counts": {
+      "pages": 8,
+      "blocks": 75,
+      "discarded_blocks": 12,
+      "lines": 293,
+      "spans": 293
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "title": 14,
+      "text": 37,
+      "abstract": 1,
+      "image": 3,
+      "table": 3,
+      "chart": 11,
+      "ref_text": 6,
+      "header": 2,
+      "footer": 1,
+      "page_number": 7,
+      "page_footnote": 2
+    },
+    "span_types": {
+      "text": 293
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 87,
+        "bbox_fs": 37,
+        "lines_deleted": 2,
+        "blocks": 17
+      },
+      "line": {},
+      "span": {
+        "cross_page": 5
+      }
+    },
+    "serialized_size_bytes": 92497,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\b5e4d88cd5692770\\GAT15\\auto\\GAT15_middle.json",
+    "source_size_bytes": 772611,
+    "elapsed_seconds": 0.034486599965021014,
+    "peak_memory_bytes": 3113903,
+    "source_counts": {
+      "pages": 9,
+      "blocks": 128,
+      "discarded_blocks": 13,
+      "preproc_blocks": 128
+    },
+    "ir_counts": {
+      "pages": 9,
+      "blocks": 128,
+      "discarded_blocks": 13,
+      "lines": 308,
+      "spans": 314
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "text": 82,
+      "title": 16,
+      "list": 1,
+      "table": 7,
+      "image": 8,
+      "chart": 2,
+      "ref_text": 12,
+      "header": 4,
+      "footer": 1,
+      "page_number": 8
+    },
+    "span_types": {
+      "text": 311,
+      "inline_equation": 3
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 141,
+        "bbox_fs": 83,
+        "lines_deleted": 1,
+        "blocks": 17
+      },
+      "line": {
+        "is_list_start_line": 4
+      },
+      "span": {
+        "cross_page": 2
+      }
+    },
+    "serialized_size_bytes": 103320,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\c01077e63ee98d45\\uerj_rede_sirius_procedimentos_bdtd\\auto\\uerj_rede_sirius_procedimentos_bdtd_middle.json",
+    "source_size_bytes": 159798,
+    "elapsed_seconds": 0.006915799924172461,
+    "peak_memory_bytes": 684141,
+    "source_counts": {
+      "pages": 3,
+      "blocks": 24,
+      "discarded_blocks": 3,
+      "preproc_blocks": 24
+    },
+    "ir_counts": {
+      "pages": 3,
+      "blocks": 24,
+      "discarded_blocks": 3,
+      "lines": 81,
+      "spans": 81
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "title": 5,
+      "text": 18,
+      "list": 1,
+      "header": 3
+    },
+    "span_types": {
+      "text": 81
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 27,
+        "bbox_fs": 19
+      },
+      "line": {
+        "is_list_start_line": 5
+      },
+      "span": {}
+    },
+    "serialized_size_bytes": 21029,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\c2882c23e0fec74c\\GAT07\\auto\\GAT07_middle.json",
+    "source_size_bytes": 674919,
+    "elapsed_seconds": 0.028963399934582412,
+    "peak_memory_bytes": 2708872,
+    "source_counts": {
+      "pages": 9,
+      "blocks": 95,
+      "discarded_blocks": 14,
+      "preproc_blocks": 95
+    },
+    "ir_counts": {
+      "pages": 9,
+      "blocks": 95,
+      "discarded_blocks": 14,
+      "lines": 273,
+      "spans": 274
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "text": 67,
+      "title": 14,
+      "abstract": 1,
+      "image": 6,
+      "table": 5,
+      "chart": 2,
+      "header": 5,
+      "footer": 1,
+      "page_number": 8
+    },
+    "span_types": {
+      "text": 274
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 109,
+        "bbox_fs": 67,
+        "lines_deleted": 1,
+        "blocks": 13
+      },
+      "line": {},
+      "span": {
+        "cross_page": 3
+      }
+    },
+    "serialized_size_bytes": 92125,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\ce786e93290d48c3\\GGT_1247\\auto\\GGT_1247_middle.json",
+    "source_size_bytes": 812577,
+    "elapsed_seconds": 0.03555969998706132,
+    "peak_memory_bytes": 3304353,
+    "source_counts": {
+      "pages": 10,
+      "blocks": 121,
+      "discarded_blocks": 14,
+      "preproc_blocks": 121
+    },
+    "ir_counts": {
+      "pages": 10,
+      "blocks": 121,
+      "discarded_blocks": 14,
+      "lines": 340,
+      "spans": 353
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "title": 17,
+      "text": 52,
+      "abstract": 1,
+      "table": 5,
+      "interline_equation": 4,
+      "chart": 8,
+      "ref_text": 33,
+      "image": 1,
+      "header": 3,
+      "footer": 2,
+      "page_number": 9
+    },
+    "span_types": {
+      "text": 342,
+      "interline_equation": 4,
+      "inline_equation": 7
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 135,
+        "bbox_fs": 52,
+        "lines_deleted": 1,
+        "blocks": 14
+      },
+      "line": {},
+      "span": {
+        "cross_page": 2
+      }
+    },
+    "serialized_size_bytes": 110926,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\d1b3b387fb758cdb\\GLT 28\\auto\\GLT 28_middle.json",
+    "source_size_bytes": 390899,
+    "elapsed_seconds": 0.03985549998469651,
+    "peak_memory_bytes": 1600683,
+    "source_counts": {
+      "pages": 6,
+      "blocks": 51,
+      "discarded_blocks": 10,
+      "preproc_blocks": 51
+    },
+    "ir_counts": {
+      "pages": 6,
+      "blocks": 51,
+      "discarded_blocks": 10,
+      "lines": 175,
+      "spans": 175
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 2
+    },
+    "block_types": {
+      "title": 11,
+      "text": 32,
+      "image": 8,
+      "header": 4,
+      "footer": 1,
+      "page_number": 5
+    },
+    "span_types": {
+      "text": 175
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 61,
+        "bbox_fs": 32,
+        "blocks": 8
+      },
+      "line": {},
+      "span": {}
+    },
+    "serialized_size_bytes": 51589,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\d4d3f18a6fc85185\\GDS08\\auto\\GDS08_middle.json",
+    "source_size_bytes": 546607,
+    "elapsed_seconds": 0.02604779996909201,
+    "peak_memory_bytes": 2195720,
+    "source_counts": {
+      "pages": 8,
+      "blocks": 96,
+      "discarded_blocks": 12,
+      "preproc_blocks": 96
+    },
+    "ir_counts": {
+      "pages": 8,
+      "blocks": 96,
+      "discarded_blocks": 12,
+      "lines": 180,
+      "spans": 191
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "text": 53,
+      "title": 22,
+      "abstract": 1,
+      "table": 4,
+      "image": 5,
+      "chart": 11,
+      "header": 4,
+      "footer": 1,
+      "page_number": 7
+    },
+    "span_types": {
+      "text": 191
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 108,
+        "bbox_fs": 53,
+        "blocks": 20
+      },
+      "line": {},
+      "span": {}
+    },
+    "serialized_size_bytes": 72968,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\d9a4f1829f20f986\\GDS_0748\\auto\\GDS_0748_middle.json",
+    "source_size_bytes": 928817,
+    "elapsed_seconds": 0.03679539996664971,
+    "peak_memory_bytes": 3724480,
+    "source_counts": {
+      "pages": 9,
+      "blocks": 93,
+      "discarded_blocks": 12,
+      "preproc_blocks": 93
+    },
+    "ir_counts": {
+      "pages": 9,
+      "blocks": 93,
+      "discarded_blocks": 12,
+      "lines": 357,
+      "spans": 387
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 1,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 1
+    },
+    "block_types": {
+      "title": 13,
+      "text": 46,
+      "abstract": 1,
+      "image": 5,
+      "interline_equation": 1,
+      "chart": 15,
+      "table": 2,
+      "ref_text": 10,
+      "header": 2,
+      "page_number": 9,
+      "footer": 1
+    },
+    "span_types": {
+      "text": 371,
+      "inline_equation": 15,
+      "interline_equation": 1
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 105,
+        "bbox_fs": 46,
+        "blocks": 22,
+        "lines_deleted": 3
+      },
+      "line": {},
+      "span": {
+        "cross_page": 7
+      }
+    },
+    "serialized_size_bytes": 119684,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\dd9a0ad9cbad7321\\metadata_williamson_1999_bureaucracies\\auto\\metadata_williamson_1999_bureaucracies_middle.json",
+    "source_size_bytes": 43929,
+    "elapsed_seconds": 0.002600100007839501,
+    "peak_memory_bytes": 163601,
+    "source_counts": {
+      "pages": 1,
+      "blocks": 12,
+      "discarded_blocks": 0,
+      "preproc_blocks": 12
+    },
+    "ir_counts": {
+      "pages": 1,
+      "blocks": 12,
+      "discarded_blocks": 0,
+      "lines": 19,
+      "spans": 19
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "title": 2,
+      "text": 9,
+      "abstract": 1
+    },
+    "span_types": {
+      "text": 19
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 12,
+        "bbox_fs": 9
+      },
+      "line": {},
+      "span": {}
+    },
+    "serialized_size_bytes": 5655,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\ddc583aa80df3de2\\GDI-31\\auto\\GDI-31_middle.json",
+    "source_size_bytes": 782457,
+    "elapsed_seconds": 0.029573600040748715,
+    "peak_memory_bytes": 3139040,
+    "source_counts": {
+      "pages": 9,
+      "blocks": 113,
+      "discarded_blocks": 1,
+      "preproc_blocks": 113
+    },
+    "ir_counts": {
+      "pages": 9,
+      "blocks": 113,
+      "discarded_blocks": 1,
+      "lines": 305,
+      "spans": 308
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "title": 27,
+      "text": 70,
+      "abstract": 1,
+      "table": 12,
+      "chart": 2,
+      "image": 1,
+      "header": 1
+    },
+    "span_types": {
+      "text": 308
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 114,
+        "bbox_fs": 70,
+        "lines_deleted": 2,
+        "blocks": 15
+      },
+      "line": {},
+      "span": {
+        "cross_page": 5
+      }
+    },
+    "serialized_size_bytes": 104196,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\dddd884b1439d722\\GAE_0419\\auto\\GAE_0419_middle.json",
+    "source_size_bytes": 934779,
+    "elapsed_seconds": 0.048041799920611084,
+    "peak_memory_bytes": 3963795,
+    "source_counts": {
+      "pages": 9,
+      "blocks": 137,
+      "discarded_blocks": 20,
+      "preproc_blocks": 137
+    },
+    "ir_counts": {
+      "pages": 9,
+      "blocks": 137,
+      "discarded_blocks": 20,
+      "lines": 439,
+      "spans": 444
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 1
+    },
+    "block_types": {
+      "title": 18,
+      "abstract": 1,
+      "text": 114,
+      "image": 4,
+      "header": 2,
+      "footer": 10,
+      "page_number": 8
+    },
+    "span_types": {
+      "text": 444
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 157,
+        "bbox_fs": 114,
+        "lines_deleted": 1,
+        "blocks": 4
+      },
+      "line": {},
+      "span": {
+        "cross_page": 2
+      }
+    },
+    "serialized_size_bytes": 125926,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\df3d4339b028b1d9\\GMI23\\auto\\GMI23_middle.json",
+    "source_size_bytes": 634805,
+    "elapsed_seconds": 0.025135800009593368,
+    "peak_memory_bytes": 2563409,
+    "source_counts": {
+      "pages": 8,
+      "blocks": 84,
+      "discarded_blocks": 12,
+      "preproc_blocks": 84
+    },
+    "ir_counts": {
+      "pages": 8,
+      "blocks": 84,
+      "discarded_blocks": 12,
+      "lines": 266,
+      "spans": 269
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "title": 14,
+      "text": 58,
+      "abstract": 1,
+      "table": 8,
+      "interline_equation": 1,
+      "chart": 1,
+      "image": 1,
+      "header": 4,
+      "footer": 1,
+      "page_number": 7
+    },
+    "span_types": {
+      "text": 267,
+      "interline_equation": 1,
+      "inline_equation": 1
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 96,
+        "bbox_fs": 58,
+        "lines_deleted": 1,
+        "blocks": 10
+      },
+      "line": {},
+      "span": {
+        "cross_page": 6
+      }
+    },
+    "serialized_size_bytes": 91307,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\f250360d4e75afc7\\GGH_0320\\auto\\GGH_0320_middle.json",
+    "source_size_bytes": 753775,
+    "elapsed_seconds": 0.03317619999870658,
+    "peak_memory_bytes": 3099413,
+    "source_counts": {
+      "pages": 10,
+      "blocks": 94,
+      "discarded_blocks": 15,
+      "preproc_blocks": 94
+    },
+    "ir_counts": {
+      "pages": 10,
+      "blocks": 94,
+      "discarded_blocks": 15,
+      "lines": 310,
+      "spans": 370
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 0
+    },
+    "block_types": {
+      "title": 14,
+      "abstract": 1,
+      "text": 53,
+      "image": 5,
+      "chart": 2,
+      "interline_equation": 1,
+      "table": 2,
+      "ref_text": 16,
+      "header": 4,
+      "page_number": 10,
+      "footer": 1
+    },
+    "span_types": {
+      "text": 351,
+      "inline_equation": 18,
+      "interline_equation": 1
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 109,
+        "bbox_fs": 53,
+        "blocks": 9,
+        "lines_deleted": 2
+      },
+      "line": {},
+      "span": {
+        "cross_page": 17
+      }
+    },
+    "serialized_size_bytes": 103467,
+    "valid": true,
+    "error": null
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\f6fe04afeb14dfbe\\GOP  2\\auto\\GOP  2_middle.json",
+    "source_size_bytes": 735045,
+    "elapsed_seconds": 0.03003519994672388,
+    "peak_memory_bytes": 2949376,
+    "source_counts": {
+      "pages": 8,
+      "blocks": 96,
+      "discarded_blocks": 12,
+      "preproc_blocks": 96
+    },
+    "ir_counts": {
+      "pages": 8,
+      "blocks": 96,
+      "discarded_blocks": 12,
+      "lines": 299,
+      "spans": 300
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true,
+      "no_content_discarded_overlap": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "null_metrics": {
+      "blocks_without_type": 0,
+      "blocks_without_bbox": 0,
+      "lines_without_bbox": 0,
+      "spans_without_type": 0,
+      "text_spans_without_text": 1
+    },
+    "block_types": {
+      "text": 70,
+      "title": 17,
+      "abstract": 1,
+      "table": 1,
+      "image": 3,
+      "code": 2,
+      "list": 2,
+      "header": 4,
+      "footer": 1,
+      "page_number": 7
+    },
+    "span_types": {
+      "text": 300
+    },
+    "attribute_keys": {
+      "document": {
+        "_backend": 1,
+        "_version_name": 1
+      },
+      "page": {},
+      "block": {
+        "index": 108,
+        "bbox_fs": 72,
+        "blocks": 6,
+        "lines_deleted": 1,
+        "sub_type": 2
+      },
+      "line": {
+        "is_list_start_line": 4,
+        "is_list_end_line": 2
+      },
+      "span": {
+        "cross_page": 5
+      }
+    },
+    "serialized_size_bytes": 95320,
+    "valid": true,
+    "error": null
+  }
+]
