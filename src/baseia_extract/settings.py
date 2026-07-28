@@ -66,6 +66,9 @@ class Settings:
     chunks_dir: Path
     mineru_api_urls: tuple[str, ...]
     mineru_version: str
+    mineru_remote_venv: str
+    mineru_remote_models_root: str
+    mineru_remote_output_root: str
     mineru_workers_per_pod: int
     mineru_retries: int
     mineru_backend: str
@@ -111,6 +114,18 @@ def get_settings() -> Settings:
         chunks_dir=data_dir / "chunks",
         mineru_api_urls=(),
         mineru_version=os.getenv("MINERU_VERSION", "3.4.0").strip(),
+        mineru_remote_venv=os.getenv(
+            "MINERU_VENV",
+            "/workspace/.venv",
+        ).strip(),
+        mineru_remote_models_root=os.getenv(
+            "MINERU_MODELS_ROOT",
+            "/workspace/mineru-models",
+        ).strip(),
+        mineru_remote_output_root=os.getenv(
+            "MINERU_API_OUTPUT_ROOT",
+            "/tmp/mineru-api-output",
+        ).strip(),
         mineru_workers_per_pod=_int_env("MINERU_WORKERS_PER_POD", 8),
         mineru_retries=_int_env("MINERU_RETRIES", 2),
         mineru_backend=os.getenv("MINERU_BACKEND", "pipeline"),
@@ -190,6 +205,13 @@ def get_settings() -> Settings:
 
     if not result.mineru_version:
         raise ValueError("MINERU_VERSION não pode ficar vazio.")
+    for name, value in (
+        ("MINERU_VENV", result.mineru_remote_venv),
+        ("MINERU_MODELS_ROOT", result.mineru_remote_models_root),
+        ("MINERU_API_OUTPUT_ROOT", result.mineru_remote_output_root),
+    ):
+        if not value.startswith("/"):
+            raise ValueError(f"{name} deve ser um caminho absoluto no pod.")
     if result.mineru_workers_per_pod < 1:
         raise ValueError("MINERU_WORKERS_PER_POD deve ser maior que zero.")
     if result.mineru_retries < 0:
