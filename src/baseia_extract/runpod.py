@@ -103,7 +103,7 @@ def _extract_pod_id(payload: object) -> str:
 def create_pod(*, template_id: str, index: int) -> ManagedPod:
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
     name = f"{settings.runpod_name_prefix}-{timestamp}-{index:02d}"
-    create_args = [
+    payload = _runpodctl(
         "pod",
         "create",
         f"--template-id={template_id}",
@@ -111,11 +111,7 @@ def create_pod(*, template_id: str, index: int) -> ManagedPod:
         f"--gpu-count={settings.runpod_gpu_count}",
         f"--terminate-after={settings.runpod_terminate_after}",
         f"--name={name}",
-    ]
-    if settings.network_volume_id:
-        create_args.append(f"--network-volume-id={settings.network_volume_id}")
-
-    payload = _runpodctl(*create_args)
+    )
     pod_id = _extract_pod_id(payload)
     return ManagedPod(
         pod_id=pod_id,
