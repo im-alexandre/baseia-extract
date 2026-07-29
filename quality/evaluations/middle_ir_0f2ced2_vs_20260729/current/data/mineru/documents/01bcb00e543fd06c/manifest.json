@@ -1,0 +1,128 @@
+{
+  "artifact_bytes": 2047234,
+  "artifacts": [
+    {
+      "bytes": 32529,
+      "path": "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718/auto/01bcb00e543fd06c.md",
+      "sha256": "ff3c221eb28d600fd8fb81e5dfe18f3a89e7393da091fff7b722217c23302648"
+    },
+    {
+      "bytes": 53233,
+      "path": "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718/auto/01bcb00e543fd06c_content_list.json",
+      "sha256": "b2c06aa0d6f519aa65c4bcac975e916b3ff25797632148bbfc2407db607bba45"
+    },
+    {
+      "bytes": 81587,
+      "path": "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718/auto/01bcb00e543fd06c_content_list_v2.json",
+      "sha256": "87a7272912af7007734b5a0be99392ec15d63155476b19d26c540c88f7e64f0e"
+    },
+    {
+      "bytes": 782743,
+      "path": "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718/auto/01bcb00e543fd06c_middle.json",
+      "sha256": "814b155ce7c869df246e62cdca32cd67a92aecf5bbb6b82ba5b007dd43f1c187"
+    },
+    {
+      "bytes": 23018,
+      "path": "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718/auto/images/0946bd1268a50c446b48c0d62bb61b0f3ae71dae2ad00e72b8e2b20f55f32083.jpg",
+      "sha256": "b45154c23644a190d2c279873b643ed788acb6198ca55137dc26036540ab07ed"
+    },
+    {
+      "bytes": 30022,
+      "path": "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718/auto/images/0956fec035c987c625e2ac76fcd6a3a5931857016f411321c69dc19f4902998f.jpg",
+      "sha256": "d3c6420a87a47e3d87b0710984bb38a34aab19822de6e4fbf3b36d976f8d50a4"
+    },
+    {
+      "bytes": 48114,
+      "path": "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718/auto/images/1ee22a0beafdbbc2642ffd04492ef1a48fa78494815c765cee9d4982b0fc1504.jpg",
+      "sha256": "44ac016862703a81d4b77a5ce65401c8f1b1df5a7feac2391b12906d1f27c51e"
+    },
+    {
+      "bytes": 16531,
+      "path": "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718/auto/images/2d3f666f9ed69ccf3ec18f7154c4aea786af7f4b23e898faca09edb74a74298f.jpg",
+      "sha256": "990b3070ea35cad229e3c27e5237902ff9a7c91cccbc1fc1758f44e7bbd45afd"
+    },
+    {
+      "bytes": 25655,
+      "path": "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718/auto/images/5757a04d5addb1a0adbb5fbbdc65db77d60f508096bbe99c79b485ed773a8edb.jpg",
+      "sha256": "f8bd1f2832b24bc97d83cbb08c041039b03a2c2440673c29ec816c11ccac4b69"
+    },
+    {
+      "bytes": 23386,
+      "path": "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718/auto/images/6b44b6f65c066fc0ef5d04331cdc6786646add14252a0e72f354b0cd4564e630.jpg",
+      "sha256": "9ec726ffd73d57a4fc1168003edc45dafe88f3101ba80bb8be81327ba80b7203"
+    },
+    {
+      "bytes": 23398,
+      "path": "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718/auto/images/70bd3632e7255a101f2ffb434312cd8b56544aced108d2b86c19f512d9cb3ab7.jpg",
+      "sha256": "590adda38d889baed70704d15358224e778337b5c40f9469c09121ca41c1dc03"
+    },
+    {
+      "bytes": 28206,
+      "path": "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718/auto/images/751969f5903d32fb2241e5fd5dd4a03372849972706a605955cd44ebe3c13919.jpg",
+      "sha256": "3f6315f5beda8ce3846de833e116c5177bc9369dd0779a02b367983ee8c5a762"
+    },
+    {
+      "bytes": 20235,
+      "path": "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718/auto/images/76abf7f79a8e6c2446c53d4ad26e097da896e4d2c812a325e41460cba5b1f6f1.jpg",
+      "sha256": "1640ed9b4b5772590d9db0bb99406ed341997979e463f3a708e1e665a22a89a4"
+    },
+    {
+      "bytes": 6654,
+      "path": "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718/auto/images/9c266691d959d6c65a42893b599202f8ff63138e861a2bc974d9a151082353a8.jpg",
+      "sha256": "bad31f339af23f060ba4ca36deb310a59f0fabb16977a1de13d1b6225eb6f5a2"
+    },
+    {
+      "bytes": 23848,
+      "path": "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718/auto/images/c421c047128b7b0c92b99212cb9274ba32f9f941bb6efdf7fbc328b093705077.jpg",
+      "sha256": "90f34c832a3cfde51528197b79a63f08446582bc6790a76a375d895c4299b3be"
+    },
+    {
+      "bytes": 24880,
+      "path": "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718/auto/images/cc05d3adf4a571359a57ce8d3777ec9658b44065cd00a903383ce953e5f59c10.jpg",
+      "sha256": "c25349a2a5205829c7cb22669472f81edb888156b7c4a1460721debb72b2473d"
+    },
+    {
+      "bytes": 15935,
+      "path": "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718/auto/images/e5920563ff03793032d9d24a6bebe78d4fd89dd270c46d346a0d7091e07a5989.jpg",
+      "sha256": "27e060c0d2ed23a8b3047e48733101cb6a5e3fe59d1fdc4b9a96122c178e3371"
+    },
+    {
+      "bytes": 26416,
+      "path": "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718/auto/images/ea59939bd41160fbbec9ce2a8182a3f670328f30414f6d13b8224269f380661a.jpg",
+      "sha256": "be6b4b58cd64422475ed58bd087ce16488ebe7bd9f9af81b3f28dad52ebe2709"
+    },
+    {
+      "bytes": 22514,
+      "path": "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718/auto/images/f57774f04e658278de0abcdf17793ce1dd25a53c4d21c524f2cebc76274184b7.jpg",
+      "sha256": "05a397a0bb6c08b1fbfc73f208aa0212cb82ada3e67c131150380b3dd213a214"
+    },
+    {
+      "bytes": 738330,
+      "path": "uploads/01bcb00e543fd06c.pdf",
+      "sha256": "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718"
+    }
+  ],
+  "completed_at": "2026-07-29T06:38:19.685235+00:00",
+  "correlation_key": "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718",
+  "created_at": "2026-07-29T06:38:00.213810+00:00",
+  "duration_seconds": 19.471,
+  "error": null,
+  "file_count": 20,
+  "gpu_id": "0",
+  "package_dir": "tasks/2d17b4ac-de0f-41a6-a956-55e8f6ba95db",
+  "page_count": 10,
+  "persisted_at": "2026-07-29T06:38:22.864029+00:00",
+  "pod_id": null,
+  "schema_version": 1,
+  "source_dir": "/workspace/results/.active/local-gpu-0/output/6115e271-e23a-43c6-8635-2b416f8eb826",
+  "source_filenames": [
+    "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718"
+  ],
+  "started_at": "2026-07-29T06:38:00.214626+00:00",
+  "status": "completed",
+  "submitted_at": "2026-07-29T06:38:00.224060+00:00",
+  "task_id": "2d17b4ac-de0f-41a6-a956-55e8f6ba95db",
+  "upstream_base_url": "http://127.0.0.1:54463",
+  "upstream_server_id": "local-gpu-0",
+  "upstream_task_id": "6115e271-e23a-43c6-8635-2b416f8eb826"
+}

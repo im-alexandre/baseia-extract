@@ -1,0 +1,2539 @@
+[
+    [
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "Chain of Optimization Models for Setting the Energy Dispatch and Spot Price in the Brazilian System"
+                    }
+                ],
+                "level": 1
+            },
+            "bbox": [
+                98,
+                81,
+                901,
+                121
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "M.E.P.Maceira CEPEL, UERJ"
+                    }
+                ]
+            },
+            "bbox": [
+                145,
+                128,
+                265,
+                156
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "L.A.Terry CEPEL"
+                    }
+                ]
+            },
+            "bbox": [
+                318,
+                128,
+                395,
+                155
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "F.S.Costa CEPEL, UERJ"
+                    }
+                ]
+            },
+            "bbox": [
+                447,
+                128,
+                560,
+                156
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "J.M.Damázio UERJ"
+                    }
+                ]
+            },
+            "bbox": [
+                595,
+                128,
+                703,
+                155
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "A.C.G.MeloCEPEL, UERJ"
+                    }
+                ]
+            },
+            "bbox": [
+                743,
+                128,
+                855,
+                155
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "CEPEL, Electric Power Research Center UERJ, State University of Rio de Janeiro Rio de Janeiro, Brazil"
+                    }
+                ]
+            },
+            "bbox": [
+                343,
+                168,
+                652,
+                211
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Abstract – This work describes the main features of the computational system for the electric-energetic operation planning and programming of the Brazilian energetic system. A chain of optimization models with different planning horizons and degrees of detail in system representation compose it. This computational system was proposed to the Brazilian Independent System Operator (ONS) and currently is being gradually implemented. ONS is responsible for central system optimization and dispatch according to clearly defined rules agreed by all industry members and approved by the Regulatory Body (ANEEL). The optimization models also calculate the water values that will form the basis for determining the Wholesale Energy Market (MAE) spot price."
+                    }
+                ]
+            },
+            "bbox": [
+                90,
+                230,
+                478,
+                403
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Keywords: Hydrothermal systems, optimisation model, simulation model, operation planning, operation programming"
+                    }
+                ]
+            },
+            "bbox": [
+                90,
+                409,
+                478,
+                448
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "1 - INTRODUCTION"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                214,
+                461,
+                374,
+                475
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Brazil has a population of 160 million inhabitants, a land area slightly smaller than the United States, and economic output of nearly US$ 800 billion, half of Latin America economic output. The industry output is responsible for 37% of the GDP, indicating its maturity level. Brazilian economy is integrated in a regional trade zone (MERCOSUL) with Argentina, Uruguay and Paraguay which objective is to increase the competitiveness of the regional economies."
+                    }
+                ]
+            },
+            "bbox": [
+                90,
+                483,
+                479,
+                608
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The Brazilian power system is composed of two large interconnected systems. The first one corresponds to the South, Southeast and Central-West Regions (SSE), responsible for 79% of the consumption, and the second one, to the Northeast and part of the North Region (NNE), responsible for 19% of the consumption. Since December 1998, a 500 kV, 1,000 MW, 1,000 km is interconnecting these two systems. There is also an isolated system in the Northern Region, responsible for the remaining 2% of consumption. Figures 1 and 2 illustrate the Brazilian main transmission grid and the subsystems."
+                    }
+                ]
+            },
+            "bbox": [
+                88,
+                612,
+                479,
+                779
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "This work describes the main features of the computational system for the electric-energetic operation planning and programming of the Brazilian system. A chain of optimization models with different planning horizons and degrees of detail in system representation compose this computational system. It was proposed to the Brazilian Independent System Operator (ONS) and currently is being gradually implemented. ONS is responsible for central system optimization and dispatch according to clearly defined rules agreed by all industry members and approved by the Regulatory Body (ANEEL). The optimization models also compute the water values that form the basis for determining the Wholesale Energy Market (MAE) spot price."
+                    }
+                ]
+            },
+            "bbox": [
+                88,
+                783,
+                479,
+                909
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                516,
+                231,
+                906,
+                314
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/5434dff6e78fe4129c4621d7b921fb2993cc3ae1c15ba78a1960cdf22b7aaec3.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 1 – Brazilian Main Transmission Grid"
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                530,
+                317,
+                894,
+                521
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/07e72fd9f8b934dfc71b5b32a82a5e1241cc19331323aeb0cedd98b85bbf9bbb.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 2 – Brazilian Subsystems"
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                550,
+                539,
+                870,
+                750
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "2 - CHARACTERISTICS OF THE BRAZILIAN SYSTEM"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                535,
+                788,
+                889,
+                815
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The Brazilian system is hydro dominated (more than 90% of the installed capacity) and characterized by large reservoirs presenting multi-year regulation capability, arranged in complex cascades over several river basins. It is a large-scale system presenting 84 hydro plants and 28 thermal plants (2 of them are nuclear), totaling more than 200 units. There are also isolated electric systems of varying sizes, mostly located in the North region. The hydro plants use store water in the reservoirs to produce energy in the future, replacing fuel costs from the thermal units. However, the future water inflows have a stochastic behavior that is dependent on future rainfall, which cannot be accurately predicted. Moreover, the amount of inflows varies greatly in different seasons, as can be seen in Figure 3, and even from year to year. This can be explained by the high coefficient of variation of the monthly inflows, as shown in Figure 4. Another characteristic is that the historical inflow records present very dry periods, some greater than one year, as can be shown in Figure 5."
+                    }
+                ]
+            },
+            "bbox": [
+                516,
+                823,
+                906,
+                907
+            ]
+        }
+    ],
+    [
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                88,
+                84,
+                479,
+                276
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/90cdfceff8790729b13c31e53e8c7b10c1ab19a56b8090a57818a439b0001c53.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 3 – Monthly Average Energy Infows"
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                98,
+                281,
+                469,
+                420
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/d96db2d2bae5692f5a8d43ef23f52a06c5a125af0a0fa5d2823d78c13ed53989.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 4 – Monthly Energy Infows Coefficient of Variation"
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                98,
+                444,
+                468,
+                593
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The limited reservoir volumes plus the variability of future inflows produce a link between an operating decision in a given stage and the future consequences of the decision. For example, if the operation decision is to deplete the stocks of hydroelectric energy, and low inflows volumes occur, the hydroelectric plants may not have enough water to supply the demand in the future. As a consequence, it may be necessary to use very expensive thermal generation in the future, or even fail to supply the load. On the other hand, if the reservoir levels are kept high through a more intensive use of thermal generation at higher costs, and high inflow volumes occur, the reservoir capacities may be exceeded and there will be spillage in the system, which means a waste of energy."
+                    }
+                ]
+            },
+            "bbox": [
+                88,
+                629,
+                479,
+                838
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In summary, the Brazilian hydrothermal operation problem has the following characteristics:"
+                    }
+                ]
+            },
+            "bbox": [
+                90,
+                842,
+                478,
+                871
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• It is coupled in time as an operation decision today affects future operation costs;"
+                    }
+                ]
+            },
+            "bbox": [
+                90,
+                878,
+                476,
+                906
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• It is essentially stochastic, due to the uncertainty about future inflows;"
+                    }
+                ]
+            },
+            "bbox": [
+                518,
+                84,
+                904,
+                112
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• The inflow historical records present multi-year dry periods;"
+                    }
+                ]
+            },
+            "bbox": [
+                518,
+                112,
+                904,
+                140
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• The reservoirs present multi-year regulation capability;"
+                    }
+                ]
+            },
+            "bbox": [
+                518,
+                141,
+                906,
+                168
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• The water released from one hydro plant affects the other plants downstream;"
+                    }
+                ]
+            },
+            "bbox": [
+                518,
+                168,
+                906,
+                195
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The worth of energy generated in a hydro plant cannot be measured directly as a function of the plant state alone, but rather in terms of fuel cost savings from avoided thermal generation;"
+                    }
+                ]
+            },
+            "bbox": [
+                516,
+                197,
+                907,
+                252
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• There is a trade-off between operation cost and supply reliability."
+                    }
+                ]
+            },
+            "bbox": [
+                518,
+                252,
+                906,
+                281
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Besides all these characteristics, the daily dispatch programming should take into account the thermal and hydro unit commitment. As a consequence, the operations scheduling ranges from multi-year reservoir optimization to hourly dispatch."
+                    }
+                ]
+            },
+            "bbox": [
+                516,
+                286,
+                907,
+                357
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/5450027d2277fba56160482245fca50abd5e2c9cfc183b77ffa0da1ccccbb7c8.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 5 – A Dry Period in The Southeast System"
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                525,
+                363,
+                897,
+                501
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Load growth rates in Brazil have been historically high, mostly due to the country's industrialization effort. In the 1970s, average growth rates were 9%. Even with the economic recession of the late 1980s and early 1990s, growth rates averaged 4%. In 1997, firm load increase was around 6%. Forecasts made by CCPE (Coordinating Committee for System Expansion Planning) indicate an average growth around 5.1%, for the next ten years."
+                    }
+                ]
+            },
+            "bbox": [
+                516,
+                524,
+                907,
+                649
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Hydropower is expected to remain the dominant source of electrical power because of the country’s high load growth rates and the availability of a great hydro potential to be exploited. Nevertheless the participation of thermal plants in the system is expected to increase in view of the advances in gas turbine technology and because the exploitation of economic hydro sites follows a crescent cost behavior."
+                    }
+                ]
+            },
+            "bbox": [
+                516,
+                655,
+                907,
+                764
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "3 - THE BRAZILIAN RESTRUCTURING PROCESS"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                565,
+                785,
+                877,
+                812
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In the new trading model for the Brazilian electricity sector there is a Wholesale Energy Market (MAE – Mercado Atacadista de Energia), where all buyers and sellers of electricity can trade and where the spot price of energy will be determined. The MAE was created by a multilateral agreement which is compulsory for all generators with installed capacity greater 50 MW and for all distribution and retail companies with consumption grater than 100 GWh per annum. Large consumers with demand above the threshold for the free market (currently 10MW) can choose to become MAE members."
+                    }
+                ]
+            },
+            "bbox": [
+                516,
+                819,
+                909,
+                903
+            ]
+        }
+    ],
+    [
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                88,
+                84,
+                479,
+                167
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The main objectives of the MAE are [1]:"
+                    }
+                ]
+            },
+            "bbox": [
+                109,
+                173,
+                389,
+                187
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• to set a price which reflects, in each time period, the marginal cost of energy on the system. This price will support the long term bilateral contracts;"
+                    }
+                ]
+            },
+            "bbox": [
+                90,
+                194,
+                478,
+                236
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• to provide a marketplace in which generators and retailers can trade their uncontracted energy;"
+                    }
+                ]
+            },
+            "bbox": [
+                90,
+                236,
+                478,
+                263
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• to create a multilateral environment to support the development of competition under which a retailer may buy from any generator and a generator may sell to any retailer."
+                    }
+                ]
+            },
+            "bbox": [
+                90,
+                264,
+                478,
+                320
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In such environment, there will be competition in the generation and trading segments, while the transmission and distribution segments will remain as natural monopolies, subject to regulated tariffs. The competition among the generation companies will be associated to the establishment of bilateral long-term contracts with the loads. The bilateral contracts are financial instruments, which specify a contract price for a fixed volume of energy. In other words, the generators receive a negotiated payment from loads and, in exchange, become responsible for their spot tariffs. These bilateral contracts reduce the exposure to the spot prices."
+                    }
+                ]
+            },
+            "bbox": [
+                88,
+                326,
+                479,
+                505
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The trading arrangements are based around a tight, centralized system optimization, scheduling and dispatch scheme. In this approach hydro and thermal generators submit basically technical data on their plant, such as water levels in the reservoirs, rate of inflow, technical availability of the turbines, thermal efficiency, fuel and operating cost data, etc. Thermal plants are allowed to bid operational prices in a narrow range."
+                    }
+                ]
+            },
+            "bbox": [
+                88,
+                510,
+                479,
+                622
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Based on the received technical data, the ONS establishes a generation schedule which describes which generation plants should be dispatched and the associated generation target in order to achieve least cost operation of the whole system. This schedule is obtained through a chain of optimization models that also calculates the water values. The water values form the basis for determining the MAE price in each period. Figure 6 illustrates the relationship between ONS, MAE, generators and load."
+                    }
+                ]
+            },
+            "bbox": [
+                88,
+                627,
+                479,
+                766
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Generators and retailers will continue to trade most of their energy via bilateral contracts. These contracts will originate payments from retailers to generators. The price and volume of energy specified in the bilateral contracts will determine the size of such payments."
+                    }
+                ]
+            },
+            "bbox": [
+                88,
+                770,
+                479,
+                842
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "After deduction of the sales and purchases covered by bilateral contracts, the net requirements of generators and retailers will be traded in the MAE thus being subject to the MAE price."
+                    }
+                ]
+            },
+            "bbox": [
+                88,
+                846,
+                478,
+                902
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/97e844381488b838055aa692cde7a6073a95671e97c9dd17f1756c183b2d6068.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 6 – ONS, MAE, Generators and Load"
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                526,
+                81,
+                894,
+                252
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "It is important to observe that all energy flows will be taken into account in determining the optimal generation schedule, dispatch and the MAE price. However, only the uncontracted energy flows would be subject to the MAE price."
+                    }
+                ]
+            },
+            "bbox": [
+                516,
+                279,
+                907,
+                349
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "To determine the MAE price, only the major transmission constraints will be taken into account. Therefore, the Brazilian interconnected system will be divided into a small number of regions (currently four), denoted as “submarkets” or “subsystems”, which will reflect the effects of these more important transmission limitations. The MAE price will be determined for each submarket and transmission loss allocation factors will be used to calculate the final price for each generator and load inside each submarket."
+                    }
+                ]
+            },
+            "bbox": [
+                516,
+                355,
+                907,
+                492
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Generators and loads will also pay a yearly fixed transmission use of the system charge ($/installed kW for generators and $/yearly peak for loads), which depends on their location. This tariff does not depend on bilateral contracts, i.e., there are no wheeling rates."
+                    }
+                ]
+            },
+            "bbox": [
+                516,
+                497,
+                907,
+                567
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "4 - THE OPERATION PLANNING MODELS"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                552,
+                586,
+                890,
+                600
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Mathematical algorithms compose the core of the Energy Operation Programming/Planning Support System -SAPPE system. Figure 7 illustrates the chain of models with different planning horizons and degrees of detail in system representation, proposed to the Brazilian system. The operations scheduling ranges from long term multi-year reservoir optimization to short term hourly dispatch. Stochastic dual dynamic programming algorithms are applied to determine the optimal allocation of hydro and thermal resources in the long and mid-term operation planning. In turn, for the short term operation programming a dual dynamic programming coupled to Lagrangian decomposition scheme is applied."
+                    }
+                ]
+            },
+            "bbox": [
+                516,
+                608,
+                907,
+                801
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The objective of the operation planning of a hydrothermal system is to calculate an operation strategy which, for each stage of the planning period, given the system state at the beginning of the stage, produces generation targets for each plant. The state system should include the reservoir storage level and information about “hydrologic trend”, for example, the last p inflow volumes. Long term operation planning uses energy storage in the aggregated reservoir and the previous energy inflows of each subsystem. The mid term operation planning and the short term operation programming use the storage and the previous inflows for each hydro plant. The strategy minimizes the expected value of the operation cost during the period, which is composed of fuel costs plus penalties for failure in load supply. If the inflow volumes are known at the beginning of each stage, stochastic dual dynamic programming, represented by the following recursive equation can solve the operation dispatch problem:"
+                    }
+                ]
+            },
+            "bbox": [
+                515,
+                807,
+                907,
+                904
+            ]
+        }
+    ],
+    [
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                88,
+                83,
+                478,
+                249
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "\\alpha _ { \\mathrm { t } } ( \\mathrm { X } _ { \\mathrm { t } } ) = \\operatorname { E } _ { \\mathrm { A } _ { \\mathrm { t } } | \\mathrm { X } _ { \\mathrm { t } } } \\left( \\operatorname* { m i n } \\sum _ { \\mathrm { t h e r m a l } \\mathrm { p l a n t s } } \\mathrm { C } _ { \\mathrm { t } } \\mathrm { G T } _ { \\mathrm { t } } + \\frac { 1 } { \\beta } \\alpha _ { \\mathrm { t } + 1 } ( \\mathrm { X } _ { \\mathrm { t } + 1 } ) \\right)",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/c1669f6e1ac1105d578d10a8843c7dd0a2d8d8e02edc8b3cd626f025c28f05c4.jpg"
+                }
+            },
+            "bbox": [
+                110,
+                256,
+                461,
+                300
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "\\forall \\ : \\mathrm { t } = \\mathrm { T } , \\ : \\mathrm { T } { - } 1 , . . . , 1",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/aa24c3442ae6910a22a7948a415307f73725c267a47ea0405128c513f6e683a5.jpg"
+                }
+            },
+            "bbox": [
+                109,
+                307,
+                238,
+                323
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "subject to"
+                    }
+                ]
+            },
+            "bbox": [
+                109,
+                328,
+                181,
+                344
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Storage balance equation in each hydro plant or subsystem aggregated reservoir"
+                    }
+                ]
+            },
+            "bbox": [
+                90,
+                350,
+                478,
+                378
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "\\begin{array} { r } { \\mathbf { V } _ { \\mathrm { t + 1 } } = \\mathbf { V } _ { \\mathrm { t } } + \\mathbf { A } _ { \\mathrm { t } } - \\mathbf { Q } _ { \\mathrm { t } } - \\mathbf { S } _ { \\mathrm { t } } + \\displaystyle \\sum _ { \\mathrm { i m e d i a t l y } } ( \\mathbf { Q } _ { \\mathrm { t } } + \\mathbf { S } _ { \\mathrm { t } } ) - \\mathbf { E } \\mathbf { V } _ { \\mathrm { t } } } \\\\ { \\mathbf { u p s t r e a m } } \\\\ { \\mathbf { h y d r o p l a n t s } } \\end{array}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/13c01a8814ef827112a67c8b938e342eb65e1c4967173794cd46f4e8ae4be3ff.jpg"
+                }
+            },
+            "bbox": [
+                110,
+                377,
+                454,
+                426
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Demand supply equation in each subsystem k"
+                    }
+                ]
+            },
+            "bbox": [
+                109,
+                434,
+                421,
+                448
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "\\sum _ { \\mathrm { h y d r o } } \\mathsf { p } \\mathbf { Q } _ { \\mathrm { t } } + \\sum _ { \\mathrm { { t h e r m a l } } } \\mathbf { \\bar { G } } \\mathbf { T } _ { \\mathrm { t } } + \\sum _ { \\mathrm { { s u b s y s t e m s } } } ( \\mathbf { F } _ { \\mathrm { t } , 1 , \\mathrm { k } } - \\mathbf { F } _ { \\mathrm { t } , \\mathrm { k } , 1 } ) = \\mathbf { D } _ { \\mathrm { t } }",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/c5bd02c7684832818d6006eadacc472122449b3073d2e5a09ea6bdb16c089608.jpg"
+                }
+            },
+            "bbox": [
+                110,
+                447,
+                463,
+                489
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Bounds in storage in each hydro plant or subsystem aggregated reservoir"
+                    }
+                ]
+            },
+            "bbox": [
+                90,
+                496,
+                478,
+                526
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "\\mathrm { \\Delta V } _ { \\mathrm { t + 1 } } \\leq \\overline { { \\mathrm { V } } }",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/1d5db1ff39ff0048b5417943ac789a265a46e962d1f6fe5f04a69de8aa7eb1d0.jpg"
+                }
+            },
+            "bbox": [
+                112,
+                524,
+                177,
+                541
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Maximum turbined outflow in each hydro plant or subsystem aggregated reservoir"
+                    }
+                ]
+            },
+            "bbox": [
+                90,
+                549,
+                479,
+                579
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "\\mathrm { Q } _ { \\mathrm { t } } \\leq \\overline { { \\mathrm { Q } } }",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/496fa8e33791b37f0362cbd7fb141362f18903a2c58d92709c48569d437d3e7a.jpg"
+                }
+            },
+            "bbox": [
+                540,
+                83,
+                597,
+                99
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Lower bounds on total outflow in each hydro plant or subsystem aggregated reservoir"
+                    }
+                ]
+            },
+            "bbox": [
+                516,
+                109,
+                907,
+                137
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "{ \\sf Q } _ { \\mathrm { t } } + { \\sf S } _ { \\mathrm { t } } \\geq { \\sf Q } _ { \\mathrm { m i n } }",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/fff66edd8175fe48aa9dde3615704529cf7e5b4419ebcbe7d56b707171de96ec.jpg"
+                }
+            },
+            "bbox": [
+                540,
+                137,
+                649,
+                154
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Maximum generation in each thermal plant "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathbf { G } \\mathbf { T } _ { \\mathrm { ~ t ~ } } { \\le } \\mathbf { G } \\mathbf { T }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "max <sub>t</sub>"
+                    }
+                ]
+            },
+            "bbox": [
+                536,
+                162,
+                837,
+                192
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Flow limits among subsystems"
+                    }
+                ]
+            },
+            "bbox": [
+                536,
+                199,
+                750,
+                213
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "F min "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathbf { \\Phi } _ { \\mathrm { t } } \\leq \\mathrm { F } _ { \\mathrm { t } } \\leq \\mathrm { F } \\operatorname* { m a x } _ { \\mathbf { \\Phi } _ { 1 } }"
+                    }
+                ]
+            },
+            "bbox": [
+                538,
+                213,
+                687,
+                231
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Set of multivariate linear constraints representing the cost-to-go function"
+                    }
+                ]
+            },
+            "bbox": [
+                518,
+                239,
+                906,
+                267
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "\\alpha _ { \\mathrm { t + 1 } } \\geq \\sum _ { \\mathrm { h y d r o } } \\pi _ { \\mathrm { v , t + 1 } } \\mathrm { V _ { t + 1 } } + \\pi _ { \\mathrm { a l , t + 1 } } \\mathrm { A _ { t } } + \\cdots + \\pi _ { \\mathrm { a p , t + 1 } } \\mathrm { A _ { t - p + 1 } } + \\mathrm { c o n s t }",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/14d438ce570c08c636b343c5cf61f5af41b737c301f771da39fcbf892ba26faf.jpg"
+                }
+            },
+            "bbox": [
+                520,
+                267,
+                902,
+                302
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "where"
+                    }
+                ]
+            },
+            "bbox": [
+                536,
+                305,
+                583,
+                318
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "t indexes the stages"
+                    }
+                ]
+            },
+            "bbox": [
+                536,
+                326,
+                718,
+                339
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathrm { X } _ { \\mathrm { t } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "state vector at the beginning of stage "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathrm { t } \\ ( \\mathrm { V } _ { \\mathrm { t } } , \\mathrm { A } _ { \\mathrm { t } }"
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathbf { \\Lambda } _ { 1 } , . . . , \\mathbf { A } _ { \\mathrm { t - p } } )"
+                    }
+                ]
+            },
+            "bbox": [
+                536,
+                338,
+                902,
+                366
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathrm { V _ { t } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "reservoir storage level"
+                    }
+                ]
+            },
+            "bbox": [
+                538,
+                366,
+                748,
+                380
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathbf { A } _ { \\mathrm { t } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "inflow volumes to hydro plant or energy inflow to subsystems"
+                    }
+                ]
+            },
+            "bbox": [
+                538,
+                380,
+                906,
+                408
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "equation_inline",
+                        "content": "\\alpha _ { \\mathrm { t } } ( \\mathrm { X } _ { \\mathrm { t } } )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "expected value of the operation cost from stage t to the end of the planning period under the optimal operation policy"
+                    }
+                ]
+            },
+            "bbox": [
+                536,
+                408,
+                907,
+                450
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathbf { A } _ { \\mathrm { t } } | \\mathbf { X } _ { \\mathrm { t } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "represents the probability distribution of inflows "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathbf { A } _ { \\mathrm { t } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "conditioned by the state "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathrm { X } _ { \\mathrm { t } }"
+                    }
+                ]
+            },
+            "bbox": [
+                536,
+                450,
+                907,
+                477
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "equation_inline",
+                        "content": "\\operatorname { E } ( . )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "expected value"
+                    }
+                ]
+            },
+            "bbox": [
+                536,
+                476,
+                697,
+                490
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathrm { G T _ { t } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "thermal generation of each thermal plant"
+                    }
+                ]
+            },
+            "bbox": [
+                536,
+                490,
+                870,
+                504
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathrm { Q } _ { \\mathrm { t } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "turbined outflow volume in each hydro plant or aggregated hydro production in each subsystem"
+                    }
+                ]
+            },
+            "bbox": [
+                536,
+                504,
+                906,
+                546
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/d9bc0c244fc61e7e93bf861d39f8d8e578e63de294f2055104e30fb7eb050898.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 7 - Chain of Models for the Brazilian Operation Planning - SAPPE system"
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                281,
+                584,
+                714,
+                875
+            ]
+        }
+    ],
+    [
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "β discount rate"
+                    }
+                ]
+            },
+            "bbox": [
+                109,
+                84,
+                258,
+                98
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathrm { C _ { t } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "generation cost of each thermal plant "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathbf { S _ { t } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "spilled volume in each hydro plant or aggregated energy spillage in each subsystem "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathrm { E V _ { t } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "evaporation volume on reservoirs or evaporated energy on aggregated reservoirs"
+                    }
+                ]
+            },
+            "bbox": [
+                109,
+                97,
+                419,
+                112
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                109,
+                111,
+                479,
+                140
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                109,
+                138,
+                479,
+                167
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "equation_inline",
+                        "content": "\\rho"
+                    },
+                    {
+                        "type": "text",
+                        "content": "production coefficient; it is a function of the initial volume, end volume and outflow "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "( \\mathrm { V _ { t } } ,"
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathbf { V } _ { \\mathrm { t } + 1 } , \\mathbf { Q } _ { \\mathrm { t } } , \\mathbf { S } _ { \\mathrm { t } } )"
+                    }
+                ]
+            },
+            "bbox": [
+                107,
+                168,
+                476,
+                209
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathrm { F _ { t , k , l } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "energy flow from subsystem k to subsystem l "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathrm { D } _ { \\mathrm { t } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "energy demand"
+                    }
+                ]
+            },
+            "bbox": [
+                109,
+                209,
+                473,
+                236
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "equation_inline",
+                        "content": "\\overline { { \\mathrm { V } } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "maximum reservoir storage"
+                    }
+                ]
+            },
+            "bbox": [
+                110,
+                237,
+                355,
+                251
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "equation_inline",
+                        "content": "\\overline { { \\mathbf { Q } } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "maximum turbined outflow volume or aggregated hydro production"
+                    }
+                ]
+            },
+            "bbox": [
+                110,
+                254,
+                479,
+                283
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Qmin minimum turbined outflow volume or aggregated hydro production"
+                    }
+                ]
+            },
+            "bbox": [
+                109,
+                283,
+                478,
+                311
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "GTmaxmaximum thermal generation"
+                    }
+                ]
+            },
+            "bbox": [
+                109,
+                311,
+                370,
+                325
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Fmin maximum flow between subsystems"
+                    }
+                ]
+            },
+            "bbox": [
+                109,
+                324,
+                412,
+                338
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Fmax minimum flow between subsystems"
+                    }
+                ]
+            },
+            "bbox": [
+                109,
+                338,
+                411,
+                352
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "equation_inline",
+                        "content": "\\pi _ { \\mathrm { v } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "simplex multiplier or dual variable associated to reservoir storage level"
+                    }
+                ]
+            },
+            "bbox": [
+                109,
+                352,
+                478,
+                380
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "equation_inline",
+                        "content": "\\pi _ { \\mathrm { a l } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "simplex multiplier or dual variable associated to inflow volume in the previous stage"
+                    }
+                ]
+            },
+            "bbox": [
+                109,
+                381,
+                478,
+                409
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Newave model [2] was developed for the long run operation planning. It computes, for every month of the five to ten years of the planning period, the optimum allocation of hydro and thermal resources, that minimizes the expected total operation cost (thermal generation costs plus penalties for failure in load supply). The several reservoirs are aggregated in energy equivalent reservoirs representing the south, southeast, north and northeast subsystems of Brazil. The solution approach is obtained by stochastic dual dynamic programming. In this algorithm the stored energy and the hydrological trend represent a state, and a Monte Carlo simulation scheme is used to interactively construct a multivariate expected cost to go function for the system."
+                    }
+                ]
+            },
+            "bbox": [
+                88,
+                414,
+                479,
+                622
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Newave model presents four basic modules: Energy Equivalent Reservoir (for each subsystem, reservoirs are aggregated into one energy equivalent reservoir and streamflows are aggregated into equivalent energy inflows), Energy Inflows (stochastic modeling of energy inflows by using periodic auto-regressive models – PAR(p)), Hydrothermal Operation Strategy (determines the most economical operation strategy to the subsystems, taking into account uncertainties on future inflows and load levels), and Simulation of System Operation (by using synthetic inflows scenarios, computes system performance probabilistic indices such as deficit risks, expected energy not supplied, expected energy interchanges among subsystems and expected marginal costs as well as their empirical probability distributions)."
+                    }
+                ]
+            },
+            "bbox": [
+                88,
+                627,
+                479,
+                847
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Gevazp model [3,4] is a multivariate monthly inflow generator model for Newave, Decomp and Suishi-o models. It chooses a stochastic time series PAR(p) model that ensures resemblance between the historical and the synthetic inflow sequences and is able to produce droughts as severe as those observed in the historical records. In this model the inflow at period (t) is a function of the previous inflows (t-1), (t-2), ... (t-p), and the time dependence structure is seasonal."
+                    }
+                ]
+            },
+            "bbox": [
+                88,
+                852,
+                479,
+                909
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                515,
+                83,
+                907,
+                152
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Let "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "Z _ { \\mathrm { t } } , ~ \\mathrm { t } = 1 , ~ 2 , ~ . . . ,"
+                    },
+                    {
+                        "type": "text",
+                        "content": "be a seasonal time series with period s. The time index t may be regarded as a function of the year T "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "( \\mathrm { T } = 1 , . . . , \\mathrm { N } )"
+                    },
+                    {
+                        "type": "text",
+                        "content": ", and the season m "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "( \\mathrm { m } = 1 , . . . ,"
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathbf { s } ) \\colon \\mathbf { t } = \\left( \\mathbf { T } - 1 \\right) \\mathbf { s } + \\mathbf { m }"
+                    },
+                    {
+                        "type": "text",
+                        "content": ". The periodic auto-regressive model, denoted by "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathsf { P A R } ( \\mathsf { p } _ { 1 } , . . . , \\mathsf { p } _ { \\mathrm { s } } )"
+                    },
+                    {
+                        "type": "text",
+                        "content": ", can be written as:"
+                    }
+                ]
+            },
+            "bbox": [
+                516,
+                157,
+                907,
+                228
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "\\phi ^ { \\mathrm { m } } ( \\mathrm { B } ) \\left( \\frac { Z _ { \\mathrm { t } } - \\mu _ { \\mathrm { m } } } { \\sigma _ { \\mathrm { m } } } \\right) = \\mathrm { a _ { t } }",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/a6c253c0e74a32f0e2adf207ce9b39d42c94c6189a369a3ae69716fdc090c8fd.jpg"
+                }
+            },
+            "bbox": [
+                538,
+                233,
+                694,
+                269
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "where "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\phi ^ { \\mathrm { m } } ( \\mathbf { B } ) { = } 1 { - } \\phi _ { 1 } ^ { \\mathrm { m } } \\mathbf { B } { - } \\ldots { - } \\phi _ { \\mathrm { p _ { m } } } ^ { \\mathrm { m } } \\mathbf { B } ^ { \\mathrm { p _ { m } } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "; B is the backward shift operator on t; "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mu _ { \\mathrm { m } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "is the mean period m; and "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathbf { a } _ { \\mathrm { t } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "is the time uncorrelated series which is independent of "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "Z _ { \\mathrm { t } } ,"
+                    },
+                    {
+                        "type": "text",
+                        "content": "and it has also zero mean and variance equal to "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\sigma _ { \\mathrm { a } } ^ { 2 ( \\mathrm { m } ) }"
+                    }
+                ]
+            },
+            "bbox": [
+                516,
+                281,
+                906,
+                366
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "One convenient and efficient estimation technique for PAR models is to formulate de Yule-Walker equations and solve them to obtain estimates of the model parameters. The order of the AR model fit to each season "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\left( \\mathtt { p } _ { \\mathtt { m } } \\right)"
+                    },
+                    {
+                        "type": "text",
+                        "content": "may be determined by examining plots of the partial auto-correlation function (PACF) for each season. "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\boldsymbol { \\mathrm { p } } _ { \\mathrm { m } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "may vary from season to season but all of the parameters are estimated."
+                    }
+                ]
+            },
+            "bbox": [
+                516,
+                375,
+                907,
+                488
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Suishi-o model [5] is a detailed simulation model of power plants operation for interconnected hydrothermal systems. It is able to simulate electrically interconnected hydrothermal systems in networks but provided they are hydraulically disconnected. It may be coupled to the strategic decision model, Newave, by the expected system cost to go function for each stage, and it can consider operation constraints for multiple water usage: maximum flow for flood control, minimum flow for sanitation or navigation and river flow diversion for irrigation projects. It simulates multivariate streamflows sequences: observed in the past or generated by Gevazp model, producing probabilistic indices for system performance. This model can calculate the firm energy or the assured energy within a pre-established energy deficit probability. Special river basins operation can also be represented."
+                    }
+                ]
+            },
+            "bbox": [
+                516,
+                491,
+                909,
+                726
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "These models complete the long run operation planning."
+                    }
+                ]
+            },
+            "bbox": [
+                516,
+                732,
+                906,
+                748
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Decomp model [6] determines the generation schedule for each system plant (hydro and thermal) such that: supply the load and minimize expected operating cost for every week of the first month and for the next months of the planning period taking into account the long term stochastic behavior of inflows. The solution approach is obtained by stochastic dual dynamic programming, with the storage volume of the reservoirs as the state variables. The other main features are: individualized representation of hydro plants, integration with long/short term models (Newave/Dessem) via expected cost to go functions, non-linear head variation of hydro plants, water travel, load levels and general linear constraints on generation targets. The unique water inflow scenario used in the four/five weeks of the first month is obtained by a inflow forecast model, Previvaz, and the range of monthly inflows of the next months are generated by Gevazp model."
+                    }
+                ]
+            },
+            "bbox": [
+                515,
+                752,
+                907,
+                904
+            ]
+        }
+    ],
+    [
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                88,
+                84,
+                479,
+                194
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Previvaz [7] is a stochastic model that produces weekly streamflow forecasts until six weeks ahead to be used in mid-term Planning Operation (Decomp model). The model automatically analyzes the historical weekly inflow series for each hydroplant and chooses for each week the best stochastic model based on the forecast mean squared error. In this analysis, Previvaz model consider 93 distinct modeling strategies based on linear ARMA(p,q) family, considering both periodic and nonperiodic models , different estimation methods and series transformation."
+                    }
+                ]
+            },
+            "bbox": [
+                88,
+                199,
+                479,
+                352
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Flood Control model [8], actually named SPEC System (System for Flood Prevention Studies), builds flood control rule curves for multipurpose multireservoir systems located in hydrographics basins with strong seasonality and incorporates facilities to consider the El Niño-South Oscillation phenomena (ENSO). The methodology of SPEC system is based on a stochastic formulation as flood prevention studies is done before the rainy season, when inflows are unknown."
+                    }
+                ]
+            },
+            "bbox": [
+                88,
+                356,
+                479,
+                482
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The SPEC system is formed by a set of models, each one having a specific function. The first is one a stochastic models to generate daily inflow series named DIANA model, the second is ENSOCLAS which permits to consider the ENSO in the synthetic inflow generation. The third one, CAEV, is based on the controllability conditions (necessary and sufficient conditions for flood control) and builds flood control rule curves for equivalent reservoirs (partial systems or a set of reservoirs). The last one, VESPOT desegregates the flood control rule curves for equivalents reservoirs, calculated by CAEV, in individualized flood control rules curves for each reservoir in the system. These reservoir empty volumes go to Newave, Suishi-o, Decomp and Dessem models."
+                    }
+                ]
+            },
+            "bbox": [
+                88,
+                486,
+                479,
+                694
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Confint model [9] is responsible by the reliability evaluation of hydrothermal interconnected systems. The system is represented by a linear network flow model, where the nodes are the areas or subsystems, and the arcs are the area generations and loads and interconnection capacities. The arcs are treated as random variables. The reliability indices (loss of load probability – LOLP, expected energy not supplied – EENS, loss of load frequency – LOLF and loss of load duration – LOLD) are calculated through a direct integration algorithm or by Monte Carlo simulation. The Confint program also produces area power marginal costs as well as sensitivity indices with respect to reinforcements on interconnections and generation capacity."
+                    }
+                ]
+            },
+            "bbox": [
+                88,
+                698,
+                481,
+                907
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Previcar model [10] produces weakly or monthly load forecast until twelve months ahead. The forecasts are based on time series and neural network models."
+                    }
+                ]
+            },
+            "bbox": [
+                515,
+                83,
+                906,
+                127
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "These models complete the mid run operation planning."
+                    }
+                ]
+            },
+            "bbox": [
+                516,
+                131,
+                906,
+                161
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Dessem model [11] was developed for the daily dispatch programming. It computes a generation dispatch for each half an hour of the next week taking into account detailed hydraulics constraints. Also, a D.C. power flow model represents the transmission network. In each period the program minimizes the sum of thermal generation and the future cost associated to hydro decisions. It applies dual dynamic programming to the multi-stage problem and provides marginal costs for each network bus. The hydraulic constraints represented in the model are: water balance in the reservoirs, flow routing representation, channel and reservoir levels bounds (navigation, intakes), maximum channel discharge and reservoir outflow, channel and reservoir levels ramp constraints (bank scour protection, harbor protection), minimum channel discharge (water quality, ecological requirements, irrigation / industrial / residential supply), AGC (automatic generation control), unit commitment of thermal units, efficiency curves and prohibited zones in turbines."
+                    }
+                ]
+            },
+            "bbox": [
+                515,
+                166,
+                909,
+                441
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Predesp model [11] computes a generation dispatch for each half an hour of the next day taking into account water balance constraints and the constraints associated to the A.C. network flow representation. In each period the program minimizes the sum of thermal generation and the future cost associated to hydro decisions, provides marginal costs for each network bus. As results, it produces the hydraulic operation point (turbined volumes, spilled volumes and stored volumes for hydro plants), the electric operation point (bus voltages, power plant active and reactive figures, circuit flows, etc.)."
+                    }
+                ]
+            },
+            "bbox": [
+                516,
+                446,
+                907,
+                612
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Previvazh [12] is a stochastic model that produces daily streamflow forecasts until fourteen days ahead to be used in Daily Programming (Dessem model). The methodology of daily forecasts is based on the desegregation of the weekly streamflow forecasts produced by Previvaz model. The desegregation process uses the synthetic daily inflow sequences that are generated conditioned to the value of the last two observed inflows. This model preserves the temporal dependence of the weekly streamflow forecasts used in the Mid Term Operation Planning and it takes into account the natural characteristics of the daily inflow process, as the high skewness, the strong seasonallity, and the special behavior of the daily hydrograph. Furthermore, it is less complex than the Rainfall-Runoff models, as the number of parameters is more parsimonious."
+                    }
+                ]
+            },
+            "bbox": [
+                515,
+                617,
+                909,
+                852
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "SISCV (Rainfall-Runoff Forecast System) [13] is a system based on two deterministic rainfall-runoff models, IPH II [14] and SMAP II [15], and as Previvazh, produces daily streamflow forecasts to be used in Daily Programming (Dessem model). The SMAP II model has a simple structure based on three reservoirs that represents the superficial zone, the subsuperficial zone and the deep zone. The model uses the Soil Conservation Service equation to separate the superficial runoff. The mathematics equations are based on one state variable that corresponds to the reservoir level at each time interval and a set of parameters associated to the physical characteristics of the hydrographic basin. The IPH II model is part of a set models developed by IPH/UFRGS [14] for simulating rainfall-runoff. It is based on a set of equations as the water balance, Horton infiltration and an empirical function for percolation."
+                    }
+                ]
+            },
+            "bbox": [
+                516,
+                856,
+                911,
+                913
+            ]
+        }
+    ],
+    [
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                88,
+                84,
+                479,
+                275
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Cahora model [16] is responsible for the hourly load forecast. It applies time series, fuzzy sets and neural network models."
+                    }
+                ]
+            },
+            "bbox": [
+                90,
+                282,
+                478,
+                323
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "These models complete the short operation programming."
+                    }
+                ]
+            },
+            "bbox": [
+                90,
+                330,
+                476,
+                358
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "5 - CONCLUSIONS"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                216,
+                370,
+                369,
+                384
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "This work described the main features of the computational system for the electric-energetic operation planning and programming of the Brazilian energetic system. A chain of optimization models with different planning horizons and degrees of detail in system representation compose it. This computational system was proposed to the Brazilian Independent System Operator (ONS) and currently is being gradually implemented. The optimization models also compute the water values that will form the basis for determining the Wholesale Energy Market (MAE) spot price."
+                    }
+                ]
+            },
+            "bbox": [
+                88,
+                393,
+                478,
+                543
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "ACKOWLEDGEMENTS"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                199,
+                562,
+                385,
+                577
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The authors would like to thank the contributions of the following people to the development of this work: A.L.Marcato, A.L.Diniz, V.S.Duarte, D.L.Jardim, L.C.F.Souza, L.N.R.Xavier, M.Luna, C.Sagastizabal, C.Prata, E.Castronuovo, J.F.Peçanha, P.M.Lourenço, V.Navarro, G.F.Ribeiro, S.Binato, S.P.Romero, A.Belloni, R.Castro, J.Kelman, J.P.Costa, S.Prado, A.S.Kligerman, C.Suanno, C.Mércio, A.O.Girardhi, A.Livino, R.Vieira, L.P.Silva, A.E.Xavier, M.V.F.Pereira, S.H.F.Cunha, G.C.Oliveira, S.Granville."
+                    }
+                ]
+            },
+            "bbox": [
+                88,
+                583,
+                479,
+                706
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "REFERENCES"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                233,
+                719,
+                350,
+                733
+            ]
+        },
+        {
+            "type": "list",
+            "content": {
+                "list_type": "reference_list",
+                "list_items": [
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[1] COOPERS & LYBRAND, “Brazil Electricity Sector Restructuring Study: Draft Report IV-I”, MME/SEN/ELETROBRÁS Project Report, Rio de Janeiro, June 1997."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[2] M.E.P.Maceira, C.B.Mercio, B.G.Gorenstin, S.H.F.Cunha, C.Suanno, M.C.Sacramento, A.S.Kligerman, Energy Evaluation of The North/Northeastern and South/Southeastern Interconnection with NEWAVE Model, VI Symposium of Specialists in Electric Operational and Expansion Planning - SEPOPE, Salvador, Brazil, May 1998."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[3] M.E.P.Maceira, C.V.Bezerra, Stochastic Streamflow Model for Hydroelectric Systems, 5<sup>th</sup> International"
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Conference on Probabilistic Methods Applied to Power Systems - PMAPS, Vancouver, Canada, September 1997."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[4] D.L.Jardim, M.E.P.Maceira, D.Falcão, Stochastic Streamflow Model for Hydroelectric Systems using Clustering Techniques, International Conference on Electric Power Engineering – PowerTech, Porto, Portugal, September 2001."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[5] M.E.P.Maceira, S.H.F.Cunha, Simulating the Energy Generation of Interconnect Hydro-thermal Systems - SUISHI Model, XIII Brazilian National Seminar on Electrical Power Production and Transmission -SNPTEE, Camboriú, Brazil, October 1995."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[6] S.H.F.Cunha, J.P.Costa, S.Prado, C.L.C. de Sá Jr., Medium Term Hydro-thermal System Optimization Under a Wholesale Energy Market, VI Symposium of Specialists in Electric Operational and Expansion Planning - SEPOPE, Salvador, Brazil, May 1998."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[7] M.E.P.Maceira, J.M.Damázio, A.O.Ghirardi, H.M.Dantas, Periodic ARMA Models Applied to Weekly Streamflow Forecasts, International Conference on Electric Power Engineering – PowerTech, Budapest, Hungary, September 1999."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[8] J.M.Damázio, F.S.Costa, Building Flood Control Rule Curves for Multipurpose Multireservoir System Using Controlability Condition, Water Resourses Research, Vol30, n<sup>0</sup>4, pp1135,1144, April 1994."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[9] A.C.G.Melo, R.V.Lício, J.L.Araújo, M.V.F.Pereira, An Analytical Approach to Calculate Exact Sensitivities of Multi-Area Reliability Indices with Respect to Variations of Equipment Failure and Repair Rates, Invited Paper, IEEE Electric Power and Energy Systems, January 1998."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[10] P.M .Lourenço, C.R.S.H.Lourenço, G.F.Ribeiro, V.Navarro, Short Term Load Forecasting Using Fuzzy Logic and Calendar of Events, 19<sup>th</sup> International Symposium on Forecasting, Washington DC, June 1999."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[11] M.E.P.Maceira, L.A.Terry, A.S.L.Diniz, L.C.F. de Souza, F.S.Costa, S.P.Romero, S.Binato, S.M.Amado, C.E.Vilasboas, R.Vilanova, Hourly Generation Dispatch Representing Detailed Hydraulic Constraints, VII Symposium of Specialists in Electric Operational and Expansion Planning-SEPOPE, Brazil, May 2000."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[12] F.S.Costa, J.M.Damázio, A.R.L.Carvalho, A.M.Dantas, PREVIVAZH – Stochastic Model for Daily Streamflow Forecasts, Seminário Internacional Hidrologia Operativa, Complejo Hidroeléctrico de Salto Grande, Argentina – Uruguay, May 2000."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[13] L.P.Silva, G.S.Vanni, F.S.Costa, J.M.Damázio, L.C.K.Oliveira, L.G.F.Guilhon, H.M.Dantas, SISCV Sistema de Previsão Determinística para Suporte da Operação de Reservatórios de Aproveitamentos Hidrelétreicos, XVI Brazilian National Seminar on Electrical Power Production and Transmission -SNPTEE, Campinas, Brazil, October 2001."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[14] C.E.M.Tucci, E.A.Zamanillo, H.D.Pasinato, Sistema de simulação precipitação-vazão IPHS1, Technical Report, IPH/UFRGS, 1989."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[15] J.E.G.Lopes, B.P.F.Braga, J.G.L.Conejo, SMAP - A simplified hydrologic model, International Symposium on Rainfall-Runoff Modeling, Mississipi State University, Mississipi, 1981."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[16] R.C.Souza, P.M.Lourenço, A Neural-Fuzzy Load Forecasting Model – Application to Hourly Data of Light RJ, 19<sup>th</sup> International Symposium on Forecasting, Washington DC, June 1999."
+                            }
+                        ]
+                    }
+                ]
+            },
+            "bbox": [
+                92,
+                741,
+                478,
+                789
+            ]
+        }
+    ]
+]
