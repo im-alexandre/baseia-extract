@@ -1,0 +1,640 @@
+[
+  {
+    "document_id": "0033d9791d44daff",
+    "source_name": "Chain-optimazation-pscc-2002",
+    "current_available": true,
+    "text_similarity": 0.995008,
+    "old": {
+      "pages": 7,
+      "content_blocks": 144,
+      "discarded_blocks": 0,
+      "lines": 652,
+      "spans": 714,
+      "text_characters": 34185,
+      "block_types": {
+        "abstract": 1,
+        "chart": 3,
+        "image": 4,
+        "interline_equation": 9,
+        "ref_text": 17,
+        "text": 102,
+        "title": 8
+      },
+      "span_types": {
+        "inline_equation": 38,
+        "interline_equation": 9,
+        "text": 667
+      },
+      "images": 9,
+      "image_paths": [
+        "13c01a8814ef827112a67c8b938e342eb65e1c4967173794cd46f4e8ae4be3ff.jpg",
+        "14d438ce570c08c636b343c5cf61f5af41b737c301f771da39fcbf892ba26faf.jpg",
+        "1d5db1ff39ff0048b5417943ac789a265a46e962d1f6fe5f04a69de8aa7eb1d0.jpg",
+        "496fa8e33791b37f0362cbd7fb141362f18903a2c58d92709c48569d437d3e7a.jpg",
+        "a6c253c0e74a32f0e2adf207ce9b39d42c94c6189a369a3ae69716fdc090c8fd.jpg",
+        "aa24c3442ae6910a22a7948a415307f73725c267a47ea0405128c513f6e683a5.jpg",
+        "c1669f6e1ac1105d578d10a8843c7dd0a2d8d8e02edc8b3cd626f025c28f05c4.jpg",
+        "c5bd02c7684832818d6006eadacc472122449b3073d2e5a09ea6bdb16c089608.jpg",
+        "fff66edd8175fe48aa9dde3615704529cf7e5b4419ebcbe7d56b707171de96ec.jpg"
+      ],
+      "tables": 0,
+      "interline_equations": 9,
+      "inline_equations": 38,
+      "nodes_with_ids": 0,
+      "nodes_total_for_ids": 1518,
+      "root_attribute_keys": [
+        "_backend",
+        "_version_name"
+      ],
+      "has_middle_sha256": false,
+      "has_source_pdf_sha256": false,
+      "has_document_id": false
+    },
+    "current": {
+      "pages": 7,
+      "content_blocks": 158,
+      "discarded_blocks": 0,
+      "lines": 667,
+      "spans": 729,
+      "text_characters": 34528,
+      "block_types": {
+        "abstract": 1,
+        "chart": 3,
+        "chart_body": 3,
+        "chart_caption": 3,
+        "image": 4,
+        "image_body": 4,
+        "image_caption": 4,
+        "interline_equation": 9,
+        "ref_text": 17,
+        "text": 102,
+        "title": 8
+      },
+      "span_types": {
+        "chart": 3,
+        "image": 4,
+        "inline_equation": 38,
+        "interline_equation": 9,
+        "text": 675
+      },
+      "images": 16,
+      "image_paths": [
+        "07e72fd9f8b934dfc71b5b32a82a5e1241cc19331323aeb0cedd98b85bbf9bbb.jpg",
+        "13c01a8814ef827112a67c8b938e342eb65e1c4967173794cd46f4e8ae4be3ff.jpg",
+        "14d438ce570c08c636b343c5cf61f5af41b737c301f771da39fcbf892ba26faf.jpg",
+        "1d5db1ff39ff0048b5417943ac789a265a46e962d1f6fe5f04a69de8aa7eb1d0.jpg",
+        "496fa8e33791b37f0362cbd7fb141362f18903a2c58d92709c48569d437d3e7a.jpg",
+        "5434dff6e78fe4129c4621d7b921fb2993cc3ae1c15ba78a1960cdf22b7aaec3.jpg",
+        "5450027d2277fba56160482245fca50abd5e2c9cfc183b77ffa0da1ccccbb7c8.jpg",
+        "90cdfceff8790729b13c31e53e8c7b10c1ab19a56b8090a57818a439b0001c53.jpg",
+        "97e844381488b838055aa692cde7a6073a95671e97c9dd17f1756c183b2d6068.jpg",
+        "a6c253c0e74a32f0e2adf207ce9b39d42c94c6189a369a3ae69716fdc090c8fd.jpg",
+        "aa24c3442ae6910a22a7948a415307f73725c267a47ea0405128c513f6e683a5.jpg",
+        "c1669f6e1ac1105d578d10a8843c7dd0a2d8d8e02edc8b3cd626f025c28f05c4.jpg",
+        "c5bd02c7684832818d6006eadacc472122449b3073d2e5a09ea6bdb16c089608.jpg",
+        "d96db2d2bae5692f5a8d43ef23f52a06c5a125af0a0fa5d2823d78c13ed53989.jpg",
+        "d9bc0c244fc61e7e93bf861d39f8d8e578e63de294f2055104e30fb7eb050898.jpg",
+        "fff66edd8175fe48aa9dde3615704529cf7e5b4419ebcbe7d56b707171de96ec.jpg"
+      ],
+      "tables": 0,
+      "interline_equations": 9,
+      "inline_equations": 38,
+      "nodes_with_ids": 1562,
+      "nodes_total_for_ids": 1562,
+      "root_attribute_keys": [],
+      "has_middle_sha256": true,
+      "has_source_pdf_sha256": true,
+      "has_document_id": true
+    },
+    "delta": {
+      "pages": 0,
+      "content_blocks": 14,
+      "discarded_blocks": 0,
+      "lines": 15,
+      "spans": 15,
+      "text_characters": 343,
+      "images": 7,
+      "tables": 0,
+      "interline_equations": 0,
+      "inline_equations": 0,
+      "nodes_with_ids": 1562
+    },
+    "block_types_added": {
+      "chart_body": 3,
+      "chart_caption": 3,
+      "image_body": 4,
+      "image_caption": 4
+    },
+    "block_types_removed": {},
+    "span_types_added": {
+      "chart": 3,
+      "image": 4,
+      "text": 8
+    },
+    "span_types_removed": {}
+  },
+  {
+    "document_id": "01bcb00e543fd06c",
+    "source_name": "GLT_1332",
+    "current_available": true,
+    "text_similarity": 0.993448,
+    "old": {
+      "pages": 10,
+      "content_blocks": 109,
+      "discarded_blocks": 13,
+      "lines": 337,
+      "spans": 347,
+      "text_characters": 29948,
+      "block_types": {
+        "abstract": 1,
+        "footer": 1,
+        "header": 3,
+        "image": 15,
+        "list": 1,
+        "page_number": 9,
+        "ref_text": 17,
+        "text": 49,
+        "title": 26
+      },
+      "span_types": {
+        "text": 347
+      },
+      "images": 0,
+      "image_paths": [],
+      "tables": 0,
+      "interline_equations": 0,
+      "inline_equations": 0,
+      "nodes_with_ids": 0,
+      "nodes_total_for_ids": 817,
+      "root_attribute_keys": [
+        "_backend",
+        "_version_name"
+      ],
+      "has_middle_sha256": false,
+      "has_source_pdf_sha256": false,
+      "has_document_id": false
+    },
+    "current": {
+      "pages": 10,
+      "content_blocks": 134,
+      "discarded_blocks": 13,
+      "lines": 362,
+      "spans": 372,
+      "text_characters": 30341,
+      "block_types": {
+        "abstract": 1,
+        "footer": 1,
+        "header": 3,
+        "image": 15,
+        "image_body": 15,
+        "image_caption": 10,
+        "list": 1,
+        "page_number": 9,
+        "ref_text": 17,
+        "text": 49,
+        "title": 26
+      },
+      "span_types": {
+        "image": 15,
+        "text": 357
+      },
+      "images": 15,
+      "image_paths": [
+        "0946bd1268a50c446b48c0d62bb61b0f3ae71dae2ad00e72b8e2b20f55f32083.jpg",
+        "0956fec035c987c625e2ac76fcd6a3a5931857016f411321c69dc19f4902998f.jpg",
+        "1ee22a0beafdbbc2642ffd04492ef1a48fa78494815c765cee9d4982b0fc1504.jpg",
+        "2d3f666f9ed69ccf3ec18f7154c4aea786af7f4b23e898faca09edb74a74298f.jpg",
+        "5757a04d5addb1a0adbb5fbbdc65db77d60f508096bbe99c79b485ed773a8edb.jpg",
+        "6b44b6f65c066fc0ef5d04331cdc6786646add14252a0e72f354b0cd4564e630.jpg",
+        "70bd3632e7255a101f2ffb434312cd8b56544aced108d2b86c19f512d9cb3ab7.jpg",
+        "751969f5903d32fb2241e5fd5dd4a03372849972706a605955cd44ebe3c13919.jpg",
+        "76abf7f79a8e6c2446c53d4ad26e097da896e4d2c812a325e41460cba5b1f6f1.jpg",
+        "9c266691d959d6c65a42893b599202f8ff63138e861a2bc974d9a151082353a8.jpg",
+        "c421c047128b7b0c92b99212cb9274ba32f9f941bb6efdf7fbc328b093705077.jpg",
+        "cc05d3adf4a571359a57ce8d3777ec9658b44065cd00a903383ce953e5f59c10.jpg",
+        "e5920563ff03793032d9d24a6bebe78d4fd89dd270c46d346a0d7091e07a5989.jpg",
+        "ea59939bd41160fbbec9ce2a8182a3f670328f30414f6d13b8224269f380661a.jpg",
+        "f57774f04e658278de0abcdf17793ce1dd25a53c4d21c524f2cebc76274184b7.jpg"
+      ],
+      "tables": 0,
+      "interline_equations": 0,
+      "inline_equations": 0,
+      "nodes_with_ids": 892,
+      "nodes_total_for_ids": 892,
+      "root_attribute_keys": [],
+      "has_middle_sha256": true,
+      "has_source_pdf_sha256": true,
+      "has_document_id": true
+    },
+    "delta": {
+      "pages": 0,
+      "content_blocks": 25,
+      "discarded_blocks": 0,
+      "lines": 25,
+      "spans": 25,
+      "text_characters": 393,
+      "images": 15,
+      "tables": 0,
+      "interline_equations": 0,
+      "inline_equations": 0,
+      "nodes_with_ids": 892
+    },
+    "block_types_added": {
+      "image_body": 15,
+      "image_caption": 10
+    },
+    "block_types_removed": {},
+    "span_types_added": {
+      "image": 15,
+      "text": 10
+    },
+    "span_types_removed": {}
+  },
+  {
+    "document_id": "035ca90614af2355",
+    "source_name": "10.1080_096031096334006",
+    "current_available": true,
+    "text_similarity": 0.978539,
+    "old": {
+      "pages": 8,
+      "content_blocks": 116,
+      "discarded_blocks": 21,
+      "lines": 472,
+      "spans": 644,
+      "text_characters": 27244,
+      "block_types": {
+        "abstract": 1,
+        "aside_text": 7,
+        "header": 7,
+        "image": 1,
+        "interline_equation": 10,
+        "list": 2,
+        "page_number": 7,
+        "ref_text": 23,
+        "table": 4,
+        "text": 63,
+        "title": 12
+      },
+      "span_types": {
+        "inline_equation": 93,
+        "interline_equation": 10,
+        "text": 541
+      },
+      "images": 10,
+      "image_paths": [
+        "019c8d4c3a0311a022f809140bcc9d09225826cbeb726ba7f4e86cdd39df6446.jpg",
+        "202429e2aeec6bdf5cf9bcd3146573c9b2044ec8bb2d6333b9dc8f19a39939f2.jpg",
+        "29e200bca24c985c1bf46ab3cb789ccc6f46d9e097cef4629b4426ed3cb3578b.jpg",
+        "2cf51092ed2d5011f6059e1cf22e2de34284a7f02dfd9986df5fabe42aa04d14.jpg",
+        "3dc6a2143e21a10b14cc757f14f14d4a471326365488684486f095a8c9c2a855.jpg",
+        "80b366471bc9e795092c85e5dff45c4d4692ce5d9160f61deff77c695e8d3674.jpg",
+        "d4716c6fb96bbc9d425b9ee798bc0a6bef521fae04c252a3ea48d979933aec7e.jpg",
+        "df278f57e1b71215c159b2ab2e126b1de8ed971accf8423579d11fafacafa721.jpg",
+        "dfa7a1df86aa39dfe71c8aa6c17b008a686cd0921ad4743624dd698902efebf8.jpg",
+        "f6217d98462e14522e50b1ead039942f8d0e5ba53487ea0d2a42ba4b20fd35ba.jpg"
+      ],
+      "tables": 4,
+      "interline_equations": 10,
+      "inline_equations": 93,
+      "nodes_with_ids": 0,
+      "nodes_total_for_ids": 1262,
+      "root_attribute_keys": [
+        "_backend",
+        "_version_name"
+      ],
+      "has_middle_sha256": false,
+      "has_source_pdf_sha256": false,
+      "has_document_id": false
+    },
+    "current": {
+      "pages": 8,
+      "content_blocks": 137,
+      "discarded_blocks": 21,
+      "lines": 494,
+      "spans": 681,
+      "text_characters": 28439,
+      "block_types": {
+        "abstract": 1,
+        "aside_text": 7,
+        "header": 7,
+        "image": 1,
+        "image_body": 1,
+        "interline_equation": 10,
+        "list": 2,
+        "page_number": 7,
+        "ref_text": 23,
+        "table": 4,
+        "table_body": 4,
+        "table_caption": 4,
+        "table_footnote": 12,
+        "text": 63,
+        "title": 12
+      },
+      "span_types": {
+        "image": 1,
+        "inline_equation": 101,
+        "interline_equation": 10,
+        "table": 4,
+        "text": 565
+      },
+      "images": 15,
+      "image_paths": [
+        "019c8d4c3a0311a022f809140bcc9d09225826cbeb726ba7f4e86cdd39df6446.jpg",
+        "202429e2aeec6bdf5cf9bcd3146573c9b2044ec8bb2d6333b9dc8f19a39939f2.jpg",
+        "29e200bca24c985c1bf46ab3cb789ccc6f46d9e097cef4629b4426ed3cb3578b.jpg",
+        "2cf51092ed2d5011f6059e1cf22e2de34284a7f02dfd9986df5fabe42aa04d14.jpg",
+        "3dc6a2143e21a10b14cc757f14f14d4a471326365488684486f095a8c9c2a855.jpg",
+        "4e92f2645514bf5801c8ce4c98df7bf2a204abeb9522f811f0db7395a3b1e09b.jpg",
+        "63d7c782ae3f0ebd56cd64994472b46876b973410701b5212af2ea204050f38d.jpg",
+        "70bd679d2b621d317298ecfc54227c46ece381ecb13f1692f6b8cf1f87b2ea2a.jpg",
+        "720b75fff704bd70463344f12e9900601af3ebb32b96aa0bfdfd8e07b09bd53c.jpg",
+        "80b366471bc9e795092c85e5dff45c4d4692ce5d9160f61deff77c695e8d3674.jpg",
+        "d4716c6fb96bbc9d425b9ee798bc0a6bef521fae04c252a3ea48d979933aec7e.jpg",
+        "d4e5c7e9ea0e54ac89a1c1d1aef77a9b989490188101ff7510c59cb86a05f89d.jpg",
+        "df278f57e1b71215c159b2ab2e126b1de8ed971accf8423579d11fafacafa721.jpg",
+        "dfa7a1df86aa39dfe71c8aa6c17b008a686cd0921ad4743624dd698902efebf8.jpg",
+        "f6217d98462e14522e50b1ead039942f8d0e5ba53487ea0d2a42ba4b20fd35ba.jpg"
+      ],
+      "tables": 4,
+      "interline_equations": 10,
+      "inline_equations": 101,
+      "nodes_with_ids": 1342,
+      "nodes_total_for_ids": 1342,
+      "root_attribute_keys": [],
+      "has_middle_sha256": true,
+      "has_source_pdf_sha256": true,
+      "has_document_id": true
+    },
+    "delta": {
+      "pages": 0,
+      "content_blocks": 21,
+      "discarded_blocks": 0,
+      "lines": 22,
+      "spans": 37,
+      "text_characters": 1195,
+      "images": 5,
+      "tables": 0,
+      "interline_equations": 0,
+      "inline_equations": 8,
+      "nodes_with_ids": 1342
+    },
+    "block_types_added": {
+      "image_body": 1,
+      "table_body": 4,
+      "table_caption": 4,
+      "table_footnote": 12
+    },
+    "block_types_removed": {},
+    "span_types_added": {
+      "image": 1,
+      "inline_equation": 8,
+      "table": 4,
+      "text": 24
+    },
+    "span_types_removed": {}
+  },
+  {
+    "document_id": "0a0f57e6addd7987",
+    "source_name": "GEC_0012",
+    "current_available": true,
+    "text_similarity": 0.99706,
+    "old": {
+      "pages": 9,
+      "content_blocks": 114,
+      "discarded_blocks": 13,
+      "lines": 340,
+      "spans": 342,
+      "text_characters": 28657,
+      "block_types": {
+        "abstract": 1,
+        "footer": 1,
+        "header": 3,
+        "image": 1,
+        "page_number": 9,
+        "ref_text": 7,
+        "table": 1,
+        "text": 81,
+        "title": 23
+      },
+      "span_types": {
+        "text": 342
+      },
+      "images": 0,
+      "image_paths": [],
+      "tables": 1,
+      "interline_equations": 0,
+      "inline_equations": 0,
+      "nodes_with_ids": 0,
+      "nodes_total_for_ids": 819,
+      "root_attribute_keys": [
+        "_backend",
+        "_version_name"
+      ],
+      "has_middle_sha256": false,
+      "has_source_pdf_sha256": false,
+      "has_document_id": false
+    },
+    "current": {
+      "pages": 9,
+      "content_blocks": 118,
+      "discarded_blocks": 13,
+      "lines": 345,
+      "spans": 347,
+      "text_characters": 28826,
+      "block_types": {
+        "abstract": 1,
+        "footer": 1,
+        "header": 3,
+        "image": 1,
+        "image_body": 1,
+        "page_number": 9,
+        "ref_text": 7,
+        "table": 1,
+        "table_body": 1,
+        "table_caption": 1,
+        "table_footnote": 1,
+        "text": 81,
+        "title": 23
+      },
+      "span_types": {
+        "image": 1,
+        "table": 1,
+        "text": 345
+      },
+      "images": 2,
+      "image_paths": [
+        "41afff0434c876f00755a198b0d643dc7c5b74cce7109bdad649eab0c129acd8.jpg",
+        "b59a70789dbd1d1848bafe82a0ed4bfb22f40a40f2429b2f6c88dc300bb944a4.jpg"
+      ],
+      "tables": 1,
+      "interline_equations": 0,
+      "inline_equations": 0,
+      "nodes_with_ids": 833,
+      "nodes_total_for_ids": 833,
+      "root_attribute_keys": [],
+      "has_middle_sha256": true,
+      "has_source_pdf_sha256": true,
+      "has_document_id": true
+    },
+    "delta": {
+      "pages": 0,
+      "content_blocks": 4,
+      "discarded_blocks": 0,
+      "lines": 5,
+      "spans": 5,
+      "text_characters": 169,
+      "images": 2,
+      "tables": 0,
+      "interline_equations": 0,
+      "inline_equations": 0,
+      "nodes_with_ids": 833
+    },
+    "block_types_added": {
+      "image_body": 1,
+      "table_body": 1,
+      "table_caption": 1,
+      "table_footnote": 1
+    },
+    "block_types_removed": {},
+    "span_types_added": {
+      "image": 1,
+      "table": 1,
+      "text": 3
+    },
+    "span_types_removed": {}
+  },
+  {
+    "document_id": "153ff9c09ca994ca",
+    "source_name": "GTM10",
+    "current_available": true,
+    "text_similarity": 0.974674,
+    "old": {
+      "pages": 9,
+      "content_blocks": 86,
+      "discarded_blocks": 13,
+      "lines": 252,
+      "spans": 287,
+      "text_characters": 21526,
+      "block_types": {
+        "chart": 7,
+        "footer": 1,
+        "header": 4,
+        "image": 7,
+        "page_number": 8,
+        "ref_text": 10,
+        "table": 1,
+        "text": 48,
+        "title": 13
+      },
+      "span_types": {
+        "inline_equation": 10,
+        "text": 277
+      },
+      "images": 0,
+      "image_paths": [],
+      "tables": 1,
+      "interline_equations": 0,
+      "inline_equations": 10,
+      "nodes_with_ids": 0,
+      "nodes_total_for_ids": 648,
+      "root_attribute_keys": [
+        "_backend",
+        "_version_name"
+      ],
+      "has_middle_sha256": false,
+      "has_source_pdf_sha256": false,
+      "has_document_id": false
+    },
+    "current": {
+      "pages": 9,
+      "content_blocks": 111,
+      "discarded_blocks": 13,
+      "lines": 280,
+      "spans": 311,
+      "text_characters": 22421,
+      "block_types": {
+        "chart": 7,
+        "chart_body": 7,
+        "chart_caption": 7,
+        "footer": 1,
+        "header": 4,
+        "image": 7,
+        "image_body": 7,
+        "image_caption": 1,
+        "page_number": 8,
+        "ref_text": 10,
+        "table": 1,
+        "table_body": 1,
+        "table_caption": 1,
+        "text": 49,
+        "title": 13
+      },
+      "span_types": {
+        "chart": 7,
+        "image": 7,
+        "inline_equation": 8,
+        "table": 1,
+        "text": 288
+      },
+      "images": 15,
+      "image_paths": [
+        "01a3d61328c89a3fcb4a6b429496876d5c1b7449c6776ac0d77047e05eae849b.jpg",
+        "1c22e578ca18331f09aa0cff3e1e7e95f88dd5e72c5893ce7c3e860cda1317e4.jpg",
+        "28d3f4a58aac46d373a7550e09341e313f48507e52c406ae32a7d36151c2e8f3.jpg",
+        "366447594e94729fbbac036468698cca366330ce446627c9c82ee359d002fa29.jpg",
+        "3af7101f95e5964ff89fbe2c5a390d7be0b84428c0be394c67ba41ea114e84b3.jpg",
+        "4c18fa27a84dfec41f35bf93b5f439f047b400bbc37e3e250cbf6fa4c3269049.jpg",
+        "50d0aef62981027b3f1bf2d5675cf66cb79ef40445d054083b1b4bc4040cb7c4.jpg",
+        "75d39a823e167c3731d491e07a4da1000b89a11ce349d23b07190877683b32d7.jpg",
+        "75fd5cc830d17f3437c011be0207739e87d2e6110e692d8960679eda212b1c98.jpg",
+        "77e8631a917a8f450d7f2e1f035e6b50db27ab32c01d1cb0fb73f32b7650d485.jpg",
+        "86206d84ea9b14059ffd3bffd7d5a874aad211a28107fa91de8b821f3f2cd975.jpg",
+        "a53745232f80716686ce2fd84f10b931107470818d67726cd4688fe2dd71057a.jpg",
+        "b410144319a8709329e293e9cb500bea4fd885245dc147d1dcd3eab435d81cc3.jpg",
+        "c4075d547ef6dc604f4c49fd5f43a47c3c0ddf5235cc5baeeb5dc32312edd0b3.jpg",
+        "f00286465a1d0749ccf07fc24c1b6d90b3ddb75148935df17ebfc61dd82641eb.jpg"
+      ],
+      "tables": 1,
+      "interline_equations": 0,
+      "inline_equations": 8,
+      "nodes_with_ids": 725,
+      "nodes_total_for_ids": 725,
+      "root_attribute_keys": [],
+      "has_middle_sha256": true,
+      "has_source_pdf_sha256": true,
+      "has_document_id": true
+    },
+    "delta": {
+      "pages": 0,
+      "content_blocks": 25,
+      "discarded_blocks": 0,
+      "lines": 28,
+      "spans": 24,
+      "text_characters": 895,
+      "images": 15,
+      "tables": 0,
+      "interline_equations": 0,
+      "inline_equations": -2,
+      "nodes_with_ids": 725
+    },
+    "block_types_added": {
+      "chart_body": 7,
+      "chart_caption": 7,
+      "image_body": 7,
+      "image_caption": 1,
+      "table_body": 1,
+      "table_caption": 1,
+      "text": 1
+    },
+    "block_types_removed": {},
+    "span_types_added": {
+      "chart": 7,
+      "image": 7,
+      "table": 1,
+      "text": 11
+    },
+    "span_types_removed": {
+      "inline_equation": 2
+    }
+  }
+]
