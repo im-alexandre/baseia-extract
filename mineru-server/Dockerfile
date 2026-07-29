@@ -1,17 +1,21 @@
-FROM vllm/vllm-openai:v0.21.0
+FROM runpod/base:1.1.0-cuda1281-ubuntu2204
 
-USER root
+ENV DEBIAN_FRONTEND=noninteractive
 
-RUN uv venv /opt/mineru-venv \
-  --python "$(command -v python3)" \
-  --system-site-packages \
-  --seed \
-  && /opt/mineru-venv/bin/python -m pip install \
-  --no-cache-dir \
-  "mineru[core]==3.4.4"
+# Dependências de renderização e fontes necessárias ao MinerU instalado no boot.
+RUN apt-get update \
+  && apt-get install --yes --no-install-recommends \
+    fontconfig \
+    fonts-noto-cjk \
+    fonts-noto-core \
+    libgl1 \
+  && fc-cache -f \
+  && rm -rf /var/lib/apt/lists/*
 
-COPY start.sh /usr/local/bin/start-mineru
-RUN chmod 0755 /usr/local/bin/start-mineru
+# O Network Volume contém exclusivamente os resultados persistidos.
+WORKDIR /workspace/results
 
-ENTRYPOINT ["/usr/local/bin/start-mineru"]
-CMD []
+COPY --chmod=0755 start.sh /usr/local/bin/start-mineru-api
+COPY persistent_results.py router_with_persistence.py sitecustomize.py /opt/baseia/
+
+ENTRYPOINT ["/usr/local/bin/start-mineru-api"]

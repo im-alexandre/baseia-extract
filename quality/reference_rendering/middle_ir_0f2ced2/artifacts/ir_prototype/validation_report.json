@@ -1,0 +1,137 @@
+[
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\0033d9791d44daff\\Chain-optimazation-pscc-2002\\auto\\Chain-optimazation-pscc-2002_middle.json",
+    "source_counts": {
+      "pages": 7,
+      "blocks": 144,
+      "discarded_blocks": 0,
+      "preproc_blocks": 144
+    },
+    "ir_counts": {
+      "pages": 7,
+      "blocks": 144,
+      "discarded_blocks": 0
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "valid": true
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\01bcb00e543fd06c\\GLT_1332\\auto\\GLT_1332_middle.json",
+    "source_counts": {
+      "pages": 10,
+      "blocks": 109,
+      "discarded_blocks": 13,
+      "preproc_blocks": 109
+    },
+    "ir_counts": {
+      "pages": 10,
+      "blocks": 109,
+      "discarded_blocks": 13
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "valid": true
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\035ca90614af2355\\10.1080_096031096334006\\auto\\10.1080_096031096334006_middle.json",
+    "source_counts": {
+      "pages": 8,
+      "blocks": 116,
+      "discarded_blocks": 21,
+      "preproc_blocks": 116
+    },
+    "ir_counts": {
+      "pages": 8,
+      "blocks": 116,
+      "discarded_blocks": 21
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "valid": true
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\0a0f57e6addd7987\\GEC_0012\\auto\\GEC_0012_middle.json",
+    "source_counts": {
+      "pages": 9,
+      "blocks": 114,
+      "discarded_blocks": 13,
+      "preproc_blocks": 114
+    },
+    "ir_counts": {
+      "pages": 9,
+      "blocks": 114,
+      "discarded_blocks": 13
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "valid": true
+  },
+  {
+    "source_path": "D:\\baseia_v3\\artifacts\\mineru\\smoke\\153ff9c09ca994ca\\GTM10\\auto\\GTM10_middle.json",
+    "source_counts": {
+      "pages": 9,
+      "blocks": 86,
+      "discarded_blocks": 13,
+      "preproc_blocks": 86
+    },
+    "ir_counts": {
+      "pages": 9,
+      "blocks": 86,
+      "discarded_blocks": 13
+    },
+    "checks": {
+      "page_count_matches": true,
+      "block_count_matches": true,
+      "discarded_count_matches": true,
+      "roundtrip_matches": true,
+      "serializable": true,
+      "preproc_not_serialized": true
+    },
+    "duplicates": {
+      "duplicated_content_blocks": 0,
+      "content_discarded_overlap": 0
+    },
+    "valid": true
+  }
+]

@@ -1,0 +1,407 @@
+{
+  "counts": {
+    "ok": 5
+  },
+  "documents": [
+    {
+      "document_id": "035ca90614af2355",
+      "ir_validation": {
+        "checks": {
+          "block_count_matches": true,
+          "block_node_count_matches": true,
+          "discarded_count_matches": true,
+          "line_count_matches": true,
+          "middle_sha256_matches": true,
+          "nested_block_count_matches": true,
+          "page_count_matches": true,
+          "preproc_not_serialized": true,
+          "roundtrip_matches": true,
+          "serializable": true,
+          "span_count_matches": true
+        },
+        "duplicates": {
+          "content_discarded_overlap": 0,
+          "duplicated_content_blocks": 0
+        },
+        "ir_counts": {
+          "block_nodes": 158,
+          "blocks": 116,
+          "discarded_blocks": 21,
+          "lines": 494,
+          "nested_blocks": 21,
+          "pages": 8,
+          "spans": 681
+        },
+        "source_counts": {
+          "block_nodes": 158,
+          "blocks": 116,
+          "discarded_blocks": 21,
+          "lines": 494,
+          "nested_blocks": 21,
+          "pages": 8,
+          "preproc_blocks": 116,
+          "spans": 681
+        },
+        "source_path": "D:\\baseia_v3\\quality\\evaluations\\middle_ir_0f2ced2_vs_20260729\\current\\data\\mineru\\documents\\035ca90614af2355\\035ca90614af235551917e2fa5297d091092bf8b79eea6a8581ad84d55be0904\\auto\\035ca90614af235551917e2fa5297d091092bf8b79eea6a8581ad84d55be0904_middle.json",
+        "valid": true
+      },
+      "middle_path": "D:\\baseia_v3\\quality\\evaluations\\middle_ir_0f2ced2_vs_20260729\\current\\data\\mineru\\documents\\035ca90614af2355\\035ca90614af235551917e2fa5297d091092bf8b79eea6a8581ad84d55be0904\\auto\\035ca90614af235551917e2fa5297d091092bf8b79eea6a8581ad84d55be0904_middle.json",
+      "missing_assets": [],
+      "render_source": "ir_reconstruction",
+      "status": "ok",
+      "structure_validation": {
+        "checks": {
+          "all_assets_registered": true,
+          "all_content_blocks_annotated_in_order": true,
+          "annotation_ids_unique": true,
+          "annotations_match_source_pages": true,
+          "discarded_blocks_preserved_in_order": true,
+          "document_id_matches": true,
+          "list_group_references_valid": true,
+          "middle_sha256_matches": true,
+          "primary_flow_is_ordered_subset": true,
+          "reading_order_contiguous": true,
+          "root_section_exists": true,
+          "roundtrip_matches": true,
+          "section_references_valid": true,
+          "source_pdf_sha256_matches": true
+        },
+        "counts": {
+          "assets": 15,
+          "content_blocks": 116,
+          "discarded_blocks": 21,
+          "list_groups": 2,
+          "pages": 8,
+          "primary_flow_blocks": 116,
+          "sections": 13
+        },
+        "document_id": "035ca90614af2355",
+        "source_name": "035ca90614af235551917e2fa5297d091092bf8b79eea6a8581ad84d55be0904",
+        "valid": true
+      },
+      "warnings": [
+        "Markdown MinerU incompatível com o middle.json; reconstrução pelo IR utilizada: Equação inline ausente no Markdown MinerU: 035ca90614af2355:p0001:b0015:l0003:s0001"
+      ]
+    },
+    {
+      "document_id": "0033d9791d44daff",
+      "ir_validation": {
+        "checks": {
+          "block_count_matches": true,
+          "block_node_count_matches": true,
+          "discarded_count_matches": true,
+          "line_count_matches": true,
+          "middle_sha256_matches": true,
+          "nested_block_count_matches": true,
+          "page_count_matches": true,
+          "preproc_not_serialized": true,
+          "roundtrip_matches": true,
+          "serializable": true,
+          "span_count_matches": true
+        },
+        "duplicates": {
+          "content_discarded_overlap": 0,
+          "duplicated_content_blocks": 0
+        },
+        "ir_counts": {
+          "block_nodes": 158,
+          "blocks": 144,
+          "discarded_blocks": 0,
+          "lines": 667,
+          "nested_blocks": 14,
+          "pages": 7,
+          "spans": 729
+        },
+        "source_counts": {
+          "block_nodes": 158,
+          "blocks": 144,
+          "discarded_blocks": 0,
+          "lines": 667,
+          "nested_blocks": 14,
+          "pages": 7,
+          "preproc_blocks": 144,
+          "spans": 729
+        },
+        "source_path": "D:\\baseia_v3\\quality\\evaluations\\middle_ir_0f2ced2_vs_20260729\\current\\data\\mineru\\documents\\0033d9791d44daff\\0033d9791d44daff6c0fb83a1cadd1f38f545ac968f6014fe69e90a1892fba74\\auto\\0033d9791d44daff6c0fb83a1cadd1f38f545ac968f6014fe69e90a1892fba74_middle.json",
+        "valid": true
+      },
+      "middle_path": "D:\\baseia_v3\\quality\\evaluations\\middle_ir_0f2ced2_vs_20260729\\current\\data\\mineru\\documents\\0033d9791d44daff\\0033d9791d44daff6c0fb83a1cadd1f38f545ac968f6014fe69e90a1892fba74\\auto\\0033d9791d44daff6c0fb83a1cadd1f38f545ac968f6014fe69e90a1892fba74_middle.json",
+      "missing_assets": [],
+      "render_source": "ir_reconstruction",
+      "status": "ok",
+      "structure_validation": {
+        "checks": {
+          "all_assets_registered": true,
+          "all_content_blocks_annotated_in_order": true,
+          "annotation_ids_unique": true,
+          "annotations_match_source_pages": true,
+          "discarded_blocks_preserved_in_order": true,
+          "document_id_matches": true,
+          "list_group_references_valid": true,
+          "middle_sha256_matches": true,
+          "primary_flow_is_ordered_subset": true,
+          "reading_order_contiguous": true,
+          "root_section_exists": true,
+          "roundtrip_matches": true,
+          "section_references_valid": true,
+          "source_pdf_sha256_matches": true
+        },
+        "counts": {
+          "assets": 16,
+          "content_blocks": 144,
+          "discarded_blocks": 0,
+          "list_groups": 0,
+          "pages": 7,
+          "primary_flow_blocks": 144,
+          "sections": 9
+        },
+        "document_id": "0033d9791d44daff",
+        "source_name": "0033d9791d44daff6c0fb83a1cadd1f38f545ac968f6014fe69e90a1892fba74",
+        "valid": true
+      },
+      "warnings": [
+        "Markdown MinerU incompatível com o middle.json; reconstrução pelo IR utilizada: Equação inline ausente no Markdown MinerU: 0033d9791d44daff:p0003:b0025:l0001:s0001"
+      ]
+    },
+    {
+      "document_id": "0a0f57e6addd7987",
+      "ir_validation": {
+        "checks": {
+          "block_count_matches": true,
+          "block_node_count_matches": true,
+          "discarded_count_matches": true,
+          "line_count_matches": true,
+          "middle_sha256_matches": true,
+          "nested_block_count_matches": true,
+          "page_count_matches": true,
+          "preproc_not_serialized": true,
+          "roundtrip_matches": true,
+          "serializable": true,
+          "span_count_matches": true
+        },
+        "duplicates": {
+          "content_discarded_overlap": 0,
+          "duplicated_content_blocks": 0
+        },
+        "ir_counts": {
+          "block_nodes": 131,
+          "blocks": 114,
+          "discarded_blocks": 13,
+          "lines": 345,
+          "nested_blocks": 4,
+          "pages": 9,
+          "spans": 347
+        },
+        "source_counts": {
+          "block_nodes": 131,
+          "blocks": 114,
+          "discarded_blocks": 13,
+          "lines": 345,
+          "nested_blocks": 4,
+          "pages": 9,
+          "preproc_blocks": 114,
+          "spans": 347
+        },
+        "source_path": "D:\\baseia_v3\\quality\\evaluations\\middle_ir_0f2ced2_vs_20260729\\current\\data\\mineru\\documents\\0a0f57e6addd7987\\0a0f57e6addd7987cf6073cd7ac1e8372fc883c59a48023687dfca5a81b5a9df\\auto\\0a0f57e6addd7987cf6073cd7ac1e8372fc883c59a48023687dfca5a81b5a9df_middle.json",
+        "valid": true
+      },
+      "middle_path": "D:\\baseia_v3\\quality\\evaluations\\middle_ir_0f2ced2_vs_20260729\\current\\data\\mineru\\documents\\0a0f57e6addd7987\\0a0f57e6addd7987cf6073cd7ac1e8372fc883c59a48023687dfca5a81b5a9df\\auto\\0a0f57e6addd7987cf6073cd7ac1e8372fc883c59a48023687dfca5a81b5a9df_middle.json",
+      "missing_assets": [],
+      "render_source": "mineru_markdown",
+      "status": "ok",
+      "structure_validation": {
+        "checks": {
+          "all_assets_registered": true,
+          "all_content_blocks_annotated_in_order": true,
+          "annotation_ids_unique": true,
+          "annotations_match_source_pages": true,
+          "discarded_blocks_preserved_in_order": true,
+          "document_id_matches": true,
+          "list_group_references_valid": true,
+          "middle_sha256_matches": true,
+          "primary_flow_is_ordered_subset": true,
+          "reading_order_contiguous": true,
+          "root_section_exists": true,
+          "roundtrip_matches": true,
+          "section_references_valid": true,
+          "source_pdf_sha256_matches": true
+        },
+        "counts": {
+          "assets": 2,
+          "content_blocks": 114,
+          "discarded_blocks": 13,
+          "list_groups": 0,
+          "pages": 9,
+          "primary_flow_blocks": 114,
+          "sections": 24
+        },
+        "document_id": "0a0f57e6addd7987",
+        "source_name": "0a0f57e6addd7987cf6073cd7ac1e8372fc883c59a48023687dfca5a81b5a9df",
+        "valid": true
+      },
+      "warnings": []
+    },
+    {
+      "document_id": "01bcb00e543fd06c",
+      "ir_validation": {
+        "checks": {
+          "block_count_matches": true,
+          "block_node_count_matches": true,
+          "discarded_count_matches": true,
+          "line_count_matches": true,
+          "middle_sha256_matches": true,
+          "nested_block_count_matches": true,
+          "page_count_matches": true,
+          "preproc_not_serialized": true,
+          "roundtrip_matches": true,
+          "serializable": true,
+          "span_count_matches": true
+        },
+        "duplicates": {
+          "content_discarded_overlap": 0,
+          "duplicated_content_blocks": 0
+        },
+        "ir_counts": {
+          "block_nodes": 147,
+          "blocks": 109,
+          "discarded_blocks": 13,
+          "lines": 362,
+          "nested_blocks": 25,
+          "pages": 10,
+          "spans": 372
+        },
+        "source_counts": {
+          "block_nodes": 147,
+          "blocks": 109,
+          "discarded_blocks": 13,
+          "lines": 362,
+          "nested_blocks": 25,
+          "pages": 10,
+          "preproc_blocks": 109,
+          "spans": 372
+        },
+        "source_path": "D:\\baseia_v3\\quality\\evaluations\\middle_ir_0f2ced2_vs_20260729\\current\\data\\mineru\\documents\\01bcb00e543fd06c\\01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718\\auto\\01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718_middle.json",
+        "valid": true
+      },
+      "middle_path": "D:\\baseia_v3\\quality\\evaluations\\middle_ir_0f2ced2_vs_20260729\\current\\data\\mineru\\documents\\01bcb00e543fd06c\\01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718\\auto\\01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718_middle.json",
+      "missing_assets": [],
+      "render_source": "mineru_markdown",
+      "status": "ok",
+      "structure_validation": {
+        "checks": {
+          "all_assets_registered": true,
+          "all_content_blocks_annotated_in_order": true,
+          "annotation_ids_unique": true,
+          "annotations_match_source_pages": true,
+          "discarded_blocks_preserved_in_order": true,
+          "document_id_matches": true,
+          "list_group_references_valid": true,
+          "middle_sha256_matches": true,
+          "primary_flow_is_ordered_subset": true,
+          "reading_order_contiguous": true,
+          "root_section_exists": true,
+          "roundtrip_matches": true,
+          "section_references_valid": true,
+          "source_pdf_sha256_matches": true
+        },
+        "counts": {
+          "assets": 15,
+          "content_blocks": 109,
+          "discarded_blocks": 13,
+          "list_groups": 1,
+          "pages": 10,
+          "primary_flow_blocks": 109,
+          "sections": 27
+        },
+        "document_id": "01bcb00e543fd06c",
+        "source_name": "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718",
+        "valid": true
+      },
+      "warnings": []
+    },
+    {
+      "document_id": "153ff9c09ca994ca",
+      "ir_validation": {
+        "checks": {
+          "block_count_matches": true,
+          "block_node_count_matches": true,
+          "discarded_count_matches": true,
+          "line_count_matches": true,
+          "middle_sha256_matches": true,
+          "nested_block_count_matches": true,
+          "page_count_matches": true,
+          "preproc_not_serialized": true,
+          "roundtrip_matches": true,
+          "serializable": true,
+          "span_count_matches": true
+        },
+        "duplicates": {
+          "content_discarded_overlap": 0,
+          "duplicated_content_blocks": 0
+        },
+        "ir_counts": {
+          "block_nodes": 124,
+          "blocks": 87,
+          "discarded_blocks": 13,
+          "lines": 280,
+          "nested_blocks": 24,
+          "pages": 9,
+          "spans": 311
+        },
+        "source_counts": {
+          "block_nodes": 124,
+          "blocks": 87,
+          "discarded_blocks": 13,
+          "lines": 280,
+          "nested_blocks": 24,
+          "pages": 9,
+          "preproc_blocks": 87,
+          "spans": 311
+        },
+        "source_path": "D:\\baseia_v3\\quality\\evaluations\\middle_ir_0f2ced2_vs_20260729\\current\\data\\mineru\\documents\\153ff9c09ca994ca\\153ff9c09ca994ca35b79fede481f1340c0a29b5a969a0be401e6aac5330606b\\auto\\153ff9c09ca994ca35b79fede481f1340c0a29b5a969a0be401e6aac5330606b_middle.json",
+        "valid": true
+      },
+      "middle_path": "D:\\baseia_v3\\quality\\evaluations\\middle_ir_0f2ced2_vs_20260729\\current\\data\\mineru\\documents\\153ff9c09ca994ca\\153ff9c09ca994ca35b79fede481f1340c0a29b5a969a0be401e6aac5330606b\\auto\\153ff9c09ca994ca35b79fede481f1340c0a29b5a969a0be401e6aac5330606b_middle.json",
+      "missing_assets": [],
+      "render_source": "ir_reconstruction",
+      "status": "ok",
+      "structure_validation": {
+        "checks": {
+          "all_assets_registered": true,
+          "all_content_blocks_annotated_in_order": true,
+          "annotation_ids_unique": true,
+          "annotations_match_source_pages": true,
+          "discarded_blocks_preserved_in_order": true,
+          "document_id_matches": true,
+          "list_group_references_valid": true,
+          "middle_sha256_matches": true,
+          "primary_flow_is_ordered_subset": true,
+          "reading_order_contiguous": true,
+          "root_section_exists": true,
+          "roundtrip_matches": true,
+          "section_references_valid": true,
+          "source_pdf_sha256_matches": true
+        },
+        "counts": {
+          "assets": 15,
+          "content_blocks": 87,
+          "discarded_blocks": 13,
+          "list_groups": 0,
+          "pages": 9,
+          "primary_flow_blocks": 87,
+          "sections": 14
+        },
+        "document_id": "153ff9c09ca994ca",
+        "source_name": "153ff9c09ca994ca35b79fede481f1340c0a29b5a969a0be401e6aac5330606b",
+        "valid": true
+      },
+      "warnings": [
+        "Markdown MinerU incompatível com o middle.json; reconstrução pelo IR utilizada: Span corrompido ausente no Markdown MinerU: 153ff9c09ca994ca:p0006:b0004:l0003:s0000"
+      ]
+    }
+  ],
+  "generated_at": "2026-07-29T10:42:24.507701+00:00",
+  "inventory_path": "D:\\baseia_v3\\quality\\evaluations\\middle_ir_0f2ced2_vs_20260729\\current\\data\\inventory\\inventory.csv",
+  "overwrite": true,
+  "workers": 5
+}

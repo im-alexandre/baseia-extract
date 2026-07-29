@@ -1,0 +1,11 @@
+{
+  "documents": 5,
+  "valid_documents": 5,
+  "invalid_documents": 0,
+  "pages": 43,
+  "blocks": 569,
+  "discarded_blocks": 60,
+  "source_preproc_blocks_ignored": 569,
+  "duplicated_content_blocks": 0,
+  "content_discarded_overlap": 0
+}

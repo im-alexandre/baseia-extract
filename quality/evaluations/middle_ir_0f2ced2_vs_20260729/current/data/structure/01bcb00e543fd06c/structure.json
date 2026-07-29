@@ -1,0 +1,2202 @@
+{
+  "annotations": [
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0000:b0000",
+      "excluded_from_primary_flow": false,
+      "page": 0,
+      "page_id": "01bcb00e543fd06c:p0000",
+      "reading_order": 0,
+      "role": "title",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0000",
+      "source_type": "title"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0000:b0001",
+      "excluded_from_primary_flow": false,
+      "page": 0,
+      "page_id": "01bcb00e543fd06c:p0000",
+      "reading_order": 1,
+      "role": "title",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001",
+      "source_type": "title"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0000:b0002",
+      "excluded_from_primary_flow": false,
+      "list_group_id": "01bcb00e543fd06c:list:01bcb00e543fd06c:p0000:b0002",
+      "page": 0,
+      "page_id": "01bcb00e543fd06c:p0000",
+      "reading_order": 2,
+      "role": "list",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001",
+      "source_type": "list"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0000:b0003",
+      "excluded_from_primary_flow": false,
+      "page": 0,
+      "page_id": "01bcb00e543fd06c:p0000",
+      "reading_order": 3,
+      "role": "title",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0003",
+      "source_type": "title"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0000:b0004",
+      "excluded_from_primary_flow": false,
+      "page": 0,
+      "page_id": "01bcb00e543fd06c:p0000",
+      "reading_order": 4,
+      "role": "abstract",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0003",
+      "source_type": "abstract"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0000:b0005",
+      "excluded_from_primary_flow": false,
+      "page": 0,
+      "page_id": "01bcb00e543fd06c:p0000",
+      "reading_order": 5,
+      "role": "title",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0005",
+      "source_type": "title"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0000:b0006",
+      "excluded_from_primary_flow": false,
+      "page": 0,
+      "page_id": "01bcb00e543fd06c:p0000",
+      "reading_order": 6,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0005",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0000:b0007",
+      "excluded_from_primary_flow": false,
+      "page": 0,
+      "page_id": "01bcb00e543fd06c:p0000",
+      "reading_order": 7,
+      "role": "title",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0007",
+      "source_type": "title"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0000:b0008",
+      "excluded_from_primary_flow": false,
+      "page": 0,
+      "page_id": "01bcb00e543fd06c:p0000",
+      "reading_order": 8,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0007",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0000:b0009",
+      "excluded_from_primary_flow": false,
+      "page": 0,
+      "page_id": "01bcb00e543fd06c:p0000",
+      "reading_order": 9,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0007",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0000:b0010",
+      "excluded_from_primary_flow": false,
+      "page": 0,
+      "page_id": "01bcb00e543fd06c:p0000",
+      "reading_order": 10,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0007",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0000:b0011",
+      "excluded_from_primary_flow": false,
+      "page": 0,
+      "page_id": "01bcb00e543fd06c:p0000",
+      "reading_order": 11,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0007",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0000:b0012",
+      "excluded_from_primary_flow": false,
+      "page": 0,
+      "page_id": "01bcb00e543fd06c:p0000",
+      "reading_order": 12,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0007",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": false
+      },
+      "block_id": "01bcb00e543fd06c:p0001:b0000",
+      "excluded_from_primary_flow": false,
+      "page": 1,
+      "page_id": "01bcb00e543fd06c:p0001",
+      "reading_order": 13,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0007",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0001:b0001",
+      "excluded_from_primary_flow": false,
+      "page": 1,
+      "page_id": "01bcb00e543fd06c:p0001",
+      "reading_order": 14,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0007",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0001:b0002",
+      "excluded_from_primary_flow": false,
+      "page": 1,
+      "page_id": "01bcb00e543fd06c:p0001",
+      "reading_order": 15,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0007",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0001:b0003",
+      "excluded_from_primary_flow": false,
+      "page": 1,
+      "page_id": "01bcb00e543fd06c:p0001",
+      "reading_order": 16,
+      "role": "title",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0001:b0003",
+      "source_type": "title"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0001:b0004",
+      "excluded_from_primary_flow": false,
+      "page": 1,
+      "page_id": "01bcb00e543fd06c:p0001",
+      "reading_order": 17,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0001:b0003",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0001:b0005",
+      "excluded_from_primary_flow": false,
+      "page": 1,
+      "page_id": "01bcb00e543fd06c:p0001",
+      "reading_order": 18,
+      "role": "title",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0001:b0005",
+      "source_type": "title"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0001:b0006",
+      "excluded_from_primary_flow": false,
+      "page": 1,
+      "page_id": "01bcb00e543fd06c:p0001",
+      "reading_order": 19,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0001:b0005",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": false
+      },
+      "block_id": "01bcb00e543fd06c:p0001:b0007",
+      "excluded_from_primary_flow": false,
+      "page": 1,
+      "page_id": "01bcb00e543fd06c:p0001",
+      "reading_order": 20,
+      "role": "figure",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0001:b0005",
+      "source_type": "image"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": false
+      },
+      "block_id": "01bcb00e543fd06c:p0001:b0008",
+      "excluded_from_primary_flow": false,
+      "page": 1,
+      "page_id": "01bcb00e543fd06c:p0001",
+      "reading_order": 21,
+      "role": "figure",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0001:b0005",
+      "source_type": "image"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": false
+      },
+      "block_id": "01bcb00e543fd06c:p0001:b0009",
+      "excluded_from_primary_flow": false,
+      "page": 1,
+      "page_id": "01bcb00e543fd06c:p0001",
+      "reading_order": 22,
+      "role": "figure",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0001:b0005",
+      "source_type": "image"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0001:b0010",
+      "excluded_from_primary_flow": false,
+      "page": 1,
+      "page_id": "01bcb00e543fd06c:p0001",
+      "reading_order": 23,
+      "role": "title",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0001:b0010",
+      "source_type": "title"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0001:b0011",
+      "excluded_from_primary_flow": false,
+      "page": 1,
+      "page_id": "01bcb00e543fd06c:p0001",
+      "reading_order": 24,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0001:b0010",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0001:b0012",
+      "excluded_from_primary_flow": false,
+      "page": 1,
+      "page_id": "01bcb00e543fd06c:p0001",
+      "reading_order": 25,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0001:b0010",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0002:b0000",
+      "excluded_from_primary_flow": false,
+      "page": 2,
+      "page_id": "01bcb00e543fd06c:p0002",
+      "reading_order": 26,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0001:b0010",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0002:b0001",
+      "excluded_from_primary_flow": false,
+      "page": 2,
+      "page_id": "01bcb00e543fd06c:p0002",
+      "reading_order": 27,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0001:b0010",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0002:b0002",
+      "excluded_from_primary_flow": false,
+      "page": 2,
+      "page_id": "01bcb00e543fd06c:p0002",
+      "reading_order": 28,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0001:b0010",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0002:b0003",
+      "excluded_from_primary_flow": false,
+      "page": 2,
+      "page_id": "01bcb00e543fd06c:p0002",
+      "reading_order": 29,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0001:b0010",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": false
+      },
+      "block_id": "01bcb00e543fd06c:p0002:b0004",
+      "excluded_from_primary_flow": false,
+      "page": 2,
+      "page_id": "01bcb00e543fd06c:p0002",
+      "reading_order": 30,
+      "role": "figure",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0001:b0010",
+      "source_type": "image"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0002:b0005",
+      "excluded_from_primary_flow": false,
+      "page": 2,
+      "page_id": "01bcb00e543fd06c:p0002",
+      "reading_order": 31,
+      "role": "title",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0002:b0005",
+      "source_type": "title"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0002:b0006",
+      "excluded_from_primary_flow": false,
+      "page": 2,
+      "page_id": "01bcb00e543fd06c:p0002",
+      "reading_order": 32,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0002:b0005",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": false
+      },
+      "block_id": "01bcb00e543fd06c:p0002:b0007",
+      "excluded_from_primary_flow": false,
+      "page": 2,
+      "page_id": "01bcb00e543fd06c:p0002",
+      "reading_order": 33,
+      "role": "figure",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0002:b0005",
+      "source_type": "image"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0002:b0008",
+      "excluded_from_primary_flow": false,
+      "page": 2,
+      "page_id": "01bcb00e543fd06c:p0002",
+      "reading_order": 34,
+      "role": "title",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0002:b0008",
+      "source_type": "title"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0002:b0009",
+      "excluded_from_primary_flow": false,
+      "page": 2,
+      "page_id": "01bcb00e543fd06c:p0002",
+      "reading_order": 35,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0002:b0008",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": false
+      },
+      "block_id": "01bcb00e543fd06c:p0003:b0000",
+      "excluded_from_primary_flow": false,
+      "page": 3,
+      "page_id": "01bcb00e543fd06c:p0003",
+      "reading_order": 36,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0002:b0008",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0003:b0001",
+      "excluded_from_primary_flow": false,
+      "page": 3,
+      "page_id": "01bcb00e543fd06c:p0003",
+      "reading_order": 37,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0002:b0008",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0003:b0002",
+      "excluded_from_primary_flow": false,
+      "page": 3,
+      "page_id": "01bcb00e543fd06c:p0003",
+      "reading_order": 38,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0002:b0008",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": false
+      },
+      "block_id": "01bcb00e543fd06c:p0003:b0003",
+      "excluded_from_primary_flow": false,
+      "page": 3,
+      "page_id": "01bcb00e543fd06c:p0003",
+      "reading_order": 39,
+      "role": "figure",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0002:b0008",
+      "source_type": "image"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0003:b0004",
+      "excluded_from_primary_flow": false,
+      "page": 3,
+      "page_id": "01bcb00e543fd06c:p0003",
+      "reading_order": 40,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0002:b0008",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0003:b0005",
+      "excluded_from_primary_flow": false,
+      "page": 3,
+      "page_id": "01bcb00e543fd06c:p0003",
+      "reading_order": 41,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0002:b0008",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0003:b0006",
+      "excluded_from_primary_flow": false,
+      "page": 3,
+      "page_id": "01bcb00e543fd06c:p0003",
+      "reading_order": 42,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0002:b0008",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": false
+      },
+      "block_id": "01bcb00e543fd06c:p0004:b0000",
+      "excluded_from_primary_flow": false,
+      "page": 4,
+      "page_id": "01bcb00e543fd06c:p0004",
+      "reading_order": 43,
+      "role": "figure",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0002:b0008",
+      "source_type": "image"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0004:b0001",
+      "excluded_from_primary_flow": false,
+      "page": 4,
+      "page_id": "01bcb00e543fd06c:p0004",
+      "reading_order": 44,
+      "role": "title",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0004:b0001",
+      "source_type": "title"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0004:b0002",
+      "excluded_from_primary_flow": false,
+      "page": 4,
+      "page_id": "01bcb00e543fd06c:p0004",
+      "reading_order": 45,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0004:b0001",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0004:b0003",
+      "excluded_from_primary_flow": false,
+      "page": 4,
+      "page_id": "01bcb00e543fd06c:p0004",
+      "reading_order": 46,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0004:b0001",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0004:b0004",
+      "excluded_from_primary_flow": false,
+      "page": 4,
+      "page_id": "01bcb00e543fd06c:p0004",
+      "reading_order": 47,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0004:b0001",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0004:b0005",
+      "excluded_from_primary_flow": false,
+      "page": 4,
+      "page_id": "01bcb00e543fd06c:p0004",
+      "reading_order": 48,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0004:b0001",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0004:b0006",
+      "excluded_from_primary_flow": false,
+      "page": 4,
+      "page_id": "01bcb00e543fd06c:p0004",
+      "reading_order": 49,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0004:b0001",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": false
+      },
+      "block_id": "01bcb00e543fd06c:p0005:b0000",
+      "excluded_from_primary_flow": false,
+      "page": 5,
+      "page_id": "01bcb00e543fd06c:p0005",
+      "reading_order": 50,
+      "role": "figure",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0004:b0001",
+      "source_type": "image"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": false
+      },
+      "block_id": "01bcb00e543fd06c:p0005:b0001",
+      "excluded_from_primary_flow": false,
+      "page": 5,
+      "page_id": "01bcb00e543fd06c:p0005",
+      "reading_order": 51,
+      "role": "figure",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0004:b0001",
+      "source_type": "image"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": false
+      },
+      "block_id": "01bcb00e543fd06c:p0005:b0002",
+      "excluded_from_primary_flow": false,
+      "page": 5,
+      "page_id": "01bcb00e543fd06c:p0005",
+      "reading_order": 52,
+      "role": "figure",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0004:b0001",
+      "source_type": "image"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0005:b0003",
+      "excluded_from_primary_flow": false,
+      "page": 5,
+      "page_id": "01bcb00e543fd06c:p0005",
+      "reading_order": 53,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0004:b0001",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0005:b0004",
+      "excluded_from_primary_flow": false,
+      "page": 5,
+      "page_id": "01bcb00e543fd06c:p0005",
+      "reading_order": 54,
+      "role": "title",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0005:b0004",
+      "source_type": "title"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0005:b0005",
+      "excluded_from_primary_flow": false,
+      "page": 5,
+      "page_id": "01bcb00e543fd06c:p0005",
+      "reading_order": 55,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0005:b0004",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": false
+      },
+      "block_id": "01bcb00e543fd06c:p0005:b0006",
+      "excluded_from_primary_flow": false,
+      "page": 5,
+      "page_id": "01bcb00e543fd06c:p0005",
+      "reading_order": 56,
+      "role": "figure",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0005:b0004",
+      "source_type": "image"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": false
+      },
+      "block_id": "01bcb00e543fd06c:p0005:b0007",
+      "excluded_from_primary_flow": false,
+      "page": 5,
+      "page_id": "01bcb00e543fd06c:p0005",
+      "reading_order": 57,
+      "role": "figure",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0005:b0004",
+      "source_type": "image"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": false
+      },
+      "block_id": "01bcb00e543fd06c:p0005:b0008",
+      "excluded_from_primary_flow": false,
+      "page": 5,
+      "page_id": "01bcb00e543fd06c:p0005",
+      "reading_order": 58,
+      "role": "figure",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0005:b0004",
+      "source_type": "image"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": false
+      },
+      "block_id": "01bcb00e543fd06c:p0005:b0009",
+      "excluded_from_primary_flow": false,
+      "page": 5,
+      "page_id": "01bcb00e543fd06c:p0005",
+      "reading_order": 59,
+      "role": "figure",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0005:b0004",
+      "source_type": "image"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0005:b0010",
+      "excluded_from_primary_flow": false,
+      "page": 5,
+      "page_id": "01bcb00e543fd06c:p0005",
+      "reading_order": 60,
+      "role": "title",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0005:b0010",
+      "source_type": "title"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0005:b0011",
+      "excluded_from_primary_flow": false,
+      "page": 5,
+      "page_id": "01bcb00e543fd06c:p0005",
+      "reading_order": 61,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0005:b0010",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0005:b0012",
+      "excluded_from_primary_flow": false,
+      "page": 5,
+      "page_id": "01bcb00e543fd06c:p0005",
+      "reading_order": 62,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0005:b0010",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0005:b0013",
+      "excluded_from_primary_flow": false,
+      "page": 5,
+      "page_id": "01bcb00e543fd06c:p0005",
+      "reading_order": 63,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0005:b0010",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0006:b0000",
+      "excluded_from_primary_flow": false,
+      "page": 6,
+      "page_id": "01bcb00e543fd06c:p0006",
+      "reading_order": 64,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0005:b0010",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0006:b0001",
+      "excluded_from_primary_flow": false,
+      "page": 6,
+      "page_id": "01bcb00e543fd06c:p0006",
+      "reading_order": 65,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0005:b0010",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0006:b0002",
+      "excluded_from_primary_flow": false,
+      "page": 6,
+      "page_id": "01bcb00e543fd06c:p0006",
+      "reading_order": 66,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0005:b0010",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0006:b0003",
+      "excluded_from_primary_flow": false,
+      "page": 6,
+      "page_id": "01bcb00e543fd06c:p0006",
+      "reading_order": 67,
+      "role": "title",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0006:b0003",
+      "source_type": "title"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0006:b0004",
+      "excluded_from_primary_flow": false,
+      "page": 6,
+      "page_id": "01bcb00e543fd06c:p0006",
+      "reading_order": 68,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0006:b0003",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0006:b0005",
+      "excluded_from_primary_flow": false,
+      "page": 6,
+      "page_id": "01bcb00e543fd06c:p0006",
+      "reading_order": 69,
+      "role": "title",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0006:b0005",
+      "source_type": "title"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0006:b0006",
+      "excluded_from_primary_flow": false,
+      "page": 6,
+      "page_id": "01bcb00e543fd06c:p0006",
+      "reading_order": 70,
+      "role": "reference",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0006:b0005",
+      "source_type": "ref_text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0006:b0007",
+      "excluded_from_primary_flow": false,
+      "page": 6,
+      "page_id": "01bcb00e543fd06c:p0006",
+      "reading_order": 71,
+      "role": "reference",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0006:b0005",
+      "source_type": "ref_text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0006:b0008",
+      "excluded_from_primary_flow": false,
+      "page": 6,
+      "page_id": "01bcb00e543fd06c:p0006",
+      "reading_order": 72,
+      "role": "reference",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0006:b0005",
+      "source_type": "ref_text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0006:b0009",
+      "excluded_from_primary_flow": false,
+      "page": 6,
+      "page_id": "01bcb00e543fd06c:p0006",
+      "reading_order": 73,
+      "role": "reference",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0006:b0005",
+      "source_type": "ref_text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0006:b0010",
+      "excluded_from_primary_flow": false,
+      "page": 6,
+      "page_id": "01bcb00e543fd06c:p0006",
+      "reading_order": 74,
+      "role": "reference",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0006:b0005",
+      "source_type": "ref_text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0006:b0011",
+      "excluded_from_primary_flow": false,
+      "page": 6,
+      "page_id": "01bcb00e543fd06c:p0006",
+      "reading_order": 75,
+      "role": "reference",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0006:b0005",
+      "source_type": "ref_text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0006:b0012",
+      "excluded_from_primary_flow": false,
+      "page": 6,
+      "page_id": "01bcb00e543fd06c:p0006",
+      "reading_order": 76,
+      "role": "reference",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0006:b0005",
+      "source_type": "ref_text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0006:b0013",
+      "excluded_from_primary_flow": false,
+      "page": 6,
+      "page_id": "01bcb00e543fd06c:p0006",
+      "reading_order": 77,
+      "role": "reference",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0006:b0005",
+      "source_type": "ref_text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0007:b0000",
+      "excluded_from_primary_flow": false,
+      "page": 7,
+      "page_id": "01bcb00e543fd06c:p0007",
+      "reading_order": 78,
+      "role": "reference",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0006:b0005",
+      "source_type": "ref_text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0007:b0001",
+      "excluded_from_primary_flow": false,
+      "page": 7,
+      "page_id": "01bcb00e543fd06c:p0007",
+      "reading_order": 79,
+      "role": "reference",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0006:b0005",
+      "source_type": "ref_text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0007:b0002",
+      "excluded_from_primary_flow": false,
+      "page": 7,
+      "page_id": "01bcb00e543fd06c:p0007",
+      "reading_order": 80,
+      "role": "reference",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0006:b0005",
+      "source_type": "ref_text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0007:b0003",
+      "excluded_from_primary_flow": false,
+      "page": 7,
+      "page_id": "01bcb00e543fd06c:p0007",
+      "reading_order": 81,
+      "role": "reference",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0006:b0005",
+      "source_type": "ref_text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0007:b0004",
+      "excluded_from_primary_flow": false,
+      "page": 7,
+      "page_id": "01bcb00e543fd06c:p0007",
+      "reading_order": 82,
+      "role": "reference",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0006:b0005",
+      "source_type": "ref_text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0007:b0005",
+      "excluded_from_primary_flow": false,
+      "page": 7,
+      "page_id": "01bcb00e543fd06c:p0007",
+      "reading_order": 83,
+      "role": "reference",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0006:b0005",
+      "source_type": "ref_text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0007:b0006",
+      "excluded_from_primary_flow": false,
+      "page": 7,
+      "page_id": "01bcb00e543fd06c:p0007",
+      "reading_order": 84,
+      "role": "reference",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0006:b0005",
+      "source_type": "ref_text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0007:b0007",
+      "excluded_from_primary_flow": false,
+      "page": 7,
+      "page_id": "01bcb00e543fd06c:p0007",
+      "reading_order": 85,
+      "role": "reference",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0006:b0005",
+      "source_type": "ref_text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0007:b0008",
+      "excluded_from_primary_flow": false,
+      "page": 7,
+      "page_id": "01bcb00e543fd06c:p0007",
+      "reading_order": 86,
+      "role": "reference",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0006:b0005",
+      "source_type": "ref_text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0008:b0000",
+      "excluded_from_primary_flow": false,
+      "page": 8,
+      "page_id": "01bcb00e543fd06c:p0008",
+      "reading_order": 87,
+      "role": "title",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0000",
+      "source_type": "title"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": false
+      },
+      "block_id": "01bcb00e543fd06c:p0008:b0001",
+      "excluded_from_primary_flow": false,
+      "page": 8,
+      "page_id": "01bcb00e543fd06c:p0008",
+      "reading_order": 88,
+      "role": "figure",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0000",
+      "source_type": "image"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0008:b0002",
+      "excluded_from_primary_flow": false,
+      "page": 8,
+      "page_id": "01bcb00e543fd06c:p0008",
+      "reading_order": 89,
+      "role": "title",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0002",
+      "source_type": "title"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0008:b0003",
+      "excluded_from_primary_flow": false,
+      "page": 8,
+      "page_id": "01bcb00e543fd06c:p0008",
+      "reading_order": 90,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0002",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0008:b0004",
+      "excluded_from_primary_flow": false,
+      "page": 8,
+      "page_id": "01bcb00e543fd06c:p0008",
+      "reading_order": 91,
+      "role": "title",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0004",
+      "source_type": "title"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0008:b0005",
+      "excluded_from_primary_flow": false,
+      "page": 8,
+      "page_id": "01bcb00e543fd06c:p0008",
+      "reading_order": 92,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0004",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0008:b0006",
+      "excluded_from_primary_flow": false,
+      "page": 8,
+      "page_id": "01bcb00e543fd06c:p0008",
+      "reading_order": 93,
+      "role": "title",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0006",
+      "source_type": "title"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0008:b0007",
+      "excluded_from_primary_flow": false,
+      "page": 8,
+      "page_id": "01bcb00e543fd06c:p0008",
+      "reading_order": 94,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0006",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0008:b0008",
+      "excluded_from_primary_flow": false,
+      "page": 8,
+      "page_id": "01bcb00e543fd06c:p0008",
+      "reading_order": 95,
+      "role": "title",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0008",
+      "source_type": "title"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0008:b0009",
+      "excluded_from_primary_flow": false,
+      "page": 8,
+      "page_id": "01bcb00e543fd06c:p0008",
+      "reading_order": 96,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0008",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0008:b0010",
+      "excluded_from_primary_flow": false,
+      "page": 8,
+      "page_id": "01bcb00e543fd06c:p0008",
+      "reading_order": 97,
+      "role": "title",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0010",
+      "source_type": "title"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0008:b0011",
+      "excluded_from_primary_flow": false,
+      "page": 8,
+      "page_id": "01bcb00e543fd06c:p0008",
+      "reading_order": 98,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0010",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0008:b0012",
+      "excluded_from_primary_flow": false,
+      "page": 8,
+      "page_id": "01bcb00e543fd06c:p0008",
+      "reading_order": 99,
+      "role": "title",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0012",
+      "source_type": "title"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0008:b0013",
+      "excluded_from_primary_flow": false,
+      "page": 8,
+      "page_id": "01bcb00e543fd06c:p0008",
+      "reading_order": 100,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0012",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0008:b0014",
+      "excluded_from_primary_flow": false,
+      "page": 8,
+      "page_id": "01bcb00e543fd06c:p0008",
+      "reading_order": 101,
+      "role": "title",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0014",
+      "source_type": "title"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0008:b0015",
+      "excluded_from_primary_flow": false,
+      "page": 8,
+      "page_id": "01bcb00e543fd06c:p0008",
+      "reading_order": 102,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0014",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0009:b0000",
+      "excluded_from_primary_flow": false,
+      "page": 9,
+      "page_id": "01bcb00e543fd06c:p0009",
+      "reading_order": 103,
+      "role": "title",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0009:b0000",
+      "source_type": "title"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0009:b0001",
+      "excluded_from_primary_flow": false,
+      "page": 9,
+      "page_id": "01bcb00e543fd06c:p0009",
+      "reading_order": 104,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0009:b0000",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0009:b0002",
+      "excluded_from_primary_flow": false,
+      "page": 9,
+      "page_id": "01bcb00e543fd06c:p0009",
+      "reading_order": 105,
+      "role": "title",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0009:b0002",
+      "source_type": "title"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0009:b0003",
+      "excluded_from_primary_flow": false,
+      "page": 9,
+      "page_id": "01bcb00e543fd06c:p0009",
+      "reading_order": 106,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0009:b0002",
+      "source_type": "text"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0009:b0004",
+      "excluded_from_primary_flow": false,
+      "page": 9,
+      "page_id": "01bcb00e543fd06c:p0009",
+      "reading_order": 107,
+      "role": "title",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0009:b0004",
+      "source_type": "title"
+    },
+    {
+      "attributes": {
+        "cross_page": null,
+        "has_content": true
+      },
+      "block_id": "01bcb00e543fd06c:p0009:b0005",
+      "excluded_from_primary_flow": false,
+      "page": 9,
+      "page_id": "01bcb00e543fd06c:p0009",
+      "reading_order": 108,
+      "role": "body",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0009:b0004",
+      "source_type": "text"
+    }
+  ],
+  "assets": [
+    {
+      "block_id": "01bcb00e543fd06c:p0001:b0007",
+      "id": "01bcb00e543fd06c:asset:01bcb00e543fd06c:p0001:b0007",
+      "kind": "figure",
+      "page": 1,
+      "page_id": "01bcb00e543fd06c:p0001",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0001:b0005"
+    },
+    {
+      "block_id": "01bcb00e543fd06c:p0001:b0008",
+      "id": "01bcb00e543fd06c:asset:01bcb00e543fd06c:p0001:b0008",
+      "kind": "figure",
+      "page": 1,
+      "page_id": "01bcb00e543fd06c:p0001",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0001:b0005"
+    },
+    {
+      "block_id": "01bcb00e543fd06c:p0001:b0009",
+      "id": "01bcb00e543fd06c:asset:01bcb00e543fd06c:p0001:b0009",
+      "kind": "figure",
+      "page": 1,
+      "page_id": "01bcb00e543fd06c:p0001",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0001:b0005"
+    },
+    {
+      "block_id": "01bcb00e543fd06c:p0002:b0004",
+      "id": "01bcb00e543fd06c:asset:01bcb00e543fd06c:p0002:b0004",
+      "kind": "figure",
+      "page": 2,
+      "page_id": "01bcb00e543fd06c:p0002",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0001:b0010"
+    },
+    {
+      "block_id": "01bcb00e543fd06c:p0002:b0007",
+      "id": "01bcb00e543fd06c:asset:01bcb00e543fd06c:p0002:b0007",
+      "kind": "figure",
+      "page": 2,
+      "page_id": "01bcb00e543fd06c:p0002",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0002:b0005"
+    },
+    {
+      "block_id": "01bcb00e543fd06c:p0003:b0003",
+      "id": "01bcb00e543fd06c:asset:01bcb00e543fd06c:p0003:b0003",
+      "kind": "figure",
+      "page": 3,
+      "page_id": "01bcb00e543fd06c:p0003",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0002:b0008"
+    },
+    {
+      "block_id": "01bcb00e543fd06c:p0004:b0000",
+      "id": "01bcb00e543fd06c:asset:01bcb00e543fd06c:p0004:b0000",
+      "kind": "figure",
+      "page": 4,
+      "page_id": "01bcb00e543fd06c:p0004",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0002:b0008"
+    },
+    {
+      "block_id": "01bcb00e543fd06c:p0005:b0000",
+      "id": "01bcb00e543fd06c:asset:01bcb00e543fd06c:p0005:b0000",
+      "kind": "figure",
+      "page": 5,
+      "page_id": "01bcb00e543fd06c:p0005",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0004:b0001"
+    },
+    {
+      "block_id": "01bcb00e543fd06c:p0005:b0001",
+      "id": "01bcb00e543fd06c:asset:01bcb00e543fd06c:p0005:b0001",
+      "kind": "figure",
+      "page": 5,
+      "page_id": "01bcb00e543fd06c:p0005",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0004:b0001"
+    },
+    {
+      "block_id": "01bcb00e543fd06c:p0005:b0002",
+      "id": "01bcb00e543fd06c:asset:01bcb00e543fd06c:p0005:b0002",
+      "kind": "figure",
+      "page": 5,
+      "page_id": "01bcb00e543fd06c:p0005",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0004:b0001"
+    },
+    {
+      "block_id": "01bcb00e543fd06c:p0005:b0006",
+      "id": "01bcb00e543fd06c:asset:01bcb00e543fd06c:p0005:b0006",
+      "kind": "figure",
+      "page": 5,
+      "page_id": "01bcb00e543fd06c:p0005",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0005:b0004"
+    },
+    {
+      "block_id": "01bcb00e543fd06c:p0005:b0007",
+      "id": "01bcb00e543fd06c:asset:01bcb00e543fd06c:p0005:b0007",
+      "kind": "figure",
+      "page": 5,
+      "page_id": "01bcb00e543fd06c:p0005",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0005:b0004"
+    },
+    {
+      "block_id": "01bcb00e543fd06c:p0005:b0008",
+      "id": "01bcb00e543fd06c:asset:01bcb00e543fd06c:p0005:b0008",
+      "kind": "figure",
+      "page": 5,
+      "page_id": "01bcb00e543fd06c:p0005",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0005:b0004"
+    },
+    {
+      "block_id": "01bcb00e543fd06c:p0005:b0009",
+      "id": "01bcb00e543fd06c:asset:01bcb00e543fd06c:p0005:b0009",
+      "kind": "figure",
+      "page": 5,
+      "page_id": "01bcb00e543fd06c:p0005",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0005:b0004"
+    },
+    {
+      "block_id": "01bcb00e543fd06c:p0008:b0001",
+      "id": "01bcb00e543fd06c:asset:01bcb00e543fd06c:p0008:b0001",
+      "kind": "figure",
+      "page": 8,
+      "page_id": "01bcb00e543fd06c:p0008",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0000"
+    }
+  ],
+  "attributes": {
+    "backend": "pipeline",
+    "backend_version": "3.4.4"
+  },
+  "discarded_block_ids": [
+    "01bcb00e543fd06c:p0000:d0000",
+    "01bcb00e543fd06c:p0000:d0001",
+    "01bcb00e543fd06c:p0000:d0002",
+    "01bcb00e543fd06c:p0000:d0003",
+    "01bcb00e543fd06c:p0001:d0000",
+    "01bcb00e543fd06c:p0002:d0000",
+    "01bcb00e543fd06c:p0003:d0000",
+    "01bcb00e543fd06c:p0004:d0000",
+    "01bcb00e543fd06c:p0005:d0000",
+    "01bcb00e543fd06c:p0006:d0000",
+    "01bcb00e543fd06c:p0007:d0000",
+    "01bcb00e543fd06c:p0008:d0000",
+    "01bcb00e543fd06c:p0009:d0000"
+  ],
+  "document_id": "01bcb00e543fd06c",
+  "list_groups": [
+    {
+      "block_ids": [
+        "01bcb00e543fd06c:p0000:b0002"
+      ],
+      "id": "01bcb00e543fd06c:list:01bcb00e543fd06c:p0000:b0002",
+      "section_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001"
+    }
+  ],
+  "middle_sha256": "814b155ce7c869df246e62cdca32cd67a92aecf5bbb6b82ba5b007dd43f1c187",
+  "primary_flow_block_ids": [
+    "01bcb00e543fd06c:p0000:b0000",
+    "01bcb00e543fd06c:p0000:b0001",
+    "01bcb00e543fd06c:p0000:b0002",
+    "01bcb00e543fd06c:p0000:b0003",
+    "01bcb00e543fd06c:p0000:b0004",
+    "01bcb00e543fd06c:p0000:b0005",
+    "01bcb00e543fd06c:p0000:b0006",
+    "01bcb00e543fd06c:p0000:b0007",
+    "01bcb00e543fd06c:p0000:b0008",
+    "01bcb00e543fd06c:p0000:b0009",
+    "01bcb00e543fd06c:p0000:b0010",
+    "01bcb00e543fd06c:p0000:b0011",
+    "01bcb00e543fd06c:p0000:b0012",
+    "01bcb00e543fd06c:p0001:b0000",
+    "01bcb00e543fd06c:p0001:b0001",
+    "01bcb00e543fd06c:p0001:b0002",
+    "01bcb00e543fd06c:p0001:b0003",
+    "01bcb00e543fd06c:p0001:b0004",
+    "01bcb00e543fd06c:p0001:b0005",
+    "01bcb00e543fd06c:p0001:b0006",
+    "01bcb00e543fd06c:p0001:b0007",
+    "01bcb00e543fd06c:p0001:b0008",
+    "01bcb00e543fd06c:p0001:b0009",
+    "01bcb00e543fd06c:p0001:b0010",
+    "01bcb00e543fd06c:p0001:b0011",
+    "01bcb00e543fd06c:p0001:b0012",
+    "01bcb00e543fd06c:p0002:b0000",
+    "01bcb00e543fd06c:p0002:b0001",
+    "01bcb00e543fd06c:p0002:b0002",
+    "01bcb00e543fd06c:p0002:b0003",
+    "01bcb00e543fd06c:p0002:b0004",
+    "01bcb00e543fd06c:p0002:b0005",
+    "01bcb00e543fd06c:p0002:b0006",
+    "01bcb00e543fd06c:p0002:b0007",
+    "01bcb00e543fd06c:p0002:b0008",
+    "01bcb00e543fd06c:p0002:b0009",
+    "01bcb00e543fd06c:p0003:b0000",
+    "01bcb00e543fd06c:p0003:b0001",
+    "01bcb00e543fd06c:p0003:b0002",
+    "01bcb00e543fd06c:p0003:b0003",
+    "01bcb00e543fd06c:p0003:b0004",
+    "01bcb00e543fd06c:p0003:b0005",
+    "01bcb00e543fd06c:p0003:b0006",
+    "01bcb00e543fd06c:p0004:b0000",
+    "01bcb00e543fd06c:p0004:b0001",
+    "01bcb00e543fd06c:p0004:b0002",
+    "01bcb00e543fd06c:p0004:b0003",
+    "01bcb00e543fd06c:p0004:b0004",
+    "01bcb00e543fd06c:p0004:b0005",
+    "01bcb00e543fd06c:p0004:b0006",
+    "01bcb00e543fd06c:p0005:b0000",
+    "01bcb00e543fd06c:p0005:b0001",
+    "01bcb00e543fd06c:p0005:b0002",
+    "01bcb00e543fd06c:p0005:b0003",
+    "01bcb00e543fd06c:p0005:b0004",
+    "01bcb00e543fd06c:p0005:b0005",
+    "01bcb00e543fd06c:p0005:b0006",
+    "01bcb00e543fd06c:p0005:b0007",
+    "01bcb00e543fd06c:p0005:b0008",
+    "01bcb00e543fd06c:p0005:b0009",
+    "01bcb00e543fd06c:p0005:b0010",
+    "01bcb00e543fd06c:p0005:b0011",
+    "01bcb00e543fd06c:p0005:b0012",
+    "01bcb00e543fd06c:p0005:b0013",
+    "01bcb00e543fd06c:p0006:b0000",
+    "01bcb00e543fd06c:p0006:b0001",
+    "01bcb00e543fd06c:p0006:b0002",
+    "01bcb00e543fd06c:p0006:b0003",
+    "01bcb00e543fd06c:p0006:b0004",
+    "01bcb00e543fd06c:p0006:b0005",
+    "01bcb00e543fd06c:p0006:b0006",
+    "01bcb00e543fd06c:p0006:b0007",
+    "01bcb00e543fd06c:p0006:b0008",
+    "01bcb00e543fd06c:p0006:b0009",
+    "01bcb00e543fd06c:p0006:b0010",
+    "01bcb00e543fd06c:p0006:b0011",
+    "01bcb00e543fd06c:p0006:b0012",
+    "01bcb00e543fd06c:p0006:b0013",
+    "01bcb00e543fd06c:p0007:b0000",
+    "01bcb00e543fd06c:p0007:b0001",
+    "01bcb00e543fd06c:p0007:b0002",
+    "01bcb00e543fd06c:p0007:b0003",
+    "01bcb00e543fd06c:p0007:b0004",
+    "01bcb00e543fd06c:p0007:b0005",
+    "01bcb00e543fd06c:p0007:b0006",
+    "01bcb00e543fd06c:p0007:b0007",
+    "01bcb00e543fd06c:p0007:b0008",
+    "01bcb00e543fd06c:p0008:b0000",
+    "01bcb00e543fd06c:p0008:b0001",
+    "01bcb00e543fd06c:p0008:b0002",
+    "01bcb00e543fd06c:p0008:b0003",
+    "01bcb00e543fd06c:p0008:b0004",
+    "01bcb00e543fd06c:p0008:b0005",
+    "01bcb00e543fd06c:p0008:b0006",
+    "01bcb00e543fd06c:p0008:b0007",
+    "01bcb00e543fd06c:p0008:b0008",
+    "01bcb00e543fd06c:p0008:b0009",
+    "01bcb00e543fd06c:p0008:b0010",
+    "01bcb00e543fd06c:p0008:b0011",
+    "01bcb00e543fd06c:p0008:b0012",
+    "01bcb00e543fd06c:p0008:b0013",
+    "01bcb00e543fd06c:p0008:b0014",
+    "01bcb00e543fd06c:p0008:b0015",
+    "01bcb00e543fd06c:p0009:b0000",
+    "01bcb00e543fd06c:p0009:b0001",
+    "01bcb00e543fd06c:p0009:b0002",
+    "01bcb00e543fd06c:p0009:b0003",
+    "01bcb00e543fd06c:p0009:b0004",
+    "01bcb00e543fd06c:p0009:b0005"
+  ],
+  "root_section_id": "01bcb00e543fd06c:section-root",
+  "sections": [
+    {
+      "block_ids": [],
+      "child_ids": [
+        "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0000",
+        "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001"
+      ],
+      "id": "01bcb00e543fd06c:section-root",
+      "level": 0,
+      "ordinal": 0
+    },
+    {
+      "block_ids": [
+        "01bcb00e543fd06c:p0000:b0000"
+      ],
+      "child_ids": [],
+      "id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0000",
+      "level": 1,
+      "ordinal": 1,
+      "parent_id": "01bcb00e543fd06c:section-root",
+      "title_block_id": "01bcb00e543fd06c:p0000:b0000"
+    },
+    {
+      "block_ids": [
+        "01bcb00e543fd06c:p0000:b0001",
+        "01bcb00e543fd06c:p0000:b0002"
+      ],
+      "child_ids": [
+        "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0003",
+        "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0005",
+        "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0007",
+        "01bcb00e543fd06c:section:01bcb00e543fd06c:p0001:b0003",
+        "01bcb00e543fd06c:section:01bcb00e543fd06c:p0001:b0005",
+        "01bcb00e543fd06c:section:01bcb00e543fd06c:p0001:b0010",
+        "01bcb00e543fd06c:section:01bcb00e543fd06c:p0002:b0005",
+        "01bcb00e543fd06c:section:01bcb00e543fd06c:p0002:b0008",
+        "01bcb00e543fd06c:section:01bcb00e543fd06c:p0004:b0001",
+        "01bcb00e543fd06c:section:01bcb00e543fd06c:p0005:b0004",
+        "01bcb00e543fd06c:section:01bcb00e543fd06c:p0005:b0010",
+        "01bcb00e543fd06c:section:01bcb00e543fd06c:p0006:b0003",
+        "01bcb00e543fd06c:section:01bcb00e543fd06c:p0006:b0005",
+        "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0000",
+        "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0002",
+        "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0004",
+        "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0006",
+        "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0008",
+        "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0010",
+        "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0012",
+        "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0014",
+        "01bcb00e543fd06c:section:01bcb00e543fd06c:p0009:b0000",
+        "01bcb00e543fd06c:section:01bcb00e543fd06c:p0009:b0002",
+        "01bcb00e543fd06c:section:01bcb00e543fd06c:p0009:b0004"
+      ],
+      "id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001",
+      "level": 1,
+      "ordinal": 2,
+      "parent_id": "01bcb00e543fd06c:section-root",
+      "title_block_id": "01bcb00e543fd06c:p0000:b0001"
+    },
+    {
+      "block_ids": [
+        "01bcb00e543fd06c:p0000:b0003",
+        "01bcb00e543fd06c:p0000:b0004"
+      ],
+      "child_ids": [],
+      "id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0003",
+      "level": 2,
+      "ordinal": 3,
+      "parent_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001",
+      "title_block_id": "01bcb00e543fd06c:p0000:b0003"
+    },
+    {
+      "block_ids": [
+        "01bcb00e543fd06c:p0000:b0005",
+        "01bcb00e543fd06c:p0000:b0006"
+      ],
+      "child_ids": [],
+      "id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0005",
+      "level": 2,
+      "ordinal": 4,
+      "parent_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001",
+      "title_block_id": "01bcb00e543fd06c:p0000:b0005"
+    },
+    {
+      "block_ids": [
+        "01bcb00e543fd06c:p0000:b0007",
+        "01bcb00e543fd06c:p0000:b0008",
+        "01bcb00e543fd06c:p0000:b0009",
+        "01bcb00e543fd06c:p0000:b0010",
+        "01bcb00e543fd06c:p0000:b0011",
+        "01bcb00e543fd06c:p0000:b0012",
+        "01bcb00e543fd06c:p0001:b0000",
+        "01bcb00e543fd06c:p0001:b0001",
+        "01bcb00e543fd06c:p0001:b0002"
+      ],
+      "child_ids": [],
+      "id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0007",
+      "level": 2,
+      "ordinal": 5,
+      "parent_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001",
+      "title_block_id": "01bcb00e543fd06c:p0000:b0007"
+    },
+    {
+      "block_ids": [
+        "01bcb00e543fd06c:p0001:b0003",
+        "01bcb00e543fd06c:p0001:b0004"
+      ],
+      "child_ids": [],
+      "id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0001:b0003",
+      "level": 2,
+      "ordinal": 6,
+      "parent_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001",
+      "title_block_id": "01bcb00e543fd06c:p0001:b0003"
+    },
+    {
+      "block_ids": [
+        "01bcb00e543fd06c:p0001:b0005",
+        "01bcb00e543fd06c:p0001:b0006",
+        "01bcb00e543fd06c:p0001:b0007",
+        "01bcb00e543fd06c:p0001:b0008",
+        "01bcb00e543fd06c:p0001:b0009"
+      ],
+      "child_ids": [],
+      "id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0001:b0005",
+      "level": 2,
+      "ordinal": 7,
+      "parent_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001",
+      "title_block_id": "01bcb00e543fd06c:p0001:b0005"
+    },
+    {
+      "block_ids": [
+        "01bcb00e543fd06c:p0001:b0010",
+        "01bcb00e543fd06c:p0001:b0011",
+        "01bcb00e543fd06c:p0001:b0012",
+        "01bcb00e543fd06c:p0002:b0000",
+        "01bcb00e543fd06c:p0002:b0001",
+        "01bcb00e543fd06c:p0002:b0002",
+        "01bcb00e543fd06c:p0002:b0003",
+        "01bcb00e543fd06c:p0002:b0004"
+      ],
+      "child_ids": [],
+      "id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0001:b0010",
+      "level": 2,
+      "ordinal": 8,
+      "parent_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001",
+      "title_block_id": "01bcb00e543fd06c:p0001:b0010"
+    },
+    {
+      "block_ids": [
+        "01bcb00e543fd06c:p0002:b0005",
+        "01bcb00e543fd06c:p0002:b0006",
+        "01bcb00e543fd06c:p0002:b0007"
+      ],
+      "child_ids": [],
+      "id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0002:b0005",
+      "level": 2,
+      "ordinal": 9,
+      "parent_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001",
+      "title_block_id": "01bcb00e543fd06c:p0002:b0005"
+    },
+    {
+      "block_ids": [
+        "01bcb00e543fd06c:p0002:b0008",
+        "01bcb00e543fd06c:p0002:b0009",
+        "01bcb00e543fd06c:p0003:b0000",
+        "01bcb00e543fd06c:p0003:b0001",
+        "01bcb00e543fd06c:p0003:b0002",
+        "01bcb00e543fd06c:p0003:b0003",
+        "01bcb00e543fd06c:p0003:b0004",
+        "01bcb00e543fd06c:p0003:b0005",
+        "01bcb00e543fd06c:p0003:b0006",
+        "01bcb00e543fd06c:p0004:b0000"
+      ],
+      "child_ids": [],
+      "id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0002:b0008",
+      "level": 2,
+      "ordinal": 10,
+      "parent_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001",
+      "title_block_id": "01bcb00e543fd06c:p0002:b0008"
+    },
+    {
+      "block_ids": [
+        "01bcb00e543fd06c:p0004:b0001",
+        "01bcb00e543fd06c:p0004:b0002",
+        "01bcb00e543fd06c:p0004:b0003",
+        "01bcb00e543fd06c:p0004:b0004",
+        "01bcb00e543fd06c:p0004:b0005",
+        "01bcb00e543fd06c:p0004:b0006",
+        "01bcb00e543fd06c:p0005:b0000",
+        "01bcb00e543fd06c:p0005:b0001",
+        "01bcb00e543fd06c:p0005:b0002",
+        "01bcb00e543fd06c:p0005:b0003"
+      ],
+      "child_ids": [],
+      "id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0004:b0001",
+      "level": 2,
+      "ordinal": 11,
+      "parent_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001",
+      "title_block_id": "01bcb00e543fd06c:p0004:b0001"
+    },
+    {
+      "block_ids": [
+        "01bcb00e543fd06c:p0005:b0004",
+        "01bcb00e543fd06c:p0005:b0005",
+        "01bcb00e543fd06c:p0005:b0006",
+        "01bcb00e543fd06c:p0005:b0007",
+        "01bcb00e543fd06c:p0005:b0008",
+        "01bcb00e543fd06c:p0005:b0009"
+      ],
+      "child_ids": [],
+      "id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0005:b0004",
+      "level": 2,
+      "ordinal": 12,
+      "parent_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001",
+      "title_block_id": "01bcb00e543fd06c:p0005:b0004"
+    },
+    {
+      "block_ids": [
+        "01bcb00e543fd06c:p0005:b0010",
+        "01bcb00e543fd06c:p0005:b0011",
+        "01bcb00e543fd06c:p0005:b0012",
+        "01bcb00e543fd06c:p0005:b0013",
+        "01bcb00e543fd06c:p0006:b0000",
+        "01bcb00e543fd06c:p0006:b0001",
+        "01bcb00e543fd06c:p0006:b0002"
+      ],
+      "child_ids": [],
+      "id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0005:b0010",
+      "level": 2,
+      "ordinal": 13,
+      "parent_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001",
+      "title_block_id": "01bcb00e543fd06c:p0005:b0010"
+    },
+    {
+      "block_ids": [
+        "01bcb00e543fd06c:p0006:b0003",
+        "01bcb00e543fd06c:p0006:b0004"
+      ],
+      "child_ids": [],
+      "id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0006:b0003",
+      "level": 2,
+      "ordinal": 14,
+      "parent_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001",
+      "title_block_id": "01bcb00e543fd06c:p0006:b0003"
+    },
+    {
+      "block_ids": [
+        "01bcb00e543fd06c:p0006:b0005",
+        "01bcb00e543fd06c:p0006:b0006",
+        "01bcb00e543fd06c:p0006:b0007",
+        "01bcb00e543fd06c:p0006:b0008",
+        "01bcb00e543fd06c:p0006:b0009",
+        "01bcb00e543fd06c:p0006:b0010",
+        "01bcb00e543fd06c:p0006:b0011",
+        "01bcb00e543fd06c:p0006:b0012",
+        "01bcb00e543fd06c:p0006:b0013",
+        "01bcb00e543fd06c:p0007:b0000",
+        "01bcb00e543fd06c:p0007:b0001",
+        "01bcb00e543fd06c:p0007:b0002",
+        "01bcb00e543fd06c:p0007:b0003",
+        "01bcb00e543fd06c:p0007:b0004",
+        "01bcb00e543fd06c:p0007:b0005",
+        "01bcb00e543fd06c:p0007:b0006",
+        "01bcb00e543fd06c:p0007:b0007",
+        "01bcb00e543fd06c:p0007:b0008"
+      ],
+      "child_ids": [],
+      "id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0006:b0005",
+      "level": 2,
+      "ordinal": 15,
+      "parent_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001",
+      "title_block_id": "01bcb00e543fd06c:p0006:b0005"
+    },
+    {
+      "block_ids": [
+        "01bcb00e543fd06c:p0008:b0000",
+        "01bcb00e543fd06c:p0008:b0001"
+      ],
+      "child_ids": [],
+      "id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0000",
+      "level": 2,
+      "ordinal": 16,
+      "parent_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001",
+      "title_block_id": "01bcb00e543fd06c:p0008:b0000"
+    },
+    {
+      "block_ids": [
+        "01bcb00e543fd06c:p0008:b0002",
+        "01bcb00e543fd06c:p0008:b0003"
+      ],
+      "child_ids": [],
+      "id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0002",
+      "level": 2,
+      "ordinal": 17,
+      "parent_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001",
+      "title_block_id": "01bcb00e543fd06c:p0008:b0002"
+    },
+    {
+      "block_ids": [
+        "01bcb00e543fd06c:p0008:b0004",
+        "01bcb00e543fd06c:p0008:b0005"
+      ],
+      "child_ids": [],
+      "id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0004",
+      "level": 2,
+      "ordinal": 18,
+      "parent_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001",
+      "title_block_id": "01bcb00e543fd06c:p0008:b0004"
+    },
+    {
+      "block_ids": [
+        "01bcb00e543fd06c:p0008:b0006",
+        "01bcb00e543fd06c:p0008:b0007"
+      ],
+      "child_ids": [],
+      "id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0006",
+      "level": 2,
+      "ordinal": 19,
+      "parent_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001",
+      "title_block_id": "01bcb00e543fd06c:p0008:b0006"
+    },
+    {
+      "block_ids": [
+        "01bcb00e543fd06c:p0008:b0008",
+        "01bcb00e543fd06c:p0008:b0009"
+      ],
+      "child_ids": [],
+      "id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0008",
+      "level": 2,
+      "ordinal": 20,
+      "parent_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001",
+      "title_block_id": "01bcb00e543fd06c:p0008:b0008"
+    },
+    {
+      "block_ids": [
+        "01bcb00e543fd06c:p0008:b0010",
+        "01bcb00e543fd06c:p0008:b0011"
+      ],
+      "child_ids": [],
+      "id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0010",
+      "level": 2,
+      "ordinal": 21,
+      "parent_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001",
+      "title_block_id": "01bcb00e543fd06c:p0008:b0010"
+    },
+    {
+      "block_ids": [
+        "01bcb00e543fd06c:p0008:b0012",
+        "01bcb00e543fd06c:p0008:b0013"
+      ],
+      "child_ids": [],
+      "id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0012",
+      "level": 2,
+      "ordinal": 22,
+      "parent_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001",
+      "title_block_id": "01bcb00e543fd06c:p0008:b0012"
+    },
+    {
+      "block_ids": [
+        "01bcb00e543fd06c:p0008:b0014",
+        "01bcb00e543fd06c:p0008:b0015"
+      ],
+      "child_ids": [],
+      "id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0008:b0014",
+      "level": 2,
+      "ordinal": 23,
+      "parent_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001",
+      "title_block_id": "01bcb00e543fd06c:p0008:b0014"
+    },
+    {
+      "block_ids": [
+        "01bcb00e543fd06c:p0009:b0000",
+        "01bcb00e543fd06c:p0009:b0001"
+      ],
+      "child_ids": [],
+      "id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0009:b0000",
+      "level": 2,
+      "ordinal": 24,
+      "parent_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001",
+      "title_block_id": "01bcb00e543fd06c:p0009:b0000"
+    },
+    {
+      "block_ids": [
+        "01bcb00e543fd06c:p0009:b0002",
+        "01bcb00e543fd06c:p0009:b0003"
+      ],
+      "child_ids": [],
+      "id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0009:b0002",
+      "level": 2,
+      "ordinal": 25,
+      "parent_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001",
+      "title_block_id": "01bcb00e543fd06c:p0009:b0002"
+    },
+    {
+      "block_ids": [
+        "01bcb00e543fd06c:p0009:b0004",
+        "01bcb00e543fd06c:p0009:b0005"
+      ],
+      "child_ids": [],
+      "id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0009:b0004",
+      "level": 2,
+      "ordinal": 26,
+      "parent_id": "01bcb00e543fd06c:section:01bcb00e543fd06c:p0000:b0001",
+      "title_block_id": "01bcb00e543fd06c:p0009:b0004"
+    }
+  ],
+  "source_pdf_sha256": "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718"
+}

@@ -1,0 +1,19 @@
+{
+  "document_id": "153ff9c09ca994ca",
+  "included_discarded_block_ids": [
+    "153ff9c09ca994ca:p0000:d0000",
+    "153ff9c09ca994ca:p0000:d0001",
+    "153ff9c09ca994ca:p0000:d0002",
+    "153ff9c09ca994ca:p0000:d0003",
+    "153ff9c09ca994ca:p0000:d0004"
+  ],
+  "middle_sha256": "d572ea96c444158d15f51ec3219960dbe78e1d7410e3b32eca5075f939cb98cb",
+  "missing_assets": [],
+  "render_source": "ir_reconstruction",
+  "source_markdown_sha256": "b8ffabac8b639c8b57584bdbaae9a39ff8d246a91ad672db7e92c5b48be08def",
+  "source_pdf_sha256": "153ff9c09ca994ca35b79fede481f1340c0a29b5a969a0be401e6aac5330606b",
+  "status": "ok",
+  "warnings": [
+    "Markdown MinerU incompatível com o middle.json; reconstrução pelo IR utilizada: Span corrompido ausente no Markdown MinerU: 153ff9c09ca994ca:p0006:b0004:l0003:s0000"
+  ]
+}

@@ -1,6 +1,0 @@
-﻿filename,page_count,preproc_blocks,para_blocks,discarded_blocks,min_page_width,max_page_width,min_page_height,max_page_height,table_count,tables_with_html,tables_without_html,formula_count,formulas_with_latex,formulas_without_latex,cross_page_span_count,affected_pages
-GDI_0685.pdf,9,88,88,11,595,595,841,841,4,4,0,0,0,0,0,0
-GGH9.pdf,8,73,73,11,595,595,842,842,4,4,0,0,0,0,12,2
-GGT_1247.pdf,10,121,121,14,595,595,841,841,10,9,1,8,8,0,2,1
-GTL_0081.pdf,5,40,40,12,595,595,841,841,0,0,0,0,0,0,0,0
-GTM10.pdf,9,86,86,13,595,595,842,842,2,2,0,0,0,0,2,1

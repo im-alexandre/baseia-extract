@@ -1,0 +1,13 @@
+{
+  "document_id": "0033d9791d44daff",
+  "included_discarded_block_ids": [],
+  "middle_sha256": "5d756cab586c3ff57ccc72a2db88b9c9ed2e08b0348a231d8c5bff3a34ddca58",
+  "missing_assets": [],
+  "render_source": "ir_reconstruction",
+  "source_markdown_sha256": "f0eae092b39943a70ea9fd9ba6b166430d4ef613418414de5164bdaaae52250d",
+  "source_pdf_sha256": "0033d9791d44daff6c0fb83a1cadd1f38f545ac968f6014fe69e90a1892fba74",
+  "status": "ok",
+  "warnings": [
+    "Markdown MinerU incompatível com o middle.json; reconstrução pelo IR utilizada: Equação inline ausente no Markdown MinerU: 0033d9791d44daff:p0003:b0025:l0001:s0001"
+  ]
+}

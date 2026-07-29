@@ -1,0 +1,22 @@
+{
+  "block_types": {
+    "text": 343,
+    "title": 82,
+    "ref_text": 74,
+    "page_number": 33,
+    "image": 28,
+    "interline_equation": 19,
+    "header": 17,
+    "chart": 10,
+    "aside_text": 7,
+    "table": 6,
+    "abstract": 4,
+    "list": 3,
+    "footer": 3
+  },
+  "span_types": {
+    "text": 2174,
+    "inline_equation": 141,
+    "interline_equation": 19
+  }
+}

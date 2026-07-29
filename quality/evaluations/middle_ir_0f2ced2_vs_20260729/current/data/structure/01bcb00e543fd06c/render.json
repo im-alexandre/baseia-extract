@@ -1,0 +1,16 @@
+{
+  "document_id": "01bcb00e543fd06c",
+  "included_discarded_block_ids": [
+    "01bcb00e543fd06c:p0000:d0000",
+    "01bcb00e543fd06c:p0000:d0001",
+    "01bcb00e543fd06c:p0000:d0002",
+    "01bcb00e543fd06c:p0000:d0003"
+  ],
+  "middle_sha256": "814b155ce7c869df246e62cdca32cd67a92aecf5bbb6b82ba5b007dd43f1c187",
+  "missing_assets": [],
+  "render_source": "mineru_markdown",
+  "source_markdown_sha256": "ff3c221eb28d600fd8fb81e5dfe18f3a89e7393da091fff7b722217c23302648",
+  "source_pdf_sha256": "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718",
+  "status": "ok",
+  "warnings": []
+}
