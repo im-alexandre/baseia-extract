@@ -2,14 +2,20 @@
 set -Eeuo pipefail
 
 MINERU_VERSION="${MINERU_VERSION:-3.4.4}"
-# A imagem RunPod instala os pacotes em /usr/local/bin/python (3.12); o
-# /usr/bin/python3 pode ser um 3.10 sem MinerU. Preserve essa coerência.
+# A imagem deriva do Python do Ubuntu e expõe no PATH o venv MinerU criado no
+# build, com acesso somente-leitura ao PyTorch/CUDA da base. O override
+# continua disponível para imagens derivadas.
 PYTHON_BIN="${PYTHON_BIN:-$(command -v python || command -v python3)}"
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 BASEIA_MODULE_DIR="${BASEIA_MODULE_DIR:-/opt/baseia}"
 
 mkdir -p "${BASEIA_MODULE_DIR}"
-for module in persistent_results.py router_with_persistence.py sitecustomize.py; do
+for module in \
+    catalog_client.py \
+    persistent_results.py \
+    router_with_persistence.py \
+    s3_results.py \
+    sitecustomize.py; do
     source_path="${SCRIPT_DIR}/${module}"
     destination_path="${BASEIA_MODULE_DIR}/${module}"
     if [[ -f "${source_path}" && "${source_path}" != "${destination_path}" ]]; then
@@ -22,28 +28,19 @@ for module in persistent_results.py router_with_persistence.py sitecustomize.py;
 done
 
 export MINERU_TOOLS_CONFIG_JSON="${MINERU_TOOLS_CONFIG_JSON:-/opt/mineru/models/mineru.json}"
-export HF_HOME="${HF_HOME:-/opt/mineru/models/huggingface}"
-export HUGGINGFACE_HUB_CACHE="${HUGGINGFACE_HUB_CACHE:-${HF_HOME}/hub}"
-export MODELSCOPE_CACHE="${MODELSCOPE_CACHE:-/opt/mineru/models/modelscope}"
+# Mantenha todos os caches de modelos no volume persistente e deixe overrides
+# explícitos sob o namespace MinerU.
+export HF_HOME="${MINERU_HF_HOME:-/opt/mineru/models/huggingface}"
+export HUGGINGFACE_HUB_CACHE="${MINERU_HUGGINGFACE_HUB_CACHE:-${HF_HOME}/hub}"
+export MODELSCOPE_CACHE="${MINERU_MODELSCOPE_CACHE:-/opt/mineru/models/modelscope}"
 export HF_HUB_ENABLE_HF_TRANSFER=1
 export PIP_DISABLE_PIP_VERSION_CHECK=1
 export PYTHONUNBUFFERED=1
-export UV_LINK_MODE="${UV_LINK_MODE:-copy}"
 export PYTHONPATH="${PYTHONPATH:+${PYTHONPATH}:}${BASEIA_MODULE_DIR}"
 
-printf '[mineru-start] Instalando pip, uv, MinerU %s e hf_transfer...\n' \
+printf '[mineru-start] Validando MinerU %s instalado na imagem...\n' \
     "${MINERU_VERSION}"
-"${PYTHON_BIN}" -m pip install --upgrade pip uv
-# O módulo de persistência usa Tenacity e é importado por sitecustomize. Faça
-# seu bootstrap sem PYTHONPATH antes de qualquer comando Python que carregue o
-# patch do servidor.
-PYTHONPATH="" "${PYTHON_BIN}" -m uv pip install --system "tenacity>=9,<10"
-# Preserve o PyTorch/CUDA já compatível com o template; não force reinstalação
-# nem uma variante CUDA específica.
-"${PYTHON_BIN}" -m uv pip install --system \
-    "mineru[pipeline]==${MINERU_VERSION}" \
-    hf_transfer
-"${PYTHON_BIN}" -c "import mineru; from mineru.version import __version__; assert __version__ == '${MINERU_VERSION}', __version__"
+"${PYTHON_BIN}" -c "from mineru.version import __version__; assert __version__ == '${MINERU_VERSION}', f'a imagem contém MinerU {__version__}, mas MINERU_VERSION=${MINERU_VERSION}; reconstrua a imagem com o build arg correspondente'"
 "${PYTHON_BIN}" -c "import mineru.cli.fast_api as api; assert getattr(api, '_baseia_upload_patch', False), 'sitecustomize não aplicou o patch BaseIA'"
 
 mkdir -p \
@@ -128,11 +125,15 @@ INTRA_OP_THREADS="${CPU_PER_GPU}"
 ((INTRA_OP_THREADS <= 12)) || INTRA_OP_THREADS=12
 
 # O serviço anuncia um teto alto; o cliente BaseIA controla a pressão real
-# por pod por meio de `poe ingest POD_ID --workers N`.
+# por endpoint por meio de `poe extract ... --workers N`.
 export MINERU_ROUTER_LOCAL_GPUS="${MINERU_ROUTER_LOCAL_GPUS:-auto}"
-# O /health do router 3.4.4 soma os limites dos workers saudáveis. Distribua
-# o teto do pod entre GPUs para anunciar no máximo 1024 agregado.
-MINERU_ROUTER_AGGREGATE_MAX_CONCURRENT_REQUESTS=1024
+# O /health do router 3.4.4 soma os limites dos workers saudáveis. O default
+# acomoda o lote esperado de 120 sem anunciar capacidade ilimitada.
+MINERU_ROUTER_AGGREGATE_MAX_CONCURRENT_REQUESTS="${MINERU_ROUTER_MAX_CONCURRENT_REQUESTS:-128}"
+[[ "${MINERU_ROUTER_AGGREGATE_MAX_CONCURRENT_REQUESTS}" =~ ^[1-9][0-9]*$ ]] || {
+    printf '[mineru-start] ERROR: MINERU_ROUTER_MAX_CONCURRENT_REQUESTS inválido.\n' >&2
+    exit 1
+}
 MINERU_API_MAX_CONCURRENT_REQUESTS=$((MINERU_ROUTER_AGGREGATE_MAX_CONCURRENT_REQUESTS / GPU_COUNT))
 ((MINERU_API_MAX_CONCURRENT_REQUESTS > 0)) || {
     printf '[mineru-start] ERROR: GPUs demais para o teto agregado do router.\n' >&2
@@ -156,7 +157,18 @@ export MINERU_API_TASK_CLEANUP_INTERVAL_SECONDS="${MINERU_API_TASK_CLEANUP_INTER
 export MINERU_LOCAL_WORK_ROOT="${MINERU_LOCAL_WORK_ROOT:-/tmp/mineru-active}"
 export MINERU_API_OUTPUT_ROOT="${MINERU_API_OUTPUT_ROOT:-${MINERU_LOCAL_WORK_ROOT}/api-output}"
 export MINERU_PERSISTENT_RESULTS_ROOT="${MINERU_PERSISTENT_RESULTS_ROOT:-/workspace/results}"
+export MINERU_RESULT_STORE="${MINERU_RESULT_STORE:-filesystem}"
+export MINERU_MAX_UNPERSISTED_TASKS="${MINERU_MAX_UNPERSISTED_TASKS:-256}"
+export MINERU_MIN_FREE_DISK_GIB="${MINERU_MIN_FREE_DISK_GIB:-10}"
+export MINERU_MIN_FREE_DISK_PERCENT="${MINERU_MIN_FREE_DISK_PERCENT:-10}"
 export MINERU_MODEL_SOURCE=local
+
+if [[ -n "${BASEIA_CATALOG_API_URL:-}" && "${MINERU_RESULT_STORE}" != "s3" ]]; then
+    printf '%s\n' \
+        '[mineru-start] ERROR: catálogo exige MINERU_RESULT_STORE=s3.' \
+        'O catálogo nunca pode concluir uma task sem artefatos duráveis no S3.' >&2
+    exit 1
+fi
 
 [[ "${MINERU_API_OUTPUT_ROOT}" != /workspace && "${MINERU_API_OUTPUT_ROOT}" != /workspace/* ]] || {
     printf '[mineru-start] ERROR: MINERU_API_OUTPUT_ROOT não pode ficar sob /workspace.\n' >&2
@@ -167,6 +179,9 @@ export MINERU_MODEL_SOURCE=local
     exit 1
 }
 mkdir -p "${MINERU_LOCAL_WORK_ROOT}" "${MINERU_API_OUTPUT_ROOT}" "/tmp/mineru-uploads"
+if [[ "${MINERU_RESULT_STORE}" == "s3" ]]; then
+    "${PYTHON_BIN}" -c "import s3_results; s3_results.ensure_bucket()"
+fi
 ulimit -n 65535 2>/dev/null || true
 
 GPU_SUMMARY="$(
@@ -191,6 +206,9 @@ printf '%s\n' \
     " Models             : ${MINERU_TOOLS_CONFIG_JSON}" \
     " Local work root    : ${MINERU_LOCAL_WORK_ROOT}" \
     " Results            : ${MINERU_PERSISTENT_RESULTS_ROOT}/tasks/<router-task-id>" \
+    " Result store       : ${MINERU_RESULT_STORE}" \
+    " Backlog limit      : ${MINERU_MAX_UNPERSISTED_TASKS} tasks" \
+    " Min free disk      : ${MINERU_MIN_FREE_DISK_GIB} GiB / ${MINERU_MIN_FREE_DISK_PERCENT}%" \
     " Retention          : disabled until persistence is durable" \
     " Listen             : ${MINERU_HOST:-0.0.0.0}:${PORT:-8000}" \
     "============================================================"

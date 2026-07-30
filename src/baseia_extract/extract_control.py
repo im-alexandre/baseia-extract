@@ -27,8 +27,13 @@ def _now() -> str:
 
 
 def _control_root() -> Path:
+    context_id = os.getenv("BASEIA_CONTEXT_ID", "").strip()
     project_key = hashlib.sha256(
-        str(settings.project_root).casefold().encode("utf-8")
+        (
+            str(settings.project_root).casefold()
+            + "\0"
+            + context_id.casefold()
+        ).encode("utf-8")
     ).hexdigest()[:12]
     return (
         Path(tempfile.gettempdir())
@@ -140,7 +145,7 @@ def normalize_api_urls(
 def _queue_endpoints(
     state: dict[str, Any],
     api_urls: tuple[str, ...],
-    workers: int = 0,
+    workers: int = 3,
 ) -> Path:
     normalized = normalize_api_urls(api_urls)
     if not normalized:
@@ -207,7 +212,8 @@ def _queue_scale(
 
 def start(
     api_urls: tuple[str, ...] = (),
-    workers: int = 0,
+    workers: int = 3,
+    sample: bool = False,
 ) -> dict[str, Any]:
     active = _active_state()
     if active is not None:
@@ -242,6 +248,7 @@ def start(
         "run_id": run_id,
         "pid": os.getpid(),
         "status": "running",
+        "scope": "sample" if sample else "inventory",
         "started_at": _now(),
         "run_dir": str(run_dir),
         "command_dir": str(command_dir),
@@ -264,6 +271,7 @@ def start(
         run_extract(
             api_urls=initial_api_urls,
             workers=workers,
+            sample=sample,
             command_dir=command_dir,
             run_id=run_id,
         )
@@ -304,7 +312,7 @@ def start(
 
 def add(
     api_urls: tuple[str, ...],
-    workers: int = 0,
+    workers: int = 3,
 ) -> dict[str, Any]:
     state = _active_state()
     if state is None:
@@ -578,11 +586,14 @@ def watch_dashboard(refresh_seconds: float = 1.0) -> dict[str, Any] | None:
 def dispatch(
     action: str,
     api_urls: tuple[str, ...],
-    workers: int = 0,
+    workers: int = 3,
+    sample: bool = False,
 ) -> dict[str, Any] | None:
     normalized_action = action.strip().casefold()
     if normalized_action == "start":
-        return start(api_urls, workers)
+        return start(api_urls, workers, sample)
+    if sample:
+        raise ValueError("--sample só pode ser usado com a ação start.")
     if normalized_action == "add":
         return add(api_urls, workers)
     if normalized_action == "status":

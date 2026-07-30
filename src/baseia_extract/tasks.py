@@ -5,10 +5,65 @@ import threading
 from pathlib import Path
 from typing import Any, Iterable
 
+import pandas as pd
+
 from . import mineru
 from .audit import audit_inventory
 from .reporting import reporter
 from .settings import settings
+
+
+def _validated_sample_manifest(
+    inventory_manifest_path: Path,
+    sample_path: Path,
+) -> Path:
+    if not sample_path.is_file():
+        raise FileNotFoundError(
+            "Amostra não encontrada. Execute `poe sample` antes de "
+            "usar `poe extract --sample`."
+        )
+    current = pd.read_csv(inventory_manifest_path)
+    selected = pd.read_csv(sample_path)
+    identity_columns = {"document_id", "revision_id", "sha256"}
+    missing_sample_columns = identity_columns.difference(selected.columns)
+    if missing_sample_columns:
+        raise ValueError(
+            "Amostra inválida; colunas ausentes: "
+            f"{sorted(missing_sample_columns)}"
+        )
+    missing_inventory_columns = identity_columns.difference(current.columns)
+    if missing_inventory_columns:
+        raise ValueError(
+            "Inventário auditado inválido; colunas de identidade ausentes: "
+            f"{sorted(missing_inventory_columns)}"
+        )
+    if selected.empty:
+        raise RuntimeError("A amostra está vazia.")
+    if selected["document_id"].astype(str).duplicated().any():
+        raise ValueError("A amostra contém document_id duplicado.")
+
+    current_identity = {
+        (
+            str(row.document_id),
+            str(row.revision_id),
+            str(row.sha256),
+        )
+        for row in current.itertuples(index=False)
+    }
+    selected_identity = {
+        (
+            str(row.document_id),
+            str(row.revision_id),
+            str(row.sha256),
+        )
+        for row in selected.itertuples(index=False)
+    }
+    if selected_identity.difference(current_identity):
+        raise RuntimeError(
+            "A amostra não corresponde ao inventário atual. "
+            "Execute `poe sample` novamente."
+        )
+    return sample_path
 
 
 def _monitor_commands(
@@ -111,13 +166,20 @@ def _monitor_commands(
 def run_extract(
     *,
     api_urls: tuple[str, ...],
-    workers: int = 0,
+    workers: int = 3,
+    sample: bool = False,
     command_dir: Path | None = None,
     run_id: str | None = None,
 ) -> dict[str, Any]:
     """Audita o inventário e extrai usando serviços MinerU HTTP existentes."""
     inventory_summary = audit_inventory()
     manifest_path = Path(inventory_summary["extraction_manifest_path"])
+    if sample:
+        manifest_path = _validated_sample_manifest(
+            manifest_path,
+            settings.sample_path,
+        )
+
     endpoint_registry = mineru.ApiEndpointRegistry(
         settings.mineru_concurrency_per_endpoint
     )
@@ -175,7 +237,8 @@ def run_extract(
 def extract(
     action: str = "start",
     api_urls: Iterable[str] = (),
-    workers: int = 0,
+    workers: int = 3,
+    sample: bool = False,
 ) -> dict[str, Any] | None:
     """Controla a extração por URLs mineru-api ou mineru-router."""
     from .extract_control import dispatch
@@ -185,4 +248,4 @@ def extract(
         if isinstance(api_urls, str)
         else tuple(api_urls)
     )
-    return dispatch(action, normalized_urls, workers)
+    return dispatch(action, normalized_urls, workers, sample)

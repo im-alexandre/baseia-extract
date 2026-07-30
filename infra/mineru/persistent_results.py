@@ -18,17 +18,19 @@ import tempfile
 import time
 import urllib.error
 import urllib.request
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
+import anyio
+import catalog_client
+import s3_results
 from tenacity import (
     Retrying,
     retry_if_exception_type,
     stop_never,
     wait_exponential,
 )
-
 
 ROOT_ENV = "MINERU_PERSISTENT_RESULTS_ROOT"
 DEFAULT_ROOT = "/workspace/results"
@@ -38,6 +40,10 @@ DEFAULT_WORK_ROOT = "/tmp/mineru-active"
 
 class VolumeUnavailable(RuntimeError):
     """The shared Network Volume cannot be used for an idempotency decision."""
+
+
+class PersistenceBackpressure(RuntimeError):
+    """The pod must stop accepting new work until persistence catches up."""
 
 
 def _root() -> Path:
@@ -60,6 +66,84 @@ def _work_root() -> Path:
 def _owner() -> str:
     value = os.environ.get("RUNPOD_POD_ID") or os.environ.get("POD_ID") or os.environ.get("HOSTNAME") or "unknown-pod"
     return "".join(char if char.isalnum() or char in "-_" else "_" for char in value)
+
+
+def persistence_admission_status() -> dict[str, Any]:
+    max_unpersisted = int(
+        os.environ.get("MINERU_MAX_UNPERSISTED_TASKS", "256")
+    )
+    min_free_gib = float(
+        os.environ.get("MINERU_MIN_FREE_DISK_GIB", "10")
+    )
+    min_free_percent = float(
+        os.environ.get("MINERU_MIN_FREE_DISK_PERCENT", "10")
+    )
+    if max_unpersisted < 1:
+        raise ValueError(
+            "MINERU_MAX_UNPERSISTED_TASKS deve ser positivo."
+        )
+    if min_free_gib < 0 or not 0 <= min_free_percent < 100:
+        raise ValueError(
+            "Limites de disco da persistência são inválidos."
+        )
+    manifests_root = _root() / "manifests" / _owner()
+    try:
+        manifest_paths = tuple(manifests_root.glob("*.json"))
+    except OSError as error:
+        raise VolumeUnavailable(
+            "não foi possível medir o backlog de persistência"
+        ) from error
+    unpersisted = 0
+    for path in manifest_paths:
+        manifest = _read_manifest(path)
+        if manifest is None:
+            unpersisted += 1
+            continue
+        if (
+            not manifest.get("persisted_at")
+            and str(manifest.get("status") or "").casefold()
+            not in {"failed", "cancelled"}
+        ):
+            unpersisted += 1
+
+    try:
+        usage = shutil.disk_usage(_work_root())
+    except OSError as error:
+        raise VolumeUnavailable(
+            "não foi possível medir o disco local de trabalho"
+        ) from error
+    required_free_bytes = max(
+        int(min_free_gib * 1024**3),
+        int(usage.total * min_free_percent / 100),
+    )
+    reasons: list[str] = []
+    if unpersisted >= max_unpersisted:
+        reasons.append(
+            f"backlog={unpersisted} >= limite={max_unpersisted}"
+        )
+    if usage.free < required_free_bytes:
+        reasons.append(
+            f"disco_livre={usage.free} < mínimo={required_free_bytes}"
+        )
+    return {
+        "accepting": not reasons,
+        "owner": _owner(),
+        "unpersisted_tasks": unpersisted,
+        "max_unpersisted_tasks": max_unpersisted,
+        "disk_total_bytes": usage.total,
+        "disk_free_bytes": usage.free,
+        "required_free_bytes": required_free_bytes,
+        "reasons": reasons,
+    }
+
+
+def require_persistence_capacity() -> dict[str, Any]:
+    status = persistence_admission_status()
+    if not status["accepting"]:
+        raise PersistenceBackpressure(
+            "; ".join(str(reason) for reason in status["reasons"])
+        )
+    return status
 
 
 def _manifest_path(task_id: str, owner: str | None = None) -> Path:
@@ -139,7 +223,12 @@ def _read_manifest_strict(path: Path) -> dict[str, Any] | None:
     return value
 
 
-def register_task(task: Any, *, idempotency_key: str | None = None) -> None:
+def register_task(
+    task: Any,
+    *,
+    idempotency_key: str | None = None,
+    request_metadata: dict[str, str] | None = None,
+) -> None:
     """Persist the router/upstream mapping immediately after submission."""
     task_id = str(task.task_id)
     server_id = str(task.upstream_server_id)
@@ -151,6 +240,7 @@ def register_task(task: Any, *, idempotency_key: str | None = None) -> None:
         (name for name in source_names if len(name) == 64 and all(char in "0123456789abcdef" for char in name.lower())),
         None,
     )
+    metadata = dict(request_metadata or {})
     manifest = {
             "schema_version": 1,
             "task_id": task_id,
@@ -163,9 +253,19 @@ def register_task(task: Any, *, idempotency_key: str | None = None) -> None:
             "source_filenames": source_names,
             "correlation_key": correlation_key,
             "idempotency_key": idempotency_key,
+            "content_sha256": metadata.get("content_sha256") or correlation_key,
+            "document_revision_id": metadata.get("document_revision_id"),
+            "artifact_prefix": metadata.get("artifact_prefix"),
+            "stage": metadata.get("stage") or "extract",
+            "processor": metadata.get("processor") or "mineru",
+            "processor_version": metadata.get("processor_version"),
+            "config_hash": metadata.get("config_hash"),
+            "stage_run_id": metadata.get("stage_run_id"),
+            "lease_owner": metadata.get("lease_owner"),
+            "lease_attempt": metadata.get("lease_attempt"),
             "status": str(task.status),
             "created_at": str(task.created_at),
-            "submitted_at": datetime.now(timezone.utc).isoformat(),
+            "submitted_at": datetime.now(UTC).isoformat(),
             "started_at": task.started_at,
             "completed_at": task.completed_at,
             "error": task.error,
@@ -176,8 +276,12 @@ def register_task(task: Any, *, idempotency_key: str | None = None) -> None:
     manifest_path = _manifest_path(task_id)
     write = _atomic_json_fail_closed if idempotency_key is not None else _atomic_json
     write(manifest_path, manifest)
-    index_key = idempotency_key or correlation_key
-    if index_key is not None:
+    index_keys = {
+        key
+        for key in (correlation_key, idempotency_key)
+        if key is not None
+    }
+    for index_key in index_keys:
         write(
             _correlation_index_dir(index_key) / f"{task_id}.json",
             {
@@ -187,6 +291,12 @@ def register_task(task: Any, *, idempotency_key: str | None = None) -> None:
                 "submitted_at": manifest["submitted_at"],
             },
         )
+    catalog_client.transition(
+        str(manifest.get("stage_run_id") or "") or None,
+        "processing",
+        lease_owner=str(manifest.get("lease_owner") or ""),
+        lease_attempt=int(manifest.get("lease_attempt") or 0),
+    )
 
 
 def find_by_correlation(correlation_key: str) -> list[dict[str, Any]]:
@@ -302,7 +412,10 @@ def find_or_alias_idempotency_key(key: str) -> dict[str, Any] | None:
     if not (
         source.get("status") == "completed"
         and source.get("persisted_at")
-        and source.get("package_dir")
+        and (
+            source.get("package_dir")
+            or isinstance(source.get("result_ref"), dict)
+        )
         and isinstance(source.get("artifacts"), list)
         and source["artifacts"]
     ):
@@ -341,7 +454,7 @@ def record_worker_completion(task: Any) -> None:
             "output_dir": str(task.output_dir),
             "started_at": task.started_at,
             "completed_at": task.completed_at,
-            "recorded_at": datetime.now(timezone.utc).isoformat(),
+            "recorded_at": datetime.now(UTC).isoformat(),
         },
     )
 
@@ -350,13 +463,22 @@ def _artifact_paths(source: Path) -> list[dict[str, Any]]:
     files: list[dict[str, Any]] = []
     for path in sorted(source.rglob("*")):
         if path.is_file():
+            relative = path.relative_to(source)
+            if (
+                relative.parts
+                and relative.parts[0].casefold() == "uploads"
+                and relative.suffix.casefold() == ".pdf"
+            ):
+                # O PDF fonte já possui uma key canônica no object storage.
+                # O diretório uploads é apenas entrada efêmera do MinerU.
+                continue
             digest = hashlib.sha256()
             with path.open("rb") as handle:
                 for chunk in iter(lambda: handle.read(1024 * 1024), b""):
                     digest.update(chunk)
             files.append(
                 {
-                    "path": path.relative_to(source).as_posix(),
+                    "path": relative.as_posix(),
                     "bytes": path.stat().st_size,
                     "sha256": digest.hexdigest(),
                 }
@@ -395,9 +517,9 @@ def _duration_seconds(started_at: object, completed_at: object) -> float | None:
     except ValueError:
         return None
     if started.tzinfo is None:
-        started = started.replace(tzinfo=timezone.utc)
+        started = started.replace(tzinfo=UTC)
     if completed.tzinfo is None:
-        completed = completed.replace(tzinfo=timezone.utc)
+        completed = completed.replace(tzinfo=UTC)
     return max(0.0, round((completed - started).total_seconds(), 3))
 
 
@@ -513,6 +635,28 @@ def _persist_completed_once(manifest: dict[str, Any]) -> bool:
     if not _has_complete_result(source):
         return False
 
+    if s3_results.enabled():
+        artifacts = _artifact_paths(source)
+        _validate_artifacts(source, artifacts)
+        enriched = {
+            **manifest,
+            "page_count": _page_count(source),
+            "duration_seconds": _duration_seconds(
+                manifest.get("started_at"),
+                manifest.get("completed_at"),
+            ),
+        }
+        package_manifest = s3_results.publish(
+            source,
+            enriched,
+            artifacts,
+        )
+        manifest.update(package_manifest)
+        manifest["status"] = "completed"
+        _atomic_json(_manifest_path(str(manifest["task_id"])), manifest)
+        shutil.rmtree(source)
+        return True
+
     task_id = str(manifest["task_id"])
     root = _root()
     final_dir = root / "tasks" / task_id
@@ -530,7 +674,7 @@ def _persist_completed_once(manifest: dict[str, Any]) -> bool:
             }
         )
         manifest["status"] = "completed"
-        manifest["persisted_at"] = manifest.get("persisted_at") or datetime.now(timezone.utc).isoformat()
+        manifest["persisted_at"] = manifest.get("persisted_at") or datetime.now(UTC).isoformat()
         _atomic_json(_manifest_path(task_id), manifest)
         shutil.rmtree(source)
         return True
@@ -545,7 +689,7 @@ def _persist_completed_once(manifest: dict[str, Any]) -> bool:
     package_manifest = {
         **manifest,
         "status": "completed",
-        "persisted_at": datetime.now(timezone.utc).isoformat(),
+        "persisted_at": datetime.now(UTC).isoformat(),
         "file_count": len(artifacts),
         "artifact_bytes": sum(item["bytes"] for item in artifacts),
         "page_count": _page_count(staging),
@@ -600,38 +744,113 @@ def _completion_marker(manifest: dict[str, Any]) -> dict[str, Any] | None:
     return marker
 
 
-def reconcile_once() -> tuple[int, int]:
-    """Persist completed outputs; safe to call repeatedly and after restart."""
-    completed = failed = 0
-    for path in sorted((_root() / "manifests" / _owner()).glob("*.json")):
-        manifest = _read_manifest(path)
-        if manifest is None or manifest.get("persisted_at"):
-            continue
-        status = _upstream_status(manifest)
-        if status is None:
-            status = _completion_marker(manifest)
-            if status is None:
-                continue
-        manifest["status"] = str(status.get("status", manifest.get("status", "unknown")))
-        manifest["started_at"] = status.get("started_at", manifest.get("started_at"))
-        manifest["completed_at"] = status.get("completed_at", manifest.get("completed_at"))
-        manifest["error"] = status.get("error", manifest.get("error"))
-        manifest["duration_seconds"] = _duration_seconds(
-            manifest.get("started_at"), manifest.get("completed_at")
+def _reconcile_path(path: Path) -> tuple[int, int]:
+    manifest = _read_manifest(path)
+    if manifest is None or manifest.get("persisted_at"):
+        return 0, 0
+    heartbeat_at = manifest.get("lease_heartbeat_at")
+    heartbeat_due = True
+    if isinstance(heartbeat_at, str):
+        try:
+            heartbeat_due = (
+                datetime.now(UTC)
+                - datetime.fromisoformat(heartbeat_at)
+            ).total_seconds() >= 60
+        except ValueError:
+            heartbeat_due = True
+    if heartbeat_due and manifest.get("stage_run_id"):
+        catalog_client.heartbeat(
+            str(manifest["stage_run_id"]),
+            lease_owner=str(manifest.get("lease_owner") or ""),
+            lease_attempt=int(manifest.get("lease_attempt") or 0),
         )
-        if manifest["status"] == "failed":
-            failed += 1
+        manifest["lease_heartbeat_at"] = datetime.now(
+            UTC
+        ).isoformat()
         _atomic_json(path, manifest)
-        if manifest["status"] == "completed" and _persist_completed(manifest):
-            completed += 1
+    upstream_base_url = str(manifest.get("upstream_base_url") or "")
+    status = (
+        None
+        if upstream_base_url.startswith("catalog://")
+        else _upstream_status(manifest)
+    )
+    if status is None:
+        status = _completion_marker(manifest)
+        if status is None:
+            return 0, 0
+    manifest["status"] = str(
+        status.get("status", manifest.get("status", "unknown"))
+    )
+    manifest["started_at"] = status.get(
+        "started_at",
+        manifest.get("started_at"),
+    )
+    manifest["completed_at"] = status.get(
+        "completed_at",
+        manifest.get("completed_at"),
+    )
+    manifest["error"] = status.get("error", manifest.get("error"))
+    manifest["duration_seconds"] = _duration_seconds(
+        manifest.get("started_at"),
+        manifest.get("completed_at"),
+    )
+    failed = int(manifest["status"] == "failed")
+    if failed:
+        catalog_client.fail(
+            str(manifest.get("stage_run_id") or "") or None,
+            error_type="MinerUTaskFailed",
+            message=str(manifest.get("error") or "MinerU task failed"),
+            retryable=False,
+            lease_owner=str(manifest.get("lease_owner") or ""),
+            lease_attempt=int(manifest.get("lease_attempt") or 0),
+        )
+    _atomic_json(path, manifest)
+    completed = int(
+        manifest["status"] == "completed"
+        and _persist_completed(manifest)
+    )
     return completed, failed
+
+
+async def _reconcile_paths(paths: tuple[Path, ...]) -> tuple[int, int]:
+    limiter = anyio.CapacityLimiter(
+        max(
+            1,
+            int(os.environ.get("MINERU_PERSISTENCE_CONCURRENCY", "4")),
+        )
+    )
+    results: list[tuple[int, int]] = []
+
+    async def reconcile(path: Path) -> None:
+        result = await anyio.to_thread.run_sync(
+            _reconcile_path,
+            path,
+            limiter=limiter,
+        )
+        results.append(result)
+
+    async with anyio.create_task_group() as tasks:
+        for path in paths:
+            tasks.start_soon(reconcile, path)
+    return (
+        sum(item[0] for item in results),
+        sum(item[1] for item in results),
+    )
+
+
+def reconcile_once() -> tuple[int, int]:
+    """Persist completed outputs concurrently and idempotently."""
+    paths = tuple(
+        sorted((_root() / "manifests" / _owner()).glob("*.json"))
+    )
+    return anyio.run(_reconcile_paths, paths)
 
 
 def watch(interval: float) -> None:
     while True:
         try:
             reconcile_once()
-        except Exception as error:
+        except Exception as error:  # noqa: BLE001 - watcher deve sobreviver
             # A malformed result must not take the router down. OSErrors in
             # publication already retry forever above; preserve any staging
             # and retry validation failures on the next sweep.

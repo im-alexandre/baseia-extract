@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 import tempfile
 import zipfile
@@ -86,10 +87,39 @@ def _known_tasks(api_urls: tuple[str, ...]) -> list[dict[str, str]]:
     records: list[dict[str, str]] = []
     for path in settings.document_store_dir.rglob("manifest.json"):
         try:
-            manifest = ExtractionManifest.model_validate_json(
-                path.read_text(encoding="utf-8")
-            )
+            payload = json.loads(path.read_text(encoding="utf-8"))
         except (OSError, ValueError):
+            continue
+        if (
+            isinstance(payload, dict)
+            and payload.get("schema_version") == 2
+        ):
+            stage_runs = payload.get("stage_runs")
+            for state in (
+                stage_runs if isinstance(stage_runs, list) else []
+            ):
+                if not isinstance(state, dict) or state.get("stage") != "extract":
+                    continue
+                api_url = str(state.get("api_url") or "").rstrip("/")
+                task_id = str(state.get("task_id") or "")
+                if api_url not in selected_urls or not task_id:
+                    continue
+                records.append(
+                    {
+                        "task_id": task_id,
+                        "pod_id": str(state.get("pod_id") or ""),
+                        "api_url": api_url,
+                        "sha256": str(payload.get("sha256") or ""),
+                        "document_id": str(
+                            payload.get("document_id") or ""
+                        ),
+                        "filename": str(payload.get("filename") or ""),
+                    }
+                )
+            continue
+        try:
+            manifest = ExtractionManifest.model_validate(payload)
+        except ValueError:
             continue
         api_url = (manifest.api_url or "").rstrip("/")
         if api_url not in selected_urls or not manifest.task_id:

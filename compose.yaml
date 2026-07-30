@@ -1,28 +1,125 @@
+name: baseia
+
 services:
-  minio:
-    image: quay.io/minio/minio:latest
+  postgres:
+    image: postgres:17.5-alpine
     restart: unless-stopped
-    command: server /data --console-address ":9001"
+    profiles:
+      - catalog
+      - production
     environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin}
+      POSTGRES_DB: ${POSTGRES_DB:-baseia}
+      POSTGRES_USER: ${POSTGRES_USER:-baseia}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-baseia}
     ports:
-      - "${MINIO_API_PORT:-9000}:9000"
-      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+      - "${BASEIA_BIND_HOST:-127.0.0.1}:${POSTGRES_PORT:-5432}:5432"
     volumes:
-      - minio-data:/data
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          pg_isready
+          -U "$${POSTGRES_USER}"
+          -d "$${POSTGRES_DB}"
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  seaweedfs:
+    image: chrislusf/seaweedfs:4.29
+    restart: unless-stopped
+    profiles:
+      - catalog
+      - production
+    environment:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-baseia}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-baseia-secret}
+      S3_BUCKET: ${BASEIA_S3_BUCKET:-baseia}
+    ports:
+      - "${BASEIA_BIND_HOST:-127.0.0.1}:${SEAWEED_S3_PORT:-8333}:8333"
+      - "${BASEIA_BIND_HOST:-127.0.0.1}:${SEAWEED_FILER_PORT:-8888}:8888"
+      - "${BASEIA_BIND_HOST:-127.0.0.1}:${SEAWEED_MASTER_PORT:-9333}:9333"
+    volumes:
+      - seaweed-data:/data
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          wget -q -O /dev/null
+          http://127.0.0.1:9333/cluster/status
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  catalog-api:
+    image: baseia/catalog-api:${BASEIA_IMAGE_TAG:-dev}
+    restart: unless-stopped
+    profiles:
+      - catalog
+      - production
+    build:
+      context: .
+      dockerfile: infra/catalog/Dockerfile
+    environment:
+      BASEIA_DATABASE_URL: >-
+        postgresql+psycopg://${POSTGRES_USER:-baseia}:${POSTGRES_PASSWORD:-baseia}@postgres:5432/${POSTGRES_DB:-baseia}
+      BASEIA_S3_ENDPOINT_URL: http://seaweedfs:8333
+      BASEIA_S3_BUCKET: ${BASEIA_S3_BUCKET:-baseia}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-baseia}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-baseia-secret}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-us-east-1}
+      BASEIA_CATALOG_API_TOKEN: ${BASEIA_CATALOG_API_TOKEN:-}
+      BASEIA_REQUIRE_CATALOG_TOKEN: ${BASEIA_REQUIRE_CATALOG_TOKEN:-false}
+    ports:
+      - "${BASEIA_BIND_HOST:-127.0.0.1}:${CATALOG_API_PORT:-8088}:8088"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      seaweedfs:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - >-
+          import urllib.request;
+          urllib.request.urlopen('http://127.0.0.1:8088/health', timeout=3)
+      interval: 5s
+      timeout: 5s
+      retries: 20
 
   mineru-api:
     image: baseia/mineru-api:${MINERU_IMAGE_TAG:-3.4.4}
     restart: unless-stopped
+    shm_size: ${MINERU_SHM_SIZE:-8gb}
+    profiles:
+      - gpu
     build:
       context: ./infra/mineru
       dockerfile: Dockerfile
+      args:
+        MINERU_VERSION: ${MINERU_VERSION:-3.4.4}
     environment:
       MINERU_VERSION: ${MINERU_VERSION:-3.4.4}
       PORT: "8000"
+      MINERU_RESULT_STORE: ${MINERU_RESULT_STORE:-s3}
+      MINERU_PERSISTENCE_CONCURRENCY: ${MINERU_PERSISTENCE_CONCURRENCY:-4}
+      MINERU_S3_UPLOAD_CONCURRENCY: ${MINERU_S3_UPLOAD_CONCURRENCY:-8}
+      MINERU_ROUTER_MAX_CONCURRENT_REQUESTS: ${MINERU_ROUTER_MAX_CONCURRENT_REQUESTS:-128}
+      MINERU_MAX_UNPERSISTED_TASKS: ${MINERU_MAX_UNPERSISTED_TASKS:-256}
+      MINERU_MIN_FREE_DISK_GIB: ${MINERU_MIN_FREE_DISK_GIB:-10}
+      MINERU_MIN_FREE_DISK_PERCENT: ${MINERU_MIN_FREE_DISK_PERCENT:-10}
+      BASEIA_CATALOG_API_URL: ${MINERU_CATALOG_API_URL:-http://catalog-api:8088}
+      BASEIA_CATALOG_API_TOKEN: ${BASEIA_CATALOG_API_TOKEN:-}
+      BASEIA_S3_ENDPOINT_URL: ${MINERU_S3_ENDPOINT_URL:-http://seaweedfs:8333}
+      BASEIA_S3_BUCKET: ${BASEIA_S3_BUCKET:-baseia}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-baseia}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-baseia-secret}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-us-east-1}
     ports:
-      - "${MINERU_API_PORT:-8000}:8000"
+      - "${BASEIA_BIND_HOST:-127.0.0.1}:${MINERU_API_PORT:-8000}:8000"
     volumes:
       - mineru-models:/opt/mineru/models
       - mineru-results:/workspace/results
@@ -35,7 +132,58 @@ services:
               capabilities:
                 - gpu
 
+  temporal-postgres:
+    image: postgres:17.5-alpine
+    restart: unless-stopped
+    profiles:
+      - production
+    environment:
+      POSTGRES_DB: temporal
+      POSTGRES_USER: temporal
+      POSTGRES_PASSWORD: ${TEMPORAL_POSTGRES_PASSWORD:-temporal}
+    volumes:
+      - temporal-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U temporal -d temporal
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  temporal:
+    image: temporalio/auto-setup:${TEMPORAL_VERSION:-1.31.2}
+    restart: unless-stopped
+    profiles:
+      - production
+    environment:
+      DB: postgres12
+      DB_PORT: "5432"
+      POSTGRES_USER: temporal
+      POSTGRES_PWD: ${TEMPORAL_POSTGRES_PASSWORD:-temporal}
+      POSTGRES_SEEDS: temporal-postgres
+    ports:
+      - "${BASEIA_BIND_HOST:-127.0.0.1}:${TEMPORAL_PORT:-7233}:7233"
+    depends_on:
+      temporal-postgres:
+        condition: service_healthy
+
+  temporal-ui:
+    image: temporalio/ui:${TEMPORAL_UI_VERSION:-2.34.0}
+    restart: unless-stopped
+    profiles:
+      - production
+    environment:
+      TEMPORAL_ADDRESS: temporal:7233
+      TEMPORAL_CORS_ORIGINS: http://localhost:3000
+    ports:
+      - "${BASEIA_BIND_HOST:-127.0.0.1}:${TEMPORAL_UI_PORT:-8080}:8080"
+    depends_on:
+      - temporal
+
 volumes:
-  minio-data:
+  postgres-data:
+  seaweed-data:
   mineru-models:
   mineru-results:
+  temporal-postgres-data:

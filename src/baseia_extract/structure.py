@@ -16,7 +16,6 @@ from baseia_extract.semantic_models import (
     SectionNode,
 )
 
-
 ROLE_BY_BLOCK_TYPE: dict[str, BlockRole] = {
     "title": BlockRole.TITLE,
     "text": BlockRole.BODY,

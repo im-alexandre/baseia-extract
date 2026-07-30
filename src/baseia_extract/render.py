@@ -7,8 +7,8 @@ Ela não altera o inventário, o PDF, nem o artefato MinerU de origem.
 
 from __future__ import annotations
 
-import json
 import hashlib
+import json
 import os
 import re
 import tempfile
@@ -16,19 +16,19 @@ import unicodedata
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
-from pathlib import Path
 from json import JSONDecodeError
+from pathlib import Path
 from typing import Any
 
 import pandas as pd
 
+from .document_manifest import write_document_manifest
 from .ir import DocumentIR, build_document_ir, validate_document_ir
 from .layout import DocumentLayout, document_layout
 from .settings import settings
 from .structure import enrich_document, validate_structure
 
-
-RENDERER_VERSION = 1
+RENDERER_VERSION = 2
 RENDER_SOURCE = "poe_render"
 
 
@@ -980,6 +980,32 @@ def _render_one(row: dict[str, Any], overwrite: bool) -> dict[str, Any]:
                 "warnings": render_warnings,
             },
         )
+        stage_runs: list[dict[str, Any]] = []
+        existing_manifest: dict[str, Any] | None = None
+        try:
+            existing_manifest = json.loads(
+                layout.manifest_path.read_text(encoding="utf-8")
+            )
+            if isinstance(existing_manifest, dict):
+                existing_stage_runs = existing_manifest.get("stage_runs")
+                if isinstance(existing_stage_runs, list):
+                    stage_runs = [
+                        item
+                        for item in existing_stage_runs
+                        if isinstance(item, dict)
+                    ]
+        except (FileNotFoundError, OSError, JSONDecodeError):
+            pass
+        write_document_manifest(
+            row,
+            origin="stage",
+            stage_runs=stage_runs,
+            existing_manifest=(
+                existing_manifest
+                if isinstance(existing_manifest, dict)
+                else None
+            ),
+        )
         return {
             "document_id": document_id,
             "status": status,
@@ -1014,21 +1040,43 @@ def _render_one(row: dict[str, Any], overwrite: bool) -> dict[str, Any]:
         }
 
 
-def render(workers: int = 0, overwrite: bool = False) -> dict[str, Any]:
+def render(
+    workers: int = 3,
+    overwrite: bool = False,
+    inventory_path: str | Path | None = None,
+) -> dict[str, Any]:
     """Gera IR, estrutura e Markdown para documentos ``ok`` do inventário.
 
     Erros de um documento são isolados no resumo; artefatos ausentes ficam
     ``pending`` para a próxima execução após a extração MinerU terminar.
     """
-    if not settings.inventory_path.is_file():
-        raise FileNotFoundError(f"Inventário ausente: {settings.inventory_path}")
-    inventory = pd.read_csv(settings.inventory_path, dtype=str, keep_default_na=False)
-    required = {"document_id", "status", "sha256"}
+    source_path = (
+        Path(inventory_path).expanduser().resolve()
+        if inventory_path is not None
+        else settings.inventory_path
+    )
+    if not source_path.is_file():
+        raise FileNotFoundError(f"Inventário ausente: {source_path}")
+    inventory = pd.read_csv(
+        source_path,
+        dtype=str,
+        keep_default_na=False,
+    )
+    required = {
+        "collection",
+        "collection_slug",
+        "collection_relative_path",
+        "document_id",
+        "revision_id",
+        "relative_path",
+        "status",
+        "sha256",
+    }
     missing_columns = required - set(inventory.columns)
     if missing_columns:
         raise ValueError(f"Inventário sem colunas obrigatórias: {sorted(missing_columns)}")
     rows = inventory.loc[inventory["status"].eq("ok")].to_dict("records")
-    resolved_workers = workers or max(1, min(8, os.cpu_count() or 4))
+    resolved_workers = workers or max(1, min(14, os.cpu_count() or 4))
 
     results: list[dict[str, Any] | None] = [None] * len(rows)
     with ThreadPoolExecutor(max_workers=resolved_workers) as executor:
@@ -1048,19 +1096,58 @@ def render(workers: int = 0, overwrite: bool = False) -> dict[str, Any]:
                 }
 
     completed = [item for item in results if item is not None]
+    publication: dict[str, Any] | None = None
+    if settings.render_publish_s3:
+        from .render_publish import publish_render_outputs
+
+        publish_rows = [
+            row
+            for row, result in zip(rows, completed, strict=True)
+            if result["status"] in {"ok", "skipped"}
+        ]
+        publication = publish_render_outputs(
+            publish_rows,
+            render_source=RENDER_SOURCE,
+            renderer_version=RENDERER_VERSION,
+            concurrency=settings.render_publish_concurrency,
+            transfer_concurrency=(
+                settings.render_s3_transfer_concurrency
+            ),
+        )
+        publication_by_document = {
+            str(item["document_id"]): item
+            for item in publication["documents"]
+        }
+        for result in completed:
+            published = publication_by_document.get(
+                str(result["document_id"])
+            )
+            if published is not None:
+                result["publication"] = published
     summary = {
         "generated_at": _utc_now(),
-        "inventory_path": str(settings.inventory_path),
+        "inventory_path": str(source_path),
         "workers": resolved_workers,
         "overwrite": overwrite,
         "counts": dict(sorted(Counter(item["status"] for item in completed).items())),
         "documents": completed,
     }
+    if publication is not None:
+        summary["publication_counts"] = publication["counts"]
     summary_path = settings.data_dir / "render_summary.json"
     _atomic_write_json(summary_path, summary)
     counts = ", ".join(
         f"{status}={count}" for status, count in summary["counts"].items()
     )
     print(f"Render concluído: {counts or 'nenhum documento'}")
+    if publication is not None:
+        publication_counts = ", ".join(
+            f"{status}={count}"
+            for status, count in publication["counts"].items()
+        )
+        print(
+            "Publicação render: "
+            f"{publication_counts or 'nenhum documento'}"
+        )
     print(f"Resumo: {summary_path}")
     return summary

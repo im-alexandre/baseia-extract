@@ -27,10 +27,16 @@ from tenacity import (
     wait_fixed,
 )
 
+from .document_manifest import (
+    build_document_manifest,
+    document_storage_keys,
+)
+from .identity import canonical_json_sha256, stage_idempotency_key
 from .layout import document_layout
 from .reporting import reporter
 from .schemas import DocumentRecord, ExtractionManifest, ExtractionResult
 from .settings import settings
+from .storage import DownloadRequest, S3ArtifactStore
 
 
 @dataclass(slots=True)
@@ -120,6 +126,35 @@ class ExtractionStopped(RuntimeError):
 # o endpoint original saudável; falhas de transporte nunca contam como 404.
 _ORPHAN_TASK_404_CONFIRMATIONS = 3
 _ORPHAN_TASK_404_GRACE_SECONDS = 2.0
+_HTTP_CLIENT: httpx.Client | None = None
+_HTTP_CLIENT_LOCK = threading.Lock()
+
+
+def _http_client() -> httpx.Client:
+    global _HTTP_CLIENT
+    with _HTTP_CLIENT_LOCK:
+        if _HTTP_CLIENT is None:
+            _HTTP_CLIENT = httpx.Client(
+                limits=httpx.Limits(
+                    max_connections=settings.mineru_http_max_connections,
+                    max_keepalive_connections=(
+                        settings.mineru_http_max_keepalive_connections
+                    ),
+                    keepalive_expiry=(
+                        settings.mineru_http_keepalive_expiry_seconds
+                    ),
+                ),
+                follow_redirects=True,
+            )
+        return _HTTP_CLIENT
+
+
+def _close_http_client() -> None:
+    global _HTTP_CLIENT
+    with _HTTP_CLIENT_LOCK:
+        client, _HTTP_CLIENT = _HTTP_CLIENT, None
+    if client is not None:
+        client.close()
 
 
 class ApiEndpointRegistry:
@@ -144,6 +179,7 @@ class ApiEndpointRegistry:
     ) -> bool:
         url = api_url.strip().rstrip("/")
         health = health or _health(url)
+        _baseia_capabilities(url)
         advertised = max(
             1,
             _as_int(
@@ -812,13 +848,61 @@ class ManifestStore:
     def load(self, item: WorkItem) -> ExtractionManifest:
         path = self.path_for(item)
         try:
-            return ExtractionManifest.model_validate_json(
-                path.read_text(encoding="utf-8")
-            )
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            if (
+                isinstance(payload, dict)
+                and payload.get("schema_version") == 2
+            ):
+                stage_runs = payload.get("stage_runs")
+                states = (
+                    [
+                        value
+                        for value in stage_runs
+                        if isinstance(value, dict)
+                        and value.get("stage") == "extract"
+                    ]
+                    if isinstance(stage_runs, list)
+                    else []
+                )
+                state = states[-1] if states else {}
+                return ExtractionManifest(
+                    sha256=str(payload["sha256"]),
+                    document_id=str(payload["document_id"]),
+                    revision_id=str(payload.get("revision_id") or "") or None,
+                    collection_slug=(
+                        str(payload.get("collection_slug") or "") or None
+                    ),
+                    origin=str(payload.get("origin") or "") or None,
+                    path=item.document.path,
+                    filename=item.document.filename,
+                    output_dir=item.output_dir,
+                    row=item.row,
+                    **{
+                        key: value
+                        for key, value in state.items()
+                        if key
+                        in ExtractionManifest.model_fields
+                        and key
+                        not in {
+                            "sha256",
+                            "document_id",
+                            "revision_id",
+                            "collection_slug",
+                            "origin",
+                            "path",
+                            "filename",
+                            "output_dir",
+                            "row",
+                        }
+                    },
+                )
+            return ExtractionManifest.model_validate(payload)
         except (FileNotFoundError, OSError, ValueError):
             return ExtractionManifest(
                 sha256=item.document.sha256,
                 document_id=item.document.document_id,
+                revision_id=item.document.revision_id,
+                collection_slug=item.document.collection_slug,
                 path=item.document.path,
                 filename=item.document.filename,
                 output_dir=item.output_dir,
@@ -832,15 +916,108 @@ class ManifestStore:
     ) -> None:
         path = self.path_for(item)
         path.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+        except (FileNotFoundError, OSError, ValueError):
+            payload = None
+        if not (
+            isinstance(payload, dict)
+            and payload.get("schema_version") == 2
+        ):
+            try:
+                payload = build_document_manifest(
+                    item.row,
+                    origin=manifest.origin or "stage",
+                )
+            except (FileNotFoundError, ValueError):
+                source_key, artifact_prefix = document_storage_keys(item.row)
+                payload = {
+                    "schema_version": 2,
+                    "origin": manifest.origin or "stage",
+                    "collection": str(item.row.get("collection") or ""),
+                    "collection_slug": str(
+                        item.row.get("collection_slug") or ""
+                    ),
+                    "document_id": item.document.document_id,
+                    "revision_id": item.document.revision_id,
+                    "sha256": item.document.sha256,
+                    "relative_path": document_layout(
+                        item.row
+                    ).relative_pdf_path.as_posix(),
+                    "filename": item.document.filename,
+                    "source_object_key": source_key,
+                    "artifact_prefix": artifact_prefix,
+                    "artifacts": [],
+                    "stage_runs": [],
+                }
+        stage_state = manifest.model_dump(
+            mode="json",
+            exclude_none=True,
+        )
+        for key in (
+            "sha256",
+            "document_id",
+            "revision_id",
+            "collection_slug",
+            "origin",
+            "path",
+            "filename",
+            "output_dir",
+            "row",
+        ):
+            stage_state.pop(key, None)
+        stage_state["stage"] = "extract"
+        stage_state["idempotency_key"] = manifest.task_id
+        states = payload.get("stage_runs")
+        if not isinstance(states, list):
+            states = []
+        identity = manifest.task_id or "pending"
+        matching = next(
+            (
+                index
+                for index, value in enumerate(states)
+                if isinstance(value, dict)
+                and value.get("stage") == "extract"
+                and (value.get("idempotency_key") or "pending") == identity
+            ),
+            None,
+        )
+        if matching is None:
+            states.append(stage_state)
+        else:
+            states[matching] = stage_state
+        origin = manifest.origin or payload.get("origin") or "stage"
+        if manifest.status == "ok":
+            payload = build_document_manifest(
+                item.row,
+                origin=str(origin),
+                stage_runs=states,
+                existing_manifest=payload,
+            )
+        else:
+            payload["stage_runs"] = states
+            payload["origin"] = origin
         handle, temporary_name = tempfile.mkstemp(
             prefix=f".{path.name}.", suffix=".tmp", dir=path.parent
         )
         os.close(handle)
         temporary = Path(temporary_name)
         try:
-            temporary.write_text(
-                manifest.model_dump_json(indent=2), encoding="utf-8"
-            )
+            with temporary.open(
+                "w",
+                encoding="utf-8",
+                newline="\n",
+            ) as file:
+                json.dump(
+                    payload,
+                    file,
+                    ensure_ascii=False,
+                    indent=2,
+                    sort_keys=True,
+                )
+                file.write("\n")
+                file.flush()
+                os.fsync(file.fileno())
             os.replace(temporary, path)
         finally:
             temporary.unlink(missing_ok=True)
@@ -912,7 +1089,7 @@ def _health(
     *,
     timeout: float | None = None,
 ) -> dict[str, Any]:
-    response = httpx.get(
+    response = _http_client().get(
         f"{api_url}/health",
         timeout=timeout or settings.mineru_health_timeout_seconds,
         headers={"Accept": "application/json"},
@@ -924,17 +1101,46 @@ def _health(
     return payload
 
 
+def _baseia_capabilities(api_url: str) -> dict[str, Any]:
+    try:
+        response = _http_client().get(
+            f"{api_url}/baseia-capabilities",
+            timeout=settings.mineru_health_timeout_seconds,
+            headers={"Accept": "application/json"},
+        )
+        response.raise_for_status()
+        payload = response.json()
+    except httpx.HTTPStatusError as error:
+        if error.response.status_code == 404:
+            raise TaskRequestError(
+                "O endpoint é uma API MinerU padrão, sem persistência BaseIA. "
+                "Use o CLI oficial no modo sandbox ou execute "
+                "infra/mineru para o pipeline idempotente."
+            ) from error
+        raise
+    if (
+        not isinstance(payload, dict)
+        or payload.get("schema_version") != 1
+        or payload.get("task_identity") != "idempotency-key"
+        or payload.get("result_reference") != "persistent-tasks"
+        or payload.get("server_side_persistence") is not True
+    ):
+        raise TaskRequestError(
+            f"Endpoint MinerU sem contrato BaseIA compatível: {api_url}"
+        )
+    return payload
+
+
 def _submit(
     pdf_path: Path,
     api_url: str,
     *,
     correlation_key: str,
     task_id: str,
+    revision_id: str,
+    artifact_prefix: str,
+    config_hash: str,
 ) -> dict[str, Any]:
-    if task_id != correlation_key:
-        raise ValueError(
-            "A task_id idempotente deve ser o SHA-256 do documento."
-        )
     fields = {
         # MinerU groups English and Latin-script languages (including
         # Brazilian Portuguese) under the OCR profile named "ch".
@@ -952,11 +1158,20 @@ def _submit(
     }
     try:
         with pdf_path.open("rb") as pdf:
-            response = httpx.post(
+            response = _http_client().post(
                 f"{api_url}/tasks",
                 data=fields,
                 files={"files": (f"{correlation_key}.pdf", pdf, "application/pdf")},
-                headers={"Idempotency-Key": correlation_key},
+                headers={
+                    "Idempotency-Key": task_id,
+                    "X-BaseIA-Content-SHA256": correlation_key,
+                    "X-BaseIA-Document-Revision-Id": revision_id,
+                    "X-BaseIA-Artifact-Prefix": artifact_prefix,
+                    "X-BaseIA-Stage": "extract",
+                    "X-BaseIA-Processor": "mineru",
+                    "X-BaseIA-Processor-Version": settings.mineru_version,
+                    "X-BaseIA-Config-Hash": config_hash,
+                },
                 timeout=settings.mineru_submit_timeout_seconds,
             )
         response.raise_for_status()
@@ -995,44 +1210,32 @@ def _submit(
 def _reconcile_submission(
     api_url: str,
     correlation_key: str,
+    task_id: str,
 ) -> dict[str, Any] | None:
     """Obtém a tarefa persistida pelo router antes de permitir novo POST."""
-    tasks = _persisted_tasks(api_url, correlation_key)
-    completed = [
-        item
-        for item in tasks
-        if str(item.get("status", "")).casefold() == "completed"
-        and item.get("persisted_at")
-        and item.get("package_dir")
-        and isinstance(item.get("artifacts"), list)
-        and item["artifacts"]
-    ]
-    active = [
-        item
-        for item in tasks
-        if str(item.get("status", "")).casefold()
-        not in {"completed", "failed", "error", "cancelled"}
-    ]
-    terminal = [item for item in tasks if item not in completed + active]
-    task = next(iter(completed or active or terminal), None)
-    task_id = task.get("task_id") if isinstance(task, dict) else None
-    if not isinstance(task_id, str) or not task_id:
-        if not tasks:
-            return None
-        raise TaskRecoveryError(
-            f"Router não retornou task_id persistido para {correlation_key}."
-        )
-    return task
+    tasks = _persisted_tasks(api_url, correlation_key, task_id=task_id)
+    matching = next(
+        (
+            item
+            for item in tasks
+            if str(item.get("task_id", "")) == task_id
+        ),
+        None,
+    )
+    return matching
 
 
 def _persisted_tasks(
     api_url: str,
     correlation_key: str,
+    *,
+    task_id: str | None = None,
 ) -> list[dict[str, Any]]:
     """Lê o índice persistente sem inferir que uma ausência é falha remota."""
     try:
-        response = httpx.get(
+        response = _http_client().get(
             f"{api_url}/persisted-tasks/{correlation_key}",
+            params={"task_id": task_id} if task_id else None,
             timeout=settings.mineru_health_timeout_seconds,
             headers={"Accept": "application/json"},
         )
@@ -1056,6 +1259,152 @@ def _persisted_tasks(
         ) from error
 
 
+def _persisted_complete(item: dict[str, Any]) -> bool:
+    result_ref = item.get("result_ref")
+    has_reference = bool(item.get("package_dir")) or (
+        isinstance(result_ref, dict)
+        and bool(result_ref.get("bucket"))
+        and bool(result_ref.get("prefix"))
+    )
+    return (
+        str(item.get("status", "")).casefold() == "completed"
+        and bool(item.get("persisted_at"))
+        and has_reference
+        and isinstance(item.get("artifacts"), list)
+        and bool(item["artifacts"])
+    )
+
+
+def _persisted_artifact_uri(item: dict[str, Any]) -> str:
+    result_ref = item.get("result_ref")
+    if isinstance(result_ref, dict):
+        bucket = str(result_ref.get("bucket") or "").strip("/")
+        prefix = str(result_ref.get("prefix") or "").strip("/")
+        if bucket and prefix:
+            return f"s3://{bucket}/{prefix}"
+    package_dir = str(item.get("package_dir") or "").strip("/")
+    if package_dir:
+        return f"/workspace/results/{package_dir}"
+    raise TaskRecoveryError("Resultado persistido sem referência de artefatos.")
+
+
+def _materialize_s3_result(
+    item: dict[str, Any],
+    output_dir: Path,
+) -> bool:
+    if not settings.mineru_materialize_results or _completed(output_dir):
+        return False
+    result_ref = item.get("result_ref")
+    if (
+        not isinstance(result_ref, dict)
+        or str(result_ref.get("scheme") or "s3").casefold() != "s3"
+    ):
+        return False
+    bucket = str(result_ref.get("bucket") or "").strip()
+    prefix = str(result_ref.get("prefix") or "").strip("/")
+    if not bucket or not prefix:
+        raise ResultDownloadError("Referência S3 incompleta para materialização.")
+    artifacts = item.get("artifacts")
+    if not isinstance(artifacts, list) or not artifacts:
+        raise ResultDownloadError("Resultado S3 sem inventário de artefatos.")
+
+    output_dir.parent.mkdir(parents=True, exist_ok=True)
+    stage = Path(
+        tempfile.mkdtemp(
+            prefix=f".{output_dir.name}.s3.",
+            dir=output_dir.parent,
+        )
+    )
+    backup = output_dir.with_name(
+        f".{output_dir.name}.{uuid.uuid4().hex}.previous"
+    )
+    try:
+        requests: list[DownloadRequest] = []
+        destinations: set[str] = set()
+        for artifact in artifacts:
+            if not isinstance(artifact, dict):
+                continue
+            key = str(
+                artifact.get("key")
+                or artifact.get("object_key")
+                or artifact.get("path")
+                or ""
+            ).strip("/")
+            checksum = str(
+                artifact.get("sha256")
+                or artifact.get("checksum_sha256")
+                or ""
+            )
+            if not key or not checksum:
+                raise ResultDownloadError(
+                    "Artefato S3 sem key ou SHA-256."
+                )
+            if key == f"{prefix}/manifest.json":
+                relative = PurePosixPath("service.json")
+            else:
+                prefix_with_separator = f"{prefix}/"
+                if not key.startswith(prefix_with_separator):
+                    raise ResultDownloadError(
+                        f"Artefato fora do prefixo da task: {key}"
+                    )
+                relative = PurePosixPath(
+                    key.removeprefix(prefix_with_separator)
+                )
+            if (
+                relative.is_absolute()
+                or ".." in relative.parts
+                or not relative.parts
+            ):
+                raise ResultDownloadError(
+                    f"Caminho S3 inseguro: {relative.as_posix()}"
+                )
+            destination = stage / Path(*relative.parts)
+            destination_key = str(destination).casefold()
+            if destination_key in destinations:
+                raise ResultDownloadError(
+                    f"Destino S3 duplicado: {relative.as_posix()}"
+                )
+            destinations.add(destination_key)
+            requests.append(
+                DownloadRequest(
+                    key=key,
+                    destination=destination,
+                    sha256=checksum,
+                )
+            )
+
+        store = S3ArtifactStore.from_result_env(
+            bucket=bucket,
+            max_concurrency=settings.mineru_s3_download_concurrency
+        )
+        store.download_many(requests)
+        if not _completed(stage):
+            raise ResultDownloadError(
+                "Materialização S3 não produziu middle JSON válido."
+            )
+        if output_dir.exists():
+            os.replace(output_dir, backup)
+        try:
+            os.replace(stage, output_dir)
+        except BaseException:
+            if backup.exists() and not output_dir.exists():
+                os.replace(backup, output_dir)
+            raise
+        if backup.exists():
+            shutil.rmtree(backup)
+        return True
+    except ResultDownloadError:
+        raise
+    except Exception as error:
+        raise ResultDownloadError(
+            "Falha ao materializar resultado S3 sem reenviar o PDF: "
+            f"{type(error).__name__}: {error}"
+        ) from error
+    finally:
+        if stage.exists():
+            shutil.rmtree(stage)
+
+
 def _recover_orphaned_task(
     *,
     original_api_url: str,
@@ -1073,16 +1422,13 @@ def _recover_orphaned_task(
 
     def probe() -> tuple[str, dict[str, Any] | None]:
         for api_url in persisted_api_urls:
-            tasks = _persisted_tasks(api_url, correlation_key)
+            tasks = _persisted_tasks(
+                api_url,
+                correlation_key,
+                task_id=task_id,
+            )
             for persisted in tasks:
-                if (
-                    str(persisted.get("status", "")).casefold()
-                    == "completed"
-                    and persisted.get("persisted_at")
-                    and persisted.get("package_dir")
-                    and isinstance(persisted.get("artifacts"), list)
-                    and persisted["artifacts"]
-                ):
+                if _persisted_complete(persisted):
                     return "persisted", persisted
             prior = next(
                 (
@@ -1099,9 +1445,11 @@ def _recover_orphaned_task(
                     f"Tarefa persistida {task_id} terminou com status "
                     f"{prior.get('status')}: {prior}"
                 )
+            if prior is not None:
+                return "active", None
 
         try:
-            response = httpx.get(
+            response = _http_client().get(
                 f"{original_api_url}/tasks/{task_id}",
                 timeout=settings.mineru_health_timeout_seconds,
                 headers={"Accept": "application/json"},
@@ -1169,8 +1517,9 @@ def _wait_persisted_result(
     last_error = "registro persistido ainda indisponível"
     while time.monotonic() < deadline:
         try:
-            response = httpx.get(
+            response = _http_client().get(
                 f"{api_url}/persisted-tasks/{correlation_key}",
+                params={"task_id": task_id},
                 timeout=settings.mineru_health_timeout_seconds,
                 headers={"Accept": "application/json"},
             )
@@ -1202,11 +1551,7 @@ def _wait_persisted_result(
                     for candidate in tasks
                     if isinstance(candidate, dict)
                     and candidate.get("task_id") == task_id
-                    and candidate.get("status") == "completed"
-                    and candidate.get("persisted_at")
-                    and candidate.get("package_dir")
-                    and isinstance(candidate.get("artifacts"), list)
-                    and candidate["artifacts"]
+                    and _persisted_complete(candidate)
                 ),
                 None,
             )
@@ -1309,7 +1654,7 @@ def _download_result_zip(
                         write=300,
                         pool=30,
                     )
-                    with httpx.stream(
+                    with _http_client().stream(
                         "GET",
                         f"{api_url}/tasks/{task_id}/result",
                         timeout=timeout,
@@ -1362,14 +1707,22 @@ def _load_manifest(path: Path) -> list[WorkItem]:
     if not path.exists():
         raise FileNotFoundError(f"Manifesto não encontrado: {path}")
     manifest = pd.read_csv(path)
-    required = {"document_id", "sha256", "path", "filename", "page_count"}
+    required = {
+        "collection_slug",
+        "document_id",
+        "revision_id",
+        "sha256",
+        "path",
+        "filename",
+        "page_count",
+    }
     missing = required.difference(manifest.columns)
     if missing:
         raise ValueError(f"Colunas ausentes no manifesto: {sorted(missing)}")
     if "status" in manifest.columns:
         manifest = manifest[manifest["status"].astype(str).eq("ok")]
     manifest = (
-        manifest.drop_duplicates("sha256", keep="first")
+        manifest.drop_duplicates("document_id", keep="first")
         .sort_values("sha256", kind="stable")
         .reset_index(drop=True)
     )
@@ -1386,6 +1739,8 @@ def _load_manifest(path: Path) -> list[WorkItem]:
         document = DocumentRecord(
             sha256=str(row["sha256"]),
             document_id=str(row["document_id"]),
+            revision_id=str(row["revision_id"]),
+            collection_slug=str(row["collection_slug"]),
             path=pdf_path,
             filename=str(row["filename"]),
             size_bytes=pdf_path.stat().st_size if pdf_path.exists() else None,
@@ -1518,7 +1873,36 @@ def _process(
         return result
     endpoint: ApiEndpoint | None = None
     saved = config.manifests.load(item)
-    task_id = saved.task_id
+    if not document.revision_id:
+        raise ValueError(
+            f"Documento sem revision_id no inventário: {document.document_id}"
+        )
+    extraction_options = {
+        "backend": settings.mineru_backend,
+        "parse_method": "auto",
+        "language": "ch",
+        "formula_enable": True,
+        "table_enable": True,
+        "return_md": True,
+        "return_middle_json": True,
+        "return_content_list": True,
+        "return_images": True,
+    }
+    config_hash = canonical_json_sha256(extraction_options)
+    expected_task_id = stage_idempotency_key(
+        revision_id=document.revision_id,
+        stage="extract",
+        processor="mineru",
+        processor_version=settings.mineru_version,
+        config_hash=config_hash,
+        input_hashes=[document.sha256],
+    )
+    _, artifact_prefix = document_storage_keys(item.row)
+    task_id = (
+        saved.task_id
+        if saved.task_id == expected_task_id
+        else None
+    )
     original_api_url = saved.api_url.rstrip("/") if saved.api_url else None
     submission_required = saved.status == "orphaned"
     task_history = list(saved.task_history)
@@ -1584,6 +1968,7 @@ def _process(
                         persisted_record = _reconcile_submission(
                             endpoint.api_url,
                             document.sha256,
+                            expected_task_id,
                         )
                         if persisted_record is not None:
                             candidate_id = persisted_record["task_id"]
@@ -1643,7 +2028,7 @@ def _process(
                                     "finished_at": datetime_now_iso(),
                                 }
                             )
-                            task_id = document.sha256
+                            task_id = expected_task_id
                             submission_required = True
                             config.manifests.update(
                                 item,
@@ -1665,7 +2050,7 @@ def _process(
                     if not task_id or submission_required:
                         if item.output_dir.exists():
                             shutil.rmtree(item.output_dir)
-                        task_id = task_id or document.sha256
+                        task_id = task_id or expected_task_id
                         config.manifests.update(
                             item,
                             status="submitting",
@@ -1683,6 +2068,9 @@ def _process(
                             endpoint.api_url,
                             correlation_key=document.sha256,
                             task_id=task_id,
+                            revision_id=document.revision_id,
+                            artifact_prefix=artifact_prefix,
+                            config_hash=config_hash,
                         )
                         throughput_eligible = True
                         # A confirmação é persistida antes de qualquer poll.
@@ -1710,8 +2098,8 @@ def _process(
                             document.sha256,
                             task_id,
                         )
-                    package_dir = str(persisted["package_dir"]).strip("/")
-                    artifact_uri = f"/workspace/results/{package_dir}"
+                    _materialize_s3_result(persisted, item.output_dir)
+                    artifact_uri = _persisted_artifact_uri(persisted)
                     persisted_artifacts = list(persisted["artifacts"])
                     duration = time.perf_counter() - started
                     if throughput_eligible:
@@ -2100,7 +2488,7 @@ def _execute(
     )
     _write_frame_atomic(errors_df, config.output_root / "errors.csv")
     reconciled = _reconcile_manifests(
-        items + deferred,
+        items,
         config.manifests,
         config.output_root,
     )
@@ -2130,9 +2518,9 @@ def _execute(
     completed_documents = new_completed_documents + reconciled_documents
     summary = {
         "run_id": config.run_id,
-        "manifest_count": len(items) + len(deferred),
+        "manifest_count": len(items),
         "eligible_count": len(items),
-        "deferred_for_bucket_count": len(deferred),
+        "deferred_error_count": len(deferred_error_items),
         "ok_count": completed_documents,
         "completed_pages": new_completed_pages + reconciled_pages,
         "new_completed_pages": new_completed_pages,
@@ -2205,4 +2593,7 @@ def extract(
         run_id=run_id or uuid.uuid4().hex,
         manifests=ManifestStore(),
     )
-    return _execute(config, stop_event or threading.Event())
+    try:
+        return _execute(config, stop_event or threading.Event())
+    finally:
+        _close_http_client()

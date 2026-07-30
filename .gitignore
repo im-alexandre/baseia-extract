@@ -11,6 +11,9 @@ dist/
 .ruff_cache/
 .coverage
 htmlcov/
+/site/
+.baseia/
+baseia.collection.yaml
 
 # Ambientes
 .venv/

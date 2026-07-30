@@ -1,0 +1,118 @@
+[project]
+site_name = "BaseIA"
+site_description = "Documentação operacional e técnica do framework BaseIA"
+docs_dir = "docs"
+site_dir = "site"
+dev_addr = "127.0.0.1:8001"
+use_directory_urls = true
+extra_css = ["assets/stylesheets/catppuccin.css"]
+nav = [
+  { "Início" = "README.md" },
+  { "Essência do projeto" = "SOUL.md" },
+  { "Utilização" = [
+    { "Visão geral" = "operational/README.md" },
+    { "Execução local" = [
+      { "Visão geral" = "operational/local/README.md" },
+      { "Quick Start" = "operational/local/quickstart.md" },
+      { "Instalação" = "operational/local/installation.md" },
+      { "Inventário" = "operational/local/inventory.md" },
+      { "Amostragem" = "operational/local/sampling.md" },
+      { "Extração" = "operational/local/extraction.md" },
+      { "Render" = "operational/local/rendering.md" },
+      { "Auditoria e recuperação" = "operational/local/audit-and-recovery.md" },
+    ] },
+    { "Desenvolvimento catalogado" = [
+      { "Visão geral" = "operational/cataloged-development/README.md" },
+      { "Preparar o ambiente" = "operational/cataloged-development/environment.md" },
+      { "Inventariar e promover" = "operational/cataloged-development/inventory.md" },
+      { "Extrair com persistência" = "operational/cataloged-development/extraction.md" },
+      { "Renderizar e publicar" = "operational/cataloged-development/rendering.md" },
+      { "Preparar a estratégia" = "operational/cataloged-development/promotion.md" },
+    ] },
+    { "Produção" = [
+      { "Visão geral" = "operational/production/README.md" },
+      { "Promover a estratégia" = "operational/production/promoting-the-strategy.md" },
+      { "Ambiente com Compose" = "operational/production/compose-environment.md" },
+      { "Registrar, executar e ativar a coleção" = "operational/production/collection-bootstrap.md" },
+      { "Execução histórica da coleção inicial" = "operational/production/initial-corpus-runbook.md" },
+      { "Executar o pipeline" = "operational/production/execute-pipeline.md" },
+      { "Usar serviços externos" = "operational/production/external-services.md" },
+      { "Operação e recuperação" = "operational/production/operations.md" },
+    ] },
+    { "Referência operacional" = [
+      { "Visão geral" = "operational/reference/README.md" },
+      { "Comandos" = "operational/reference/commands.md" },
+      { "Configuração" = "operational/reference/configuration.md" },
+      { "Artefatos e saídas" = "operational/reference/artifacts.md" },
+    ] },
+  ] },
+  { "Desenvolvimento do framework" = [
+    { "Visão geral" = "technical/README.md" },
+    { "Estrutura do repositório" = "technical/repository-structure.md" },
+    { "Arquitetura" = [
+      { "Visão geral" = "technical/architecture/overview.md" },
+      { "Catálogo e concorrência" = "technical/architecture/catalog.md" },
+      { "Persistência MinerU" = "technical/architecture/mineru-persistence.md" },
+    ] },
+    { "Conceitos" = [
+      { "Pipeline" = "technical/concepts/pipeline.md" },
+      { "Catálogo e identidade" = "technical/concepts/catalog.md" },
+      { "Artefatos e layout" = "technical/concepts/artifacts.md" },
+    ] },
+    { "Desenvolvimento" = [
+      { "Guia de desenvolvimento" = "technical/development/guide.md" },
+      { "Manutenção da documentação" = "technical/development/documentation.md" },
+    ] },
+    { "Soft backlog" = [
+      { "Visão geral" = "technical/backlog/README.md" },
+      { "CAP-001: concorrência" = "technical/backlog/concurrency-model.md" },
+      { "CAT-001: promoção genérica (concluído)" = "technical/backlog/generic-collection-bootstrap.md" },
+      { "CTX-001: workspaces e perfis" = "technical/backlog/workspace-contexts.md" },
+      { "CAT-002: autoridade inicial no S3" = "technical/backlog/production-authority-handoff.md" },
+      { "SEM-001: tipos semânticos MinerU" = "technical/backlog/semantic-block-types.md" },
+      { "OPS-001: estratégia promovível" = "technical/backlog/promotable-strategy.md" },
+      { "ORC-001: orquestração" = "technical/backlog/production-orchestration.md" },
+      { "ING-001: ingestão no Qdrant" = "technical/backlog/qdrant-ingestion.md" },
+    ] },
+  ] },
+]
+
+[project.theme]
+name = "catppuccin"
+variant = "classic"
+language = "pt-BR"
+palette = [
+  { scheme = "latte", toggle = { icon = "material/weather-sunny", name = "Usar modo escuro" } },
+  { scheme = "mocha", toggle = { icon = "material/weather-night", name = "Usar modo claro" } },
+]
+features = [
+  "navigation.tabs",
+  "navigation.tabs.sticky",
+  "navigation.sections",
+  "navigation.path",
+  "navigation.top",
+  "toc.follow",
+  "content.code.copy",
+]
+
+[project.validation]
+invalid_links = true
+invalid_link_anchors = true
+
+[project.markdown_extensions.attr_list]
+
+[project.markdown_extensions.tables]
+
+[project.markdown_extensions.toc]
+permalink = true
+
+[project.markdown_extensions.pymdownx.highlight]
+anchor_linenums = true
+line_spans = "__span"
+pygments_lang_class = true
+
+[project.markdown_extensions.pymdownx.snippets]
+base_path = ["SOUL.md"]
+check_paths = true
+
+[project.markdown_extensions.pymdownx.superfences]

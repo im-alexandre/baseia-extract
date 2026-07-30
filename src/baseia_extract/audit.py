@@ -12,7 +12,6 @@ from .layout import document_layout
 from .schemas import ExtractionManifest
 from .settings import settings
 
-
 KNOWN_BLOCK_TYPES = {
     "abstract",
     "aside_text",
@@ -406,13 +405,20 @@ def _load_runs() -> pd.DataFrame:
     return runs.drop_duplicates("document_id", keep="last")
 
 
-def audit_inventory() -> dict[str, Any]:
-    if not settings.inventory_path.exists():
+def audit_inventory(
+    inventory_path: str | Path | None = None,
+) -> dict[str, Any]:
+    source_path = (
+        Path(inventory_path).expanduser().resolve()
+        if inventory_path is not None
+        else settings.inventory_path
+    )
+    if not source_path.exists():
         raise FileNotFoundError(
-            f"Manifesto não encontrado: {settings.inventory_path}"
+            f"Manifesto não encontrado: {source_path}"
         )
 
-    inventory = pd.read_csv(settings.inventory_path)
+    inventory = pd.read_csv(source_path)
     missing_columns = REQUIRED_INVENTORY_COLUMNS.difference(inventory.columns)
     if missing_columns:
         raise ValueError(
@@ -573,18 +579,28 @@ def _review_sample(
     )
 
 
-def audit_extraction() -> dict[str, Any]:
-    inventory_summary = audit_inventory()
+def audit_extraction(
+    *,
+    require_render: bool = True,
+    inventory_path: str | Path | None = None,
+) -> dict[str, Any]:
+    inventory_summary = audit_inventory(inventory_path)
     manifest_path = Path(inventory_summary["extraction_manifest_path"])
     manifest = pd.read_csv(manifest_path)
     runs = _load_runs()
 
-    documents_root = settings.document_store_dir
     output_dir = settings.audit_dir / "extraction"
     output_dir.mkdir(parents=True, exist_ok=True)
 
     extraction_exists = (
-        any(documents_root.rglob("*_middle.json"))
+        any(
+            any(
+                document_layout(row.to_dict()).mineru_dir.rglob(
+                    "*_middle.json"
+                )
+            )
+            for _, row in manifest.iterrows()
+        )
         or (settings.extraction_dir / "runs.csv").exists()
     )
 
@@ -635,22 +651,64 @@ def audit_extraction() -> dict[str, Any]:
             failures.append("manifest_missing")
         else:
             try:
-                canonical_manifest = (
-                    ExtractionManifest.model_validate_json(
-                        layout.manifest_path.read_text(encoding="utf-8")
+                manifest_payload = json.loads(
+                    layout.manifest_path.read_text(encoding="utf-8")
+                )
+                if (
+                    isinstance(manifest_payload, dict)
+                    and manifest_payload.get("schema_version") == 2
+                ):
+                    manifest_valid = (
+                        _normalized_string(manifest_payload.get("sha256"))
+                        == _normalized_string(inventory_row.get("sha256"))
+                        and _normalized_string(
+                            manifest_payload.get("document_id")
+                        )
+                        == document_id
+                        and _normalized_string(
+                            manifest_payload.get("revision_id")
+                        )
+                        == _normalized_string(
+                            inventory_row.get("revision_id")
+                        )
+                        and _normalized_string(
+                            manifest_payload.get("relative_path")
+                        ).replace("\\", "/")
+                        == layout.relative_pdf_path.as_posix()
+                        and isinstance(
+                            manifest_payload.get("artifacts"),
+                            list,
+                        )
                     )
-                )
-                manifest_valid = (
-                    canonical_manifest.sha256
-                    == _normalized_string(inventory_row.get("sha256"))
-                    and canonical_manifest.path.resolve()
-                    == layout.pdf_path.resolve()
-                    and canonical_manifest.output_dir.resolve()
-                    == layout.mineru_dir.resolve()
-                )
+                    if require_render:
+                        canonical_markdown = [
+                            item
+                            for item in manifest_payload.get("artifacts", [])
+                            if isinstance(item, dict)
+                            and item.get("kind") == "canonical_markdown"
+                            and item.get("canonical") is True
+                        ]
+                        if len(canonical_markdown) != 1:
+                            failures.append(
+                                "canonical_markdown_manifest_mismatch"
+                            )
+                else:
+                    canonical_manifest = (
+                        ExtractionManifest.model_validate(
+                            manifest_payload
+                        )
+                    )
+                    manifest_valid = (
+                        canonical_manifest.sha256
+                        == _normalized_string(inventory_row.get("sha256"))
+                        and canonical_manifest.path.resolve()
+                        == layout.pdf_path.resolve()
+                        and canonical_manifest.output_dir.resolve()
+                        == layout.mineru_dir.resolve()
+                    )
                 if not manifest_valid:
                     failures.append("manifest_identity_mismatch")
-            except (OSError, ValueError):
+            except (OSError, ValueError, TypeError, json.JSONDecodeError):
                 failures.append("manifest_invalid")
 
         nested_manifests = list(layout.mineru_dir.rglob("manifest.json"))
@@ -663,6 +721,26 @@ def audit_extraction() -> dict[str, Any]:
             failures.append("middle_json_missing")
         elif len(middle_paths) > 1:
             failures.append(f"multiple_middle_json:{len(middle_paths)}")
+
+        if require_render:
+            for canonical_path, failure in (
+                (layout.ir_path, "canonical_ir_missing"),
+                (layout.structure_path, "canonical_structure_missing"),
+                (layout.markdown_path, "canonical_markdown_missing"),
+                (layout.render_path, "canonical_render_manifest_missing"),
+            ):
+                if not canonical_path.is_file():
+                    failures.append(failure)
+            extra_canonical_markdown = [
+                path
+                for path in layout.canonical_dir.rglob("*.md")
+                if path != layout.markdown_path
+            ] if layout.canonical_dir.is_dir() else []
+            if extra_canonical_markdown:
+                failures.append(
+                    "multiple_canonical_markdown:"
+                    f"{1 + len(extra_canonical_markdown)}"
+                )
 
         metrics: dict[str, Any] = {
             "middle_path": None,
@@ -686,11 +764,12 @@ def audit_extraction() -> dict[str, Any]:
         }
 
         if len(middle_paths) == 1:
-            metrics, middle_failures, middle_warnings = _inspect_middle(
+            middle_metrics, middle_failures, middle_warnings = _inspect_middle(
                 middle_paths[0],
                 expected_pages,
                 schema,
             )
+            metrics.update(middle_metrics)
             failures.extend(middle_failures)
             warnings.extend(middle_warnings)
 
@@ -759,7 +838,12 @@ def audit_extraction() -> dict[str, Any]:
     review_sample = _review_sample(documents, outliers)
     _write_frame(review_sample, output_dir / "review_sample.csv")
 
-    catalog = pd.read_csv(settings.inventory_path)
+    catalog_source = (
+        Path(inventory_path).expanduser().resolve()
+        if inventory_path is not None
+        else settings.inventory_path
+    )
+    catalog = pd.read_csv(catalog_source)
     expected_manifest_paths = {
         document_layout(row.to_dict()).manifest_path.resolve()
         for _, row in catalog.iterrows()
@@ -767,8 +851,20 @@ def audit_extraction() -> dict[str, Any]:
         and Path(str(row.get("path"))).is_file()
     }
     orphan_rows: list[dict[str, str]] = []
-    if documents_root.exists():
-        for path in documents_root.rglob("manifest.json"):
+    seen_manifests: set[Path] = set()
+    for documents_root in settings.document_source_roots:
+        scan_root = (
+            documents_root.with_suffix("")
+            if documents_root.is_file()
+            else documents_root
+        )
+        if not scan_root.exists():
+            continue
+        for path in scan_root.rglob("manifest.json"):
+            resolved_path = path.resolve()
+            if resolved_path in seen_manifests:
+                continue
+            seen_manifests.add(resolved_path)
             if path.resolve() not in expected_manifest_paths:
                 orphan_rows.append(
                     {
@@ -794,6 +890,7 @@ def audit_extraction() -> dict[str, Any]:
 
     summary = {
         "available": True,
+        "required_stage": "render" if require_render else "extract",
         **inventory_summary,
         "audited_documents": int(len(documents)),
         "passed": int(documents["audit_status"].eq("PASS").sum()),

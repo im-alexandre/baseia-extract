@@ -6,20 +6,25 @@ import asyncio
 import contextvars
 import hashlib
 import os
+import uuid
 from pathlib import Path
 
+import catalog_client
 import persistent_results
 from mineru.cli import router
 from mineru.version import __version__
-
 
 EXPECTED_VERSION = "3.4.4"
 _idempotency_key: contextvars.ContextVar[str | None] = contextvars.ContextVar(
     "baseia_idempotency_key", default=None
 )
+_request_metadata: contextvars.ContextVar[dict[str, str] | None] = (
+    contextvars.ContextVar("baseia_request_metadata", default=None)
+)
 _submit_locks: dict[str, asyncio.Lock] = {}
 _submit_lock_references: dict[str, int] = {}
 _submit_locks_guard = asyncio.Lock()
+_PROCESS_INSTANCE_ID = uuid.uuid4().hex[:12]
 
 
 def _file_sha256(path: Path) -> str:
@@ -106,7 +111,11 @@ def _patch_router() -> None:
                 task.task_id = external_id
                 self._tasks.pop(generated_id, None)
                 self._tasks[external_id] = task
-        persistent_results.register_task(task, idempotency_key=external_id)
+        persistent_results.register_task(
+            task,
+            idempotency_key=external_id,
+            request_metadata=_request_metadata.get(),
+        )
         return task
 
     router.ManagedLocalServer.start = start
@@ -147,6 +156,7 @@ def _patch_router() -> None:
                 persistent_results.register_task,
                 current,
                 idempotency_key=key,
+                request_metadata=_request_metadata.get(),
             )
             return current
         async with registry._lock:
@@ -187,13 +197,90 @@ def _patch_router() -> None:
             raise router.HTTPException(status_code=400, detail="Idempotency-Key exige exatamente um arquivo.")
         upload = payload.uploads[0]
         upload_name = Path(upload.upload_name).name
-        if upload_name != upload.upload_name or Path(upload_name).suffix.lower() != ".pdf" or Path(upload_name).stem.lower() != key:
-            raise router.HTTPException(status_code=400, detail="Idempotency-Key deve coincidir com o stem SHA-256 do PDF.")
+        content_sha256 = (
+            request.headers.get("X-BaseIA-Content-SHA256")
+            or Path(upload_name).stem
+        ).lower()
+        if (
+            len(content_sha256) != 64
+            or any(
+                char not in "0123456789abcdef"
+                for char in content_sha256
+            )
+        ):
+            raise router.HTTPException(
+                status_code=400,
+                detail="X-BaseIA-Content-SHA256 deve ser hexadecimal.",
+            )
+        if (
+            upload_name != upload.upload_name
+            or Path(upload_name).suffix.lower() != ".pdf"
+            or Path(upload_name).stem.lower() != content_sha256
+        ):
+            raise router.HTTPException(
+                status_code=400,
+                detail=(
+                    "O stem do PDF deve coincidir com "
+                    "X-BaseIA-Content-SHA256."
+                ),
+            )
         actual_sha256 = await asyncio.to_thread(_file_sha256, Path(upload.path))
-        if actual_sha256 != key:
+        if actual_sha256 != content_sha256:
             raise router.HTTPException(
                 status_code=422,
-                detail="Idempotency-Key não corresponde ao conteúdo do PDF.",
+                detail=(
+                    "X-BaseIA-Content-SHA256 não corresponde ao PDF."
+                ),
+            )
+        metadata = {
+            "idempotency_key": key,
+            "content_sha256": content_sha256,
+            "document_revision_id": request.headers.get(
+                "X-BaseIA-Document-Revision-Id",
+                "",
+            ),
+            "artifact_prefix": request.headers.get(
+                "X-BaseIA-Artifact-Prefix",
+                "",
+            ).strip("/"),
+            "stage": request.headers.get("X-BaseIA-Stage", "extract"),
+            "processor": request.headers.get(
+                "X-BaseIA-Processor",
+                "mineru",
+            ),
+            "processor_version": request.headers.get(
+                "X-BaseIA-Processor-Version",
+                EXPECTED_VERSION,
+            ),
+            "config_hash": request.headers.get(
+                "X-BaseIA-Config-Hash",
+                "",
+            ),
+            "lease_owner": (
+                (
+                    os.environ.get("RUNPOD_POD_ID")
+                    or os.environ.get("POD_ID")
+                    or os.environ.get("HOSTNAME")
+                    or "unknown-mineru-server"
+                )
+                + ":"
+                + _PROCESS_INSTANCE_ID
+            ),
+        }
+        if catalog_client.enabled() and any(
+            not metadata[field]
+            for field in (
+                "document_revision_id",
+                "artifact_prefix",
+                "config_hash",
+            )
+        ):
+            raise router.HTTPException(
+                status_code=400,
+                detail=(
+                    "O modo catalogado exige revision id, artifact prefix "
+                    "e config hash."
+                ),
             )
         lock = await acquire_submit_lock(key)
         try:
@@ -201,6 +288,46 @@ def _patch_router() -> None:
                 current = await existing_task(request, key)
                 if current is not None:
                     return current
+                await asyncio.to_thread(
+                    persistent_results.require_persistence_capacity
+                )
+                catalog_run = await asyncio.to_thread(
+                    catalog_client.get_or_create_stage_run,
+                    metadata,
+                )
+                if catalog_run is not None:
+                    metadata["stage_run_id"] = str(catalog_run["id"])
+                    metadata["lease_attempt"] = str(
+                        catalog_run["attempt"]
+                    )
+                    if not bool(catalog_run.get("claimed")):
+                        current = task_from_manifest(
+                            {
+                                "task_id": key,
+                                "upstream_server_id": "catalog",
+                                "upstream_task_id": key,
+                                "upstream_base_url": "catalog://stage-run",
+                                "backend": str(
+                                    getattr(payload, "backend", "pipeline")
+                                ),
+                                "source_filenames": [content_sha256],
+                                "created_at": str(
+                                    catalog_run.get("created_at") or ""
+                                ),
+                                "status": str(
+                                    catalog_run.get("status") or "accepted"
+                                ),
+                                "started_at": catalog_run.get("started_at"),
+                                "completed_at": catalog_run.get("finished_at"),
+                                "error": catalog_run.get("error"),
+                            }
+                        )
+                        registry = (
+                            request.app.state.router_task_registry
+                        )
+                        async with registry._lock:
+                            registry._tasks[key] = current
+                        return current
                 # Deliberately no pre-upstream durable reservation: there is
                 # no transaction spanning this Volume and MinerU's upstream
                 # POST. A reservation could survive a crash before POST and
@@ -208,12 +335,22 @@ def _patch_router() -> None:
                 # We fail closed on Volume errors instead of claiming that
                 # such a distributed guarantee exists.
                 token = _idempotency_key.set(key)
+                metadata_token = _request_metadata.set(metadata)
                 try:
                     return await original_submit_router_task(request, payload)
                 finally:
+                    _request_metadata.reset(metadata_token)
                     _idempotency_key.reset(token)
         except persistent_results.VolumeUnavailable as error:
             raise router.HTTPException(status_code=503, detail="Índice de idempotência indisponível; tente novamente.") from error
+        except persistent_results.PersistenceBackpressure as error:
+            raise router.HTTPException(
+                status_code=503,
+                detail=(
+                    "Persistência sob pressão; nova task recusada: "
+                    f"{error}"
+                ),
+            ) from error
         finally:
             await release_submit_lock(key, lock)
 
@@ -224,8 +361,45 @@ def _patch_router() -> None:
     def create_app(settings=None):
         app = original_create_app(settings)
 
+        @app.get("/baseia-capabilities")
+        async def get_baseia_capabilities():
+            return {
+                "schema_version": 1,
+                "mineru_version": EXPECTED_VERSION,
+                "task_identity": "idempotency-key",
+                "result_reference": "persistent-tasks",
+                "server_side_persistence": True,
+                "persistence_backpressure": True,
+                "result_store": os.environ.get(
+                    "MINERU_RESULT_STORE",
+                    "filesystem",
+                ),
+                "catalog_enabled": catalog_client.enabled(),
+            }
+
+        @app.get("/baseia-persistence-health")
+        async def get_baseia_persistence_health():
+            try:
+                status = await asyncio.to_thread(
+                    persistent_results.persistence_admission_status
+                )
+            except persistent_results.VolumeUnavailable as error:
+                raise router.HTTPException(
+                    status_code=503,
+                    detail=f"Persistência indisponível: {error}",
+                ) from error
+            if not status["accepting"]:
+                raise router.HTTPException(
+                    status_code=503,
+                    detail=status,
+                )
+            return status
+
         @app.get("/persisted-tasks/{correlation_key}")
-        async def get_persisted_tasks(correlation_key: str):
+        async def get_persisted_tasks(
+            correlation_key: str,
+            task_id: str | None = None,
+        ):
             try:
                 tasks = persistent_results.find_by_correlation(correlation_key)
             except persistent_results.VolumeUnavailable as error:
@@ -233,6 +407,76 @@ def _patch_router() -> None:
                     status_code=503,
                     detail="Índice persistente indisponível; tente novamente.",
                 ) from error
+            if task_id and catalog_client.enabled():
+                catalog_run = await asyncio.to_thread(
+                    catalog_client.get_stage_run,
+                    task_id,
+                )
+                if catalog_run is not None:
+                    artifacts = [
+                        {
+                            "path": str(item.get("object_key") or ""),
+                            "key": str(item.get("object_key") or ""),
+                            "sha256": str(
+                                item.get("checksum_sha256") or ""
+                            ),
+                            "bytes": int(item.get("size_bytes") or 0),
+                            "content_type": str(
+                                item.get("content_type")
+                                or "application/octet-stream"
+                            ),
+                            "kind": str(item.get("kind") or "artifact"),
+                            "canonical": bool(item.get("canonical")),
+                        }
+                        for item in catalog_run.get("artifacts", [])
+                        if isinstance(item, dict)
+                    ]
+                    result_manifest = next(
+                        (
+                            item
+                            for item in artifacts
+                            if item["kind"] == "mineru_result_manifest"
+                        ),
+                        None,
+                    )
+                    result_ref = None
+                    if result_manifest is not None:
+                        manifest_key = str(result_manifest["key"])
+                        result_ref = {
+                            "scheme": "s3",
+                            "bucket": os.environ.get(
+                                "BASEIA_S3_BUCKET",
+                                "",
+                            ),
+                            "prefix": str(
+                                Path(manifest_key).parent
+                            ).replace("\\", "/"),
+                            "manifest_key": manifest_key,
+                        }
+                    catalog_task = {
+                        "task_id": task_id,
+                        "correlation_key": correlation_key,
+                        "idempotency_key": task_id,
+                        "stage_run_id": str(catalog_run["id"]),
+                        "status": str(catalog_run["status"]),
+                        "created_at": catalog_run.get("created_at"),
+                        "started_at": catalog_run.get("started_at"),
+                        "completed_at": catalog_run.get("finished_at"),
+                        "persisted_at": (
+                            catalog_run.get("finished_at")
+                            if catalog_run.get("status") == "completed"
+                            else None
+                        ),
+                        "error": catalog_run.get("error"),
+                        "artifacts": artifacts,
+                        "result_ref": result_ref,
+                    }
+                    tasks = [
+                        item
+                        for item in tasks
+                        if item.get("task_id") != task_id
+                    ]
+                    tasks.append(catalog_task)
             if not tasks:
                 raise router.HTTPException(status_code=404, detail="Persisted task not found")
             return {

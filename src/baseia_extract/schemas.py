@@ -11,6 +11,8 @@ class DocumentRecord(BaseModel):
 
     sha256: str
     document_id: str
+    revision_id: str | None = None
+    collection_slug: str | None = None
     path: Path
     filename: str
     size_bytes: int | None = None
@@ -58,6 +60,9 @@ class ExtractionManifest(BaseModel):
 
     sha256: str
     document_id: str
+    revision_id: str | None = None
+    collection_slug: str | None = None
+    origin: str | None = None
     path: Path
     filename: str
     output_dir: Path
