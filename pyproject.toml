@@ -23,20 +23,17 @@ dependencies = [
   "pypdf[crypto]>=6.14.2",
   "requests",
   "rich>=14,<15",
-  "runpod>=1.9,<2",
   "tenacity>=9,<10",
   "tabulate>=0.9,<1",
   "tqdm",
   "unpywall",
-  "mineru-client",
-  "minio>=7.2,<8",
 ]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/baseia_extract"]
 
 [tool.poe.tasks.inventory]
-help = "Inventaria todos os PDFs de corpus/ em data/inventory/inventory.csv."
+help = "Recria o inventário dos PDFs canônicos em data/documents/."
 script = "baseia_extract.inventory:build_inventory(workers or None, recursive)"
 args = [
   { name = "workers", options = ["--workers"], type = "integer", default = 0 },
@@ -52,27 +49,19 @@ args = [
 ]
 
 [tool.poe.tasks.extract]
-help = "Executa a extração no terminal; aceita add, scale, stop, status, log e watch."
-script = "baseia_extract.tasks:extract(action, pods, workers)"
+help = "Gerencia a extração por URLs mineru-api/mineru-router."
+script = "baseia_extract.tasks:extract(action, api_urls, workers)"
 args = [
   { name = "action", positional = true, default = "start", choices = ["start", "add", "scale", "stop", "status", "log", "watch"] },
-  { name = "pods", positional = true, multiple = true },
+  { name = "api_urls", positional = true, multiple = true },
   { name = "workers", options = ["--workers"], type = "integer", default = 0 },
-]
-
-[tool.poe.tasks.ingest]
-help = "Inicia a extração ou adiciona um pod com capacidade explícita."
-script = "baseia_extract.tasks:ingest(pod_id, workers)"
-args = [
-  { name = "pod_id", positional = true },
-  { name = "workers", options = ["--workers"], type = "integer" },
 ]
 
 [tool.poe.tasks.recover-extract]
 help = "Recupera ZIPs de tarefas MinerU concluídas sem reenviar PDFs."
-script = "baseia_extract.recover:recover(pods, downloads, apply)"
+script = "baseia_extract.recover:recover(api_urls, downloads, apply)"
 args = [
-  { name = "pods", positional = true, multiple = true },
+  { name = "api_urls", positional = true, multiple = true },
   { name = "downloads", options = ["--downloads"], type = "integer", default = 4 },
   { name = "apply", options = ["--apply"], type = "boolean", default = false },
 ]
@@ -88,6 +77,3 @@ args = [
   { name = "workers", options = ["--workers"], type = "integer", default = 0 },
   { name = "overwrite", options = ["--overwrite"], type = "boolean", default = false },
 ]
-
-[tool.uv.sources]
-mineru-client = { git = "https://github.com/sergeyshmakov/mineru-runpod", rev = "17d4955b244ea4d4dca9a5f3c995c7988fbb0c63" }

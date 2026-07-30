@@ -15,6 +15,8 @@ from pydantic import BaseModel
 from tenacity import AsyncRetrying, retry_if_exception, stop_after_attempt
 from tenacity.wait import wait_exponential
 
+from .extract_control import normalize_api_urls
+from .layout import document_layout
 from .mineru import _completed, _extract_result_zip
 from .schemas import ExtractionManifest
 from .settings import settings
@@ -79,23 +81,27 @@ def _atomic_record(path: Path, record: RecoveryRecord) -> None:
         temporary.unlink(missing_ok=True)
 
 
-def _known_tasks(pods: tuple[str, ...]) -> list[dict[str, str]]:
+def _known_tasks(api_urls: tuple[str, ...]) -> list[dict[str, str]]:
+    selected_urls = {url.rstrip("/") for url in api_urls}
     records: list[dict[str, str]] = []
-    for path in (settings.mineru_output_dir / "manifests").rglob("*.json"):
+    for path in settings.document_store_dir.rglob("manifest.json"):
         try:
             manifest = ExtractionManifest.model_validate_json(
                 path.read_text(encoding="utf-8")
             )
         except (OSError, ValueError):
             continue
-        if manifest.pod_id not in pods or not manifest.task_id:
+        api_url = (manifest.api_url or "").rstrip("/")
+        if api_url not in selected_urls or not manifest.task_id:
             continue
         records.append(
             {
                 "task_id": manifest.task_id,
-                "pod_id": manifest.pod_id,
+                "pod_id": manifest.pod_id or "",
+                "api_url": api_url,
                 "sha256": manifest.sha256,
                 "document_id": manifest.document_id,
+                "filename": manifest.filename,
             }
         )
     return records
@@ -114,20 +120,22 @@ def _has_middle_json(zip_path: Path) -> bool:
 
 
 async def _recover(
-    pods: tuple[str, ...],
+    api_urls: tuple[str, ...],
     *,
     downloads: int,
     apply: bool,
 ) -> dict[str, int]:
-    tasks = _known_tasks(pods)
+    tasks = _known_tasks(api_urls)
     recovery_root = settings.data_dir / "mineru_recovery"
     raw_root = recovery_root / "raw"
     records_root = recovery_root / "records"
-    status_limiter = anyio.CapacityLimiter(min(64, max(8, len(pods) * 12)))
+    status_limiter = anyio.CapacityLimiter(
+        min(64, max(8, len(api_urls) * 12))
+    )
     download_limiter = anyio.CapacityLimiter(max(1, downloads))
     limits = httpx.Limits(
-        max_connections=max(16, len(pods) * 8),
-        max_keepalive_connections=max(8, len(pods) * 4),
+        max_connections=max(16, len(api_urls) * 8),
+        max_keepalive_connections=max(8, len(api_urls) * 4),
         keepalive_expiry=60,
     )
     timeout = httpx.Timeout(
@@ -137,12 +145,12 @@ async def _recover(
         pool=30,
     )
     clients = {
-        pod: httpx.AsyncClient(
-            base_url=f"https://{pod}-8000.proxy.runpod.net",
+        api_url: httpx.AsyncClient(
+            base_url=api_url,
             limits=limits,
             timeout=timeout,
         )
-        for pod in pods
+        for api_url in api_urls
     }
     completed: dict[str, tuple[dict[str, str], dict[str, Any]]] = {}
     counts = {
@@ -163,7 +171,7 @@ async def _recover(
         async with status_limiter:
             try:
                 response = await _request(
-                    clients[task["pod_id"]],
+                    clients[task["api_url"]],
                     "GET",
                     f"/tasks/{task['task_id']}",
                 )
@@ -208,9 +216,7 @@ async def _recover(
             payload: dict[str, Any],
         ) -> None:
             output_dir = (
-                settings.mineru_output_dir
-                / "documents"
-                / task["document_id"]
+                document_layout(task).mineru_dir
             )
             if _completed(output_dir):
                 counts["already_persisted"] += 1
@@ -251,7 +257,7 @@ async def _recover(
                             reraise=True,
                         ):
                             with attempt:
-                                async with clients[task["pod_id"]].stream(
+                                async with clients[task["api_url"]].stream(
                                     "GET",
                                     f"/tasks/{task['task_id']}/result",
                                 ) as response:
@@ -312,14 +318,20 @@ async def _recover(
 
 
 def recover(
-    pods: Iterable[str],
+    api_urls: Iterable[str],
     downloads: int = 4,
     apply: bool = False,
 ) -> dict[str, int]:
     """Recupera resultados já concluídos sem reenviar documentos."""
-    normalized = tuple(dict.fromkeys(str(pod).strip() for pod in pods if pod))
+    normalized = normalize_api_urls(
+        tuple(
+            str(api_url).strip().rstrip("/")
+            for api_url in api_urls
+            if api_url
+        )
+    )
     if not normalized:
-        raise ValueError("Informe pelo menos um POD_ID.")
+        raise ValueError("Informe pelo menos uma URL de serviço MinerU.")
     return anyio.run(
         partial(
             _recover,

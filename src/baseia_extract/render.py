@@ -23,8 +23,13 @@ from typing import Any
 import pandas as pd
 
 from .ir import DocumentIR, build_document_ir, validate_document_ir
+from .layout import DocumentLayout, document_layout
 from .settings import settings
 from .structure import enrich_document, validate_structure
+
+
+RENDERER_VERSION = 1
+RENDER_SOURCE = "poe_render"
 
 
 def _utc_now() -> str:
@@ -863,8 +868,8 @@ def _ensure_semantic_heading(markdown: str) -> str:
     return markdown[:start] + "# " + markdown[start:]
 
 
-def _middle_paths(document_id: str) -> list[Path]:
-    directory = settings.mineru_output_dir / "documents" / document_id
+def _middle_paths(layout: DocumentLayout) -> list[Path]:
+    directory = layout.mineru_dir
     if not directory.is_dir():
         return []
     return sorted(
@@ -872,11 +877,14 @@ def _middle_paths(document_id: str) -> list[Path]:
     )
 
 
-def _existing_is_current(document_id: str, middle_path: Path) -> bool:
-    ir_path = settings.ir_dir / document_id / "document_ir.json"
-    structure_path = settings.structure_dir / document_id / "structure.json"
-    markdown_path = settings.structure_dir / document_id / "document.md"
-    render_path = settings.structure_dir / document_id / "render.json"
+def _existing_is_current(
+    layout: DocumentLayout,
+    middle_path: Path,
+) -> bool:
+    ir_path = layout.ir_path
+    structure_path = layout.structure_path
+    markdown_path = layout.markdown_path
+    render_path = layout.render_path
     if not all(
         path.is_file()
         for path in (ir_path, structure_path, markdown_path, render_path)
@@ -885,17 +893,11 @@ def _existing_is_current(document_id: str, middle_path: Path) -> bool:
     try:
         ir = DocumentIR.model_validate_json(ir_path.read_text(encoding="utf-8"))
         render_metadata = json.loads(render_path.read_text(encoding="utf-8"))
-        source_markdown = _mineru_markdown_path(middle_path)
-        source_markdown_sha256 = (
-            hashlib.sha256(source_markdown.read_bytes()).hexdigest()
-            if source_markdown is not None
-            else None
-        )
         return (
             ir.middle_sha256
             == hashlib.sha256(middle_path.read_bytes()).hexdigest()
-            and render_metadata.get("source_markdown_sha256")
-            == source_markdown_sha256
+            and render_metadata.get("render_source") == RENDER_SOURCE
+            and render_metadata.get("renderer_version") == RENDERER_VERSION
             and not render_metadata.get("missing_assets")
         )
     except Exception:
@@ -904,7 +906,8 @@ def _existing_is_current(document_id: str, middle_path: Path) -> bool:
 
 def _render_one(row: dict[str, Any], overwrite: bool) -> dict[str, Any]:
     document_id = str(row["document_id"])
-    middle_paths = _middle_paths(document_id)
+    layout = document_layout(row)
+    middle_paths = _middle_paths(layout)
     if not middle_paths:
         return {"document_id": document_id, "status": "pending", "reason": "middle.json ausente"}
     if len(middle_paths) != 1:
@@ -914,12 +917,11 @@ def _render_one(row: dict[str, Any], overwrite: bool) -> dict[str, Any]:
             "reason": f"middle.json ambíguo ({len(middle_paths)} encontrados)",
         }
     middle_path = middle_paths[0]
-    if not overwrite and _existing_is_current(document_id, middle_path):
+    if not overwrite and _existing_is_current(layout, middle_path):
         return {"document_id": document_id, "status": "skipped", "middle_path": str(middle_path)}
 
     try:
         source_sha256 = str(row.get("sha256") or "")
-        source_pdf_path = Path(str(row["path"])) if row.get("path") else None
         document = build_document_ir(
             middle_path,
             source_document_id=document_id,
@@ -934,43 +936,14 @@ def _render_one(row: dict[str, Any], overwrite: bool) -> dict[str, Any]:
         if not structure_validation["valid"]:
             raise ValueError(f"Estrutura inválida: {structure_validation['checks']}")
 
-        markdown_path = settings.structure_dir / document_id / "document.md"
-        source_markdown_path = _mineru_markdown_path(middle_path)
+        markdown_path = layout.markdown_path
         render_warnings: list[str] = []
-        if source_markdown_path is not None:
-            source_markdown_sha256 = hashlib.sha256(
-                source_markdown_path.read_bytes()
-            ).hexdigest()
-            try:
-                markdown, missing_assets = _render_mineru_markdown(
-                    document,
-                    source_path=source_markdown_path,
-                    source_pdf_path=source_pdf_path,
-                    middle_path=middle_path,
-                    markdown_path=markdown_path,
-                )
-                render_source = "mineru_markdown"
-            except ValueError as error:
-                markdown, missing_assets = _render_markdown(
-                    document,
-                    structure,
-                    middle_path=middle_path,
-                    markdown_path=markdown_path,
-                )
-                render_source = "ir_reconstruction"
-                render_warnings.append(
-                    "Markdown MinerU incompatível com o middle.json; "
-                    f"reconstrução pelo IR utilizada: {error}"
-                )
-        else:
-            markdown, missing_assets = _render_markdown(
-                document,
-                structure,
-                middle_path=middle_path,
-                markdown_path=markdown_path,
-            )
-            render_source = "ir_reconstruction"
-            source_markdown_sha256 = None
+        markdown, missing_assets = _render_markdown(
+            document,
+            structure,
+            middle_path=middle_path,
+            markdown_path=markdown_path,
+        )
         markdown, furniture_missing_assets, included_discarded_ids = (
             _include_source_furniture(
                 document,
@@ -984,23 +957,23 @@ def _render_one(row: dict[str, Any], overwrite: bool) -> dict[str, Any]:
             dict.fromkeys([*missing_assets, *furniture_missing_assets])
         )
         _atomic_write_text(
-            settings.ir_dir / document_id / "document_ir.json",
+            layout.ir_path,
             document.model_dump_json(exclude_none=True, indent=2) + "\n",
         )
         _atomic_write_json(
-            settings.structure_dir / document_id / "structure.json",
+            layout.structure_path,
             structure.model_dump(mode="json", exclude_none=True),
         )
         _atomic_write_text(markdown_path, markdown)
         status = "incomplete" if missing_assets else "ok"
         _atomic_write_json(
-            settings.structure_dir / document_id / "render.json",
+            layout.render_path,
             {
                 "document_id": document_id,
                 "middle_sha256": document.middle_sha256,
                 "source_pdf_sha256": document.source_pdf_sha256,
-                "render_source": render_source,
-                "source_markdown_sha256": source_markdown_sha256,
+                "render_source": RENDER_SOURCE,
+                "renderer_version": RENDERER_VERSION,
                 "included_discarded_block_ids": included_discarded_ids,
                 "status": status,
                 "missing_assets": missing_assets,
@@ -1011,7 +984,7 @@ def _render_one(row: dict[str, Any], overwrite: bool) -> dict[str, Any]:
             "document_id": document_id,
             "status": status,
             "middle_path": str(middle_path),
-            "render_source": render_source,
+            "render_source": RENDER_SOURCE,
             "ir_validation": ir_validation,
             "structure_validation": structure_validation,
             "missing_assets": missing_assets,
@@ -1083,7 +1056,7 @@ def render(workers: int = 0, overwrite: bool = False) -> dict[str, Any]:
         "counts": dict(sorted(Counter(item["status"] for item in completed).items())),
         "documents": completed,
     }
-    summary_path = settings.structure_dir / "render_summary.json"
+    summary_path = settings.data_dir / "render_summary.json"
     _atomic_write_json(summary_path, summary)
     counts = ", ".join(
         f"{status}={count}" for status, count in summary["counts"].items()

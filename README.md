@@ -1,6 +1,6 @@
 # BaseIA Extract
 
-Extração de PDFs com MinerU em pods transitórios do RunPod.
+Extração de PDFs por serviços HTTP `mineru-api` ou `mineru-router`.
 
 ## Instalação
 
@@ -9,9 +9,10 @@ uv sync
 Copy-Item .env.example .env
 ```
 
-Cada documento tem um manifesto JSON atômico em `data/mineru/manifests/`,
-identificado pelo SHA-256. A fila, a ocupação e o inventário dos pods existem
-somente durante a execução.
+Cada documento possui um PDF canônico e um único diretório de artefatos,
+identificado por seu caminho original. O manifesto atômico fica dentro desse
+diretório. A fila, a ocupação e o inventário dos endpoints existem somente
+durante a execução.
 
 ## Comandos
 
@@ -26,7 +27,7 @@ poe render
 `poe extract` roda no terminal e apresenta um painel Rich com:
 
 - concluídos, reutilizados, em voo, retries, erros e pendentes;
-- saúde, capacidade, ocupação e ociosidade por pod;
+- saúde, capacidade, ocupação e ociosidade por endpoint;
 - capacidade anunciada pela API e limite efetivo do cliente;
 - fila interna anunciada pelo `/health` do MinerU.
 
@@ -38,30 +39,43 @@ no manifesto para retomada, sem novo envio do PDF.
 O terminal não imprime o nome de cada documento. Um log textual com snapshots
 periódicos é gravado no diretório temporário mostrado no início.
 
-Enquanto a extração estiver ativa, use outro terminal:
+Configure o endpoint padrão no `.env`:
+
+```text
+MINERU_API_URL=http://127.0.0.1:8000
+```
+
+Sem URL na linha de comando, `poe extract` usa esse valor. Para controlar uma
+execução ativa em outro terminal:
 
 ```powershell
 poe extract status
 poe extract log
-poe extract add POD_ID [OUTRO_POD_ID...]
-poe extract add https://POD_ID-8000.proxy.runpod.net
+poe extract add https://mineru-a.example.com --workers 16
+poe extract scale https://mineru-a.example.com --workers 32
 poe extract stop
 ```
 
+Somente URLs HTTP(S) são aceitas. IDs de pod e o ciclo de vida da
+infraestrutura não fazem parte do comando de extração.
+
 `poe extract stop` encerra o despacho de documentos novos, espera os que estão
-em voo (incluindo seus retries) e depois executa `runpodctl pod stop` em todos
-os pods gerenciados. Pods nunca são deletados.
+em voo (incluindo seus retries) e encerra somente o cliente local. Nenhum
+serviço remoto é iniciado, parado ou removido.
 
 `poe render` pode rodar depois ou em paralelo com a extração. Ele percorre o
 inventário, processa somente documentos cujo `middle.json` já está disponível
 e gera:
 
 ```text
-data/ir/<document_id>/document_ir.json
-data/structure/<document_id>/structure.json
-data/structure/<document_id>/document.md
-data/structure/<document_id>/render.json
-data/structure/render_summary.json
+data/documents/path/documento.pdf
+data/documents/path/documento/manifest.json
+data/documents/path/documento/mineru/
+data/documents/path/documento/document_ir.json
+data/documents/path/documento/structure.json
+data/documents/path/documento/document.md
+data/documents/path/documento/render.json
+data/render_summary.json
 ```
 
 O Markdown mantém a hierarquia, imagens, tabelas, fórmulas e demais elementos
@@ -86,69 +100,44 @@ conteúdo não causam nova extração.
 Após a deduplicação, o despacho é ordenado pelo SHA-256 completo: uma mistura
 determinística do corpus que evita concentrar documentos grandes no fim.
 
-Os artefatos continuam em:
+O layout canônico é:
 
 ```text
-data/mineru/documents/<document_id>/
-data/mineru/runs.csv
-data/mineru/errors.csv
-data/mineru/summary.json
-data/mineru/pods.json
-data/mineru/manifests/<sha256[:2]>/<sha256>.json
-data/mineru/reconciliation.csv
+data/documents/<caminho relativo>/<nome>.pdf
+data/documents/<caminho relativo>/<nome>/manifest.json
+data/documents/<caminho relativo>/<nome>/mineru/
+data/documents/<caminho relativo>/<nome>/document_ir.json
+data/documents/<caminho relativo>/<nome>/structure.json
+data/documents/<caminho relativo>/<nome>/document.md
+data/documents/<caminho relativo>/<nome>/render.json
+data/extraction/runs.csv
+data/extraction/errors.csv
+data/extraction/summary.json
+data/extraction/endpoints.json
+data/extraction/reconciliation.csv
 ```
 
-## Pods e capacidade
-
-No início, o coordenador reconcilia `runpodctl pod list --all`:
-
-1. adota pods `RUNNING` com `RUNPOD_NAME_PREFIX`;
-2. se faltar capacidade, inicia pods `STOPPED` do mesmo prefixo;
-3. só então cria a quantidade restante;
-4. começa a extrair assim que o primeiro `/health` responde;
-5. incorpora pods adicionais em runtime.
-
-Enquanto `RUNPOD_NETWORK_VOLUME_ID` estiver definido, todo pod novo usa o
-Network Volume compartilhado em `/workspace`. Ele deve permanecer configurado
-até que todos os pacotes da rodada tenham sido baixados e reconciliados. Quando
-essa variável estiver vazia, novos pods recebem um **Volume Disk de 100 GB**
-(configurável por `RUNPOD_VOLUME_DISK_GB`) em `/workspace`. Somente resultados
-completos são gravados em `/workspace/results`; modelos, caches, ambiente Python
-e temporários ficam no disco efêmero do container. O Volume Disk persiste entre
-`stop` e `start` enquanto o pod não for deletado.
-
-A seleção usa o perfil `RUNPOD_HARDWARE_PROFILE=mineru-budget-24`, que prioriza
-GPUs com boa relação CPU/GPU. Além do mínimo de VRAM e
-CUDA, todo pod criado precisa atender a `RUNPOD_MIN_VCPU_COUNT`,
-`RUNPOD_MIN_MEMORY_GB` e `RUNPOD_MAX_COST_PER_HOUR`. Uma máquina fora desses
-limites é descartada e o próximo tipo disponível é tentado. A configuração-alvo
-é **4 pods × 8 GPUs**.
-
-Todos os pods anunciam o guardrail de **1024 requisições agregadas por pod** em
-`MINERU_API_MAX_CONCURRENT_REQUESTS`. Em 8 GPUs, isso equivale a **128 por
-GPU**. O cliente começa com `--workers 16` por pod; depois, o autotune altera a
-admissão exclusivamente pelo pages/min sustentado. Para pods existentes ou
-adicionados manualmente, o cliente respeita a capacidade anunciada pelo
-`/health`.
+Cada documento possui um único PDF regular nesse layout. Não há cópias,
+hardlinks ou aliases: o inventário rejeita mais de um caminho para o mesmo
+SHA-256. Todos os artefatos e o único manifesto do documento ficam no diretório
+irmão com o mesmo nome do PDF.
 
 ## Imagem MinerU
 
-`mineru-server/Dockerfile` gera uma imagem autocontida para Pods: MinerU,
+`infra/mineru/Dockerfile` gera uma imagem autocontida para Pods: MinerU,
 dependências e modelos `pipeline` são instalados durante o build. A inicialização
 revalida as dependências com `uv` e então executa `mineru-router`. O Volume
 Disk é usado somente para resultados completos em `/workspace/results`; não há
 fluxo Serverless nesta arquitetura.
 
-`mineru-server/start.sh` também pode ser executado diretamente em um pod
+`infra/mineru/start.sh` também pode ser executado diretamente em um pod
 preparado manualmente. Ele instala `uv`, `mineru[pipeline]` e `hf_transfer`,
 garante os modelos `pipeline` no cache local, conta as GPUs visíveis e inicia um
 worker local por GPU. O router fixa o teto em **1024 agregado por pod**; com 8
 GPUs, anuncia 128 por GPU. A janela de processamento é 64 e a pressão real é
 controlada pelo cliente:
 
-```powershell
-poe ingest POD_ID --workers 16
-```
+Use `poe extract start URL --workers 16` para iniciar o cliente.
 
 O script divide os threads de CPU entre as GPUs e mantém modelos, cache, venv e
 temporários no container. Os resultados só ficam disponíveis após a persistência
@@ -163,12 +152,12 @@ concorrentes para o mesmo trabalho:
 corpus + manifestos JSON atômicos
         |
         v
-poe ingest (circuit breaker de admissão e retry)
+poe extract (circuit breaker de admissão e retry)
         |
-        +------ limite explícito por pod ------+
+        +---- limite explícito por endpoint ---+
         |                                      |
         v                                      v
-mineru-router Pod A                    mineru-router Pod B
+mineru-router A                        mineru-router B
   +-- worker GPU 0                       +-- worker GPU 0
   +-- worker GPU 1                       +-- worker GPU 1
         |                                      |
@@ -178,11 +167,10 @@ mineru-router Pod A                    mineru-router Pod B
         /workspace/results/<router-task-id>/
 ```
 
-- O `mineru-router` cria um worker por GPU visível e distribui apenas dentro do
-  próprio pod. Seu teto é 1024 agregado por pod (128/GPU na configuração de
-  oito GPUs) e a janela é 64.
-- `poe ingest POD_ID --workers 16` define a capacidade inicial do cliente por
-  pod. O autotune ajusta somente a admissão, exclusivamente pelo pages/min
+- Cada serviço anuncia seu teto em `/health`; o cliente nunca administra a
+  infraestrutura que hospeda o endpoint.
+- `poe extract start URL --workers 16` define a capacidade inicial do cliente
+  por endpoint. O autotune ajusta somente a admissão, exclusivamente pelo pages/min
   sustentado; o circuit breaker bloqueia novos POSTs após falhas, sem reduzir
   workers.
 - A fila transitória usa `AnyIO MemoryObjectStream`; `CapacityLimiter` permite
@@ -192,27 +180,18 @@ mineru-router Pod A                    mineru-router Pod B
   leituras apenas adia o aumento, e volta a liberá-lo abaixo de 85%. Se o
   throughput cair ou estabilizar, retorna ao último patamar eficiente. As
   métricas ficam no log, nos manifestos e em `reconciliation.csv`.
-- Repetir `poe ingest POD_ID --workers N` durante a execução redefine a
-  capacidade inicial do pod sem reiniciar os trabalhos em voo.
+- `poe extract scale URL --workers N` redefine a capacidade inicial do
+  endpoint sem reiniciar os trabalhos em voo.
 - O cliente só mantém em memória os trabalhos em voo. Depois de concluída, a
   tarefa só libera a vaga quando o router confirma o pacote atômico no Volume;
   o manifesto registra o caminho e os hashes, sem baixar ZIPs no hot path.
 - Cada manifesto guarda inventário SHA-256, conclusão, erro, retry, tentativas,
   endpoint e `task_id`. Não há PostgreSQL: manifestos JSON atômicos são o único
-  estado durável; fila ativa, telemetria e pods permanecem transitórios.
-- A parada é drenante: bloqueia novos envios, espera os trabalhos em voo e
-  então para os pods gerenciados.
+  estado durável; fila ativa e telemetria permanecem transitórias.
+- A parada é drenante: bloqueia novos envios e espera os trabalhos em voo.
 
 Celery e Redis não fazem parte desta arquitetura. Há um único coordenador, e a
 fila durável pode ser reconstruída a partir dos manifestos; adicionar outra fila
 não controla a memória consumida pelos workers GPU. Se futuramente houver
 vários coordenadores independentes, execução distribuída tolerante a falhas ou
 necessidade de retomada de jobs em voo, essa decisão deve ser reavaliada.
-
-No template RunPod:
-
-- exponha `8000/http`;
-- mantenha `RUNPOD_NETWORK_VOLUME_ID` durante a rodada atual; depois, deixe o
-  criador automático anexar o Volume Disk de 100 GB em `/workspace`;
-- deixe Docker Entrypoint e Docker Start Command vazios;
-- use a imagem publicada quando MinerU ou seus modelos forem atualizados.

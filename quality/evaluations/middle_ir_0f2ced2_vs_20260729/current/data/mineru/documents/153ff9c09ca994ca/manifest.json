@@ -1,5 +1,5 @@
 {
-  "artifact_bytes": 2047830,
+  "artifact_bytes": 1386475,
   "artifacts": [
     {
       "bytes": 25381,
@@ -95,32 +95,27 @@
       "bytes": 119353,
       "path": "153ff9c09ca994ca35b79fede481f1340c0a29b5a969a0be401e6aac5330606b/auto/images/f00286465a1d0749ccf07fc24c1b6d90b3ddb75148935df17ebfc61dd82641eb.jpg",
       "sha256": "7dd1482c8e16bc67a0633508fa80cd1896d36343fc42f7f019c35ac149f61094"
-    },
-    {
-      "bytes": 661355,
-      "path": "uploads/153ff9c09ca994ca.pdf",
-      "sha256": "153ff9c09ca994ca35b79fede481f1340c0a29b5a969a0be401e6aac5330606b"
     }
   ],
-  "completed_at": "2026-07-29T06:42:28.300150+00:00",
+  "completed_at": "2026-07-29T03:42:28.30015-03:00",
   "correlation_key": "153ff9c09ca994ca35b79fede481f1340c0a29b5a969a0be401e6aac5330606b",
-  "created_at": "2026-07-29T06:42:21.007720+00:00",
+  "created_at": "2026-07-29T03:42:21.00772-03:00",
   "duration_seconds": 7.292,
   "error": null,
-  "file_count": 20,
+  "file_count": 19,
   "gpu_id": "0",
   "package_dir": "tasks/052cc30d-12b3-43e2-a9be-7d2be1ffb138",
   "page_count": 9,
-  "persisted_at": "2026-07-29T06:42:31.968630+00:00",
+  "persisted_at": "2026-07-29T03:42:31.96863-03:00",
   "pod_id": null,
   "schema_version": 1,
   "source_dir": "/workspace/results/.active/local-gpu-0/output/29acc27c-ad11-4d42-bc77-497e297f9b6e",
   "source_filenames": [
     "153ff9c09ca994ca35b79fede481f1340c0a29b5a969a0be401e6aac5330606b"
   ],
-  "started_at": "2026-07-29T06:42:21.008519+00:00",
+  "started_at": "2026-07-29T03:42:21.008519-03:00",
   "status": "completed",
-  "submitted_at": "2026-07-29T06:42:21.014564+00:00",
+  "submitted_at": "2026-07-29T03:42:21.014564-03:00",
   "task_id": "052cc30d-12b3-43e2-a9be-7d2be1ffb138",
   "upstream_base_url": "http://127.0.0.1:51211",
   "upstream_server_id": "local-gpu-0",

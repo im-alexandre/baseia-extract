@@ -321,7 +321,7 @@ class ExtractionReporter:
 
     def _render(self) -> Group:
         work = Table(title="Trabalho", expand=True)
-        work.add_column("Pod", style="cyan", no_wrap=True)
+        work.add_column("Endpoint", style="cyan", no_wrap=True)
         work.add_column("Estado/Circuito", no_wrap=True)
         work.add_column("Cliente/API", justify="right", no_wrap=True)
         work.add_column("Voo/Ocioso", justify="right", no_wrap=True)
@@ -335,7 +335,7 @@ class ExtractionReporter:
         )
 
         pressure = Table(title="Pressão", expand=True)
-        pressure.add_column("Pod", style="cyan", no_wrap=True)
+        pressure.add_column("Endpoint", style="cyan", no_wrap=True)
         pressure.add_column("GPU média/máx", justify="right", no_wrap=True)
         pressure.add_column("VRAM média/máx", justify="right", no_wrap=True)
         pressure.add_column("CPU", justify="right")
@@ -399,7 +399,8 @@ class ExtractionReporter:
                 f"reutilizados={self._reused}  pendentes={self._pending}",
                 f"em voo={self._in_flight}  "
                 f"[yellow]retries={self._retries}[/yellow]  "
-                f"[red]erros={self._errors}[/red]  pods={len(self._pods)}  "
+                f"[red]erros={self._errors}[/red]  "
+                f"endpoints={len(self._pods)}  "
                 f"capacidade={capacity}  ociosa={idle}",
                 f"[green]vazão={pages_per_minute:.1f} pág/min[/green]  "
                 f"média={average_pages_per_minute:.1f} pág/min  "
@@ -451,7 +452,7 @@ class ExtractionReporter:
         average_pages_per_minute = self._completed_pages / elapsed_minutes
         self._logger.info(
             "estado total=%d concluidos=%d reutilizados=%d em_voo=%d "
-            "retries=%d erros=%d pendentes=%d pods=%d capacidade=%d "
+            "retries=%d erros=%d pendentes=%d endpoints=%d capacidade=%d "
             "ociosa=%d paginas=%d paginas_min=%.2f "
             "paginas_min_media=%.2f docs_min=%.2f",
             self._total,
@@ -471,7 +472,7 @@ class ExtractionReporter:
         )
         for pod in self._pods.values():
             self._logger.info(
-                "pod=%s saude=%s cliente=%d api=%d em_voo=%d "
+                "endpoint=%s saude=%s cliente=%d api=%d em_voo=%d "
                 "ocioso=%d concluidos=%d retries=%d erros=%d fila_api=%d "
                 "gpu=%s vram=%s cpu=%s ram=%s paginas_min=%s docs_min=%s "
                 "p50_s=%s p95_s=%s circuito=%s",

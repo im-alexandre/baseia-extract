@@ -61,6 +61,7 @@ class ExtractionManifest(BaseModel):
     path: Path
     filename: str
     output_dir: Path
+    service: dict[str, Any] = Field(default_factory=dict)
     status: str = "pending"
     attempts: int = 0
     retry_count: int = 0

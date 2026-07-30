@@ -1,5 +1,5 @@
 {
-  "artifact_bytes": 2047234,
+  "artifact_bytes": 1308904,
   "artifacts": [
     {
       "bytes": 32529,
@@ -95,32 +95,27 @@
       "bytes": 22514,
       "path": "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718/auto/images/f57774f04e658278de0abcdf17793ce1dd25a53c4d21c524f2cebc76274184b7.jpg",
       "sha256": "05a397a0bb6c08b1fbfc73f208aa0212cb82ada3e67c131150380b3dd213a214"
-    },
-    {
-      "bytes": 738330,
-      "path": "uploads/01bcb00e543fd06c.pdf",
-      "sha256": "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718"
     }
   ],
-  "completed_at": "2026-07-29T06:38:19.685235+00:00",
+  "completed_at": "2026-07-29T03:38:19.685235-03:00",
   "correlation_key": "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718",
-  "created_at": "2026-07-29T06:38:00.213810+00:00",
+  "created_at": "2026-07-29T03:38:00.21381-03:00",
   "duration_seconds": 19.471,
   "error": null,
-  "file_count": 20,
+  "file_count": 19,
   "gpu_id": "0",
   "package_dir": "tasks/2d17b4ac-de0f-41a6-a956-55e8f6ba95db",
   "page_count": 10,
-  "persisted_at": "2026-07-29T06:38:22.864029+00:00",
+  "persisted_at": "2026-07-29T03:38:22.864029-03:00",
   "pod_id": null,
   "schema_version": 1,
   "source_dir": "/workspace/results/.active/local-gpu-0/output/6115e271-e23a-43c6-8635-2b416f8eb826",
   "source_filenames": [
     "01bcb00e543fd06c33a2d5fd21d37e2e9c72243c2cb5f91a4955932e8c1ae718"
   ],
-  "started_at": "2026-07-29T06:38:00.214626+00:00",
+  "started_at": "2026-07-29T03:38:00.214626-03:00",
   "status": "completed",
-  "submitted_at": "2026-07-29T06:38:00.224060+00:00",
+  "submitted_at": "2026-07-29T03:38:00.22406-03:00",
   "task_id": "2d17b4ac-de0f-41a6-a956-55e8f6ba95db",
   "upstream_base_url": "http://127.0.0.1:54463",
   "upstream_server_id": "local-gpu-0",

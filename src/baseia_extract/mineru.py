@@ -13,12 +13,11 @@ import zipfile
 from collections import deque
 from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
-from typing import Any, Callable
+from typing import Any
 
 import anyio
 import httpx
 import pandas as pd
-from mineru_client import MineruClient
 from tenacity import (
     Retrying,
     retry_if_exception,
@@ -28,7 +27,7 @@ from tenacity import (
     wait_fixed,
 )
 
-from .object_storage import ObjectStorage
+from .layout import document_layout
 from .reporting import reporter
 from .schemas import DocumentRecord, ExtractionManifest, ExtractionResult
 from .settings import settings
@@ -47,7 +46,6 @@ class ApiEndpoint:
     api_queued: int = 0
     in_flight: int = 0
     healthy: bool = True
-    serverless_client: MineruClient | None = None
     draining: bool = False
     capacity_before_drain: int = 0
     low_pressure_samples: int = 0
@@ -133,13 +131,6 @@ class ApiEndpointRegistry:
         self._first_ready = threading.Event()
         self._endpoints: dict[str, ApiEndpoint] = {}
         self._defective: set[str] = set()
-        self._on_defective: Callable[[str, str], None] | None = None
-
-    def set_defective_callback(
-        self,
-        callback: Callable[[str, str], None],
-    ) -> None:
-        self._on_defective = callback
 
     def add(
         self,
@@ -149,6 +140,7 @@ class ApiEndpointRegistry:
         name: str = "",
         gpu_id: str | None = None,
         health: dict[str, Any] | None = None,
+        client_capacity: int | None = None,
     ) -> bool:
         url = api_url.strip().rstrip("/")
         health = health or _health(url)
@@ -159,9 +151,13 @@ class ApiEndpointRegistry:
                 self._concurrency_limit,
             ),
         )
-        requested = _as_int(
-            health.get("_client_capacity_override"),
-            self._concurrency_limit,
+        requested = (
+            client_capacity
+            if client_capacity is not None
+            else _as_int(
+                health.get("_client_capacity_override"),
+                self._concurrency_limit,
+            )
         )
         client_capacity = min(advertised, max(1, requested))
         endpoint = ApiEndpoint(
@@ -193,40 +189,6 @@ class ApiEndpointRegistry:
 
     def wait_for_first(self, timeout: float) -> bool:
         return self._first_ready.wait(timeout)
-
-    def add_serverless(
-        self,
-        endpoint_id: str,
-        *,
-        capacity: int,
-        client: MineruClient,
-    ) -> bool:
-        endpoint = ApiEndpoint(
-            api_url=f"runpod://{endpoint_id}",
-            pod_id=None,
-            name=f"serverless:{endpoint_id}",
-            gpu_id=None,
-            service_capacity=capacity,
-            client_capacity=capacity,
-            client_capacity_limit=capacity,
-            initial_capacity=capacity,
-            serverless_client=client,
-        )
-        with self._condition:
-            if endpoint.api_url in self._endpoints:
-                return False
-            self._endpoints[endpoint.api_url] = endpoint
-            self._first_ready.set()
-            self._condition.notify_all()
-        reporter.register_pod(
-            endpoint.key,
-            label=endpoint.name,
-            gpu="pool dinâmico",
-            service_capacity=capacity,
-            client_capacity=capacity,
-            api_queued=0,
-        )
-        return True
 
     def acquire(
         self,
@@ -268,8 +230,8 @@ class ApiEndpointRegistry:
 
         Um endpoint presente, mas temporariamente indisponível, continua sendo
         aguardado para evitar duplicar uma tarefa ainda recuperável no disco
-        daquele pod. O fallback só ocorre quando a URL antiga não pertence ao
-        pool atual.
+        daquele serviço. O fallback só ocorre quando a URL antiga não pertence
+        ao pool atual.
         """
         normalized = api_url.rstrip("/")
         with self._condition:
@@ -305,7 +267,7 @@ class ApiEndpointRegistry:
         self,
         stop_event: threading.Event | None = None,
     ) -> ApiEndpoint:
-        """Usa qualquer pod saudável para consultar o volume compartilhado."""
+        """Usa qualquer endpoint saudável para consultar resultados comuns."""
         with self._condition:
             while True:
                 if stop_event is not None and stop_event.is_set():
@@ -356,7 +318,7 @@ class ApiEndpointRegistry:
         if opened:
             reporter.update_circuit(endpoint.key, "aberto")
             reporter.event(
-                f"Circuito de admissão aberto | pod={endpoint.name} | "
+                f"Circuito de admissão aberto | endpoint={endpoint.name} | "
                 f"falhas={len(endpoint.connect_failures)}",
                 level="WARNING",
                 color="yellow",
@@ -381,22 +343,24 @@ class ApiEndpointRegistry:
         if closed:
             reporter.update_circuit(endpoint.key, "fechado")
             reporter.event(
-                f"Circuito de admissão recuperado | pod={endpoint.name}",
+                f"Circuito de admissão recuperado | endpoint={endpoint.name}",
                 color="green",
             )
 
     def mark_defective(self, endpoint: ApiEndpoint, reason: str) -> None:
-        callback: Callable[[str, str], None] | None = None
         with self._condition:
             endpoint.healthy = False
             endpoint.client_capacity = 0
             if endpoint.key not in self._defective:
                 self._defective.add(endpoint.key)
-                callback = self._on_defective
             self._condition.notify_all()
         reporter.update_health(endpoint.key, healthy=False)
-        if callback is not None and endpoint.pod_id:
-            callback(endpoint.pod_id, reason)
+        reporter.event(
+            f"Endpoint marcado como defeituoso | endpoint={endpoint.name} | "
+            f"motivo={reason}",
+            level="ERROR",
+            color="red",
+        )
 
     def reduce_capacity(
         self,
@@ -421,7 +385,7 @@ class ApiEndpointRegistry:
                 current.client_capacity,
             )
             reporter.event(
-                f"Capacidade reduzida | pod={endpoint.name} | "
+                f"Capacidade reduzida | endpoint={endpoint.name} | "
                 f"{previous}->{current.client_capacity} | motivo={reason}",
                 level="WARNING",
                 color="yellow",
@@ -455,7 +419,7 @@ class ApiEndpointRegistry:
             self._condition.notify_all()
         reporter.update_capacity(endpoint.key, endpoint.client_capacity)
         reporter.event(
-            f"Capacidade inicial atualizada | pod={endpoint.name} | "
+            f"Capacidade inicial atualizada | endpoint={endpoint.name} | "
             f"{previous}->{endpoint.client_capacity}",
             color="cyan",
         )
@@ -468,7 +432,6 @@ class ApiEndpointRegistry:
             pod_keys = tuple(
                 endpoint.key
                 for endpoint in self._endpoints.values()
-                if endpoint.serverless_client is None
             )
         return sum(
             self.set_initial_capacity(pod_key, capacity)
@@ -497,7 +460,7 @@ class ApiEndpointRegistry:
                 None,
             )
 
-            if endpoint is None or endpoint.serverless_client is not None:
+            if endpoint is None:
                 return
             endpoint.gpu_count = max(1, len(vram))
             endpoint.cpu_usage = max(0, cpu)
@@ -569,7 +532,7 @@ class ApiEndpointRegistry:
                 else "ajuste"
             )
             reporter.event(
-                f"Capacidade dinâmica | pod={endpoint.name} | "
+                f"Capacidade dinâmica | endpoint={endpoint.name} | "
                 f"{previous}->{endpoint.client_capacity} | "
                 f"pressão={pressure}% | ação={action}",
                 color="green" if resumed else "yellow",
@@ -705,7 +668,8 @@ class ApiEndpointRegistry:
         if changed:
             reporter.event(
                 "Controle por throughput | "
-                f"pod={endpoint.name} | pages/min={metrics['pages_per_minute']} | "
+                f"endpoint={endpoint.name} | "
+                f"pages/min={metrics['pages_per_minute']} | "
                 f"workers={previous}->{current.client_capacity} | ação={action}",
                 color="green" if current.client_capacity > previous else "yellow",
             )
@@ -713,7 +677,7 @@ class ApiEndpointRegistry:
         elif cpu_increase_deferred:
             reporter.event(
                 "Aumento de capacidade adiado por CPU | "
-                f"pod={endpoint.name} | cpu={current.cpu_usage}% | "
+                f"endpoint={endpoint.name} | cpu={current.cpu_usage}% | "
                 f"amostras={current.cpu_high_pressure_samples} | "
                 f"workers={current.client_capacity}",
                 color="yellow",
@@ -738,8 +702,6 @@ class ApiEndpointRegistry:
         with self._condition:
             endpoints = tuple(self._endpoints.values())
         for endpoint in endpoints:
-            if endpoint.serverless_client is not None:
-                continue
             try:
                 health = _health(endpoint.api_url, timeout=3.0)
                 advertised = max(
@@ -781,7 +743,8 @@ class ApiEndpointRegistry:
                     endpoint.transport_failures += 1
                 self._record_connect_failure(endpoint)
                 reporter.event(
-                    f"Conexão transitória indisponível | pod={endpoint.name}",
+                    "Conexão transitória indisponível | "
+                    f"endpoint={endpoint.name}",
                     level="WARNING",
                     color="yellow",
                 )
@@ -814,11 +777,7 @@ class ApiEndpointRegistry:
                     ),
                     "pages_per_minute": endpoint.throughput_baseline,
                     "efficient_capacity": endpoint.efficient_capacity,
-                    "transport": (
-                        "runpod-serverless"
-                        if endpoint.serverless_client is not None
-                        else "mineru-api"
-                    ),
+                    "transport": "mineru-api",
                 }
                 for endpoint in self._endpoints.values()
             ]
@@ -833,8 +792,6 @@ class ExtractionConfig:
     overwrite: bool
     run_id: str
     manifests: ManifestStore
-    max_source_bytes: int | None = None
-    object_storage: ObjectStorage | None = None
 
 
 @dataclass(slots=True)
@@ -848,14 +805,12 @@ class WorkItem:
 class ManifestStore:
     """Manifestos individuais, atômicos e recuperáveis entre execuções."""
 
-    def __init__(self, root: Path) -> None:
-        self.root = root
-
-    def path_for(self, sha256: str) -> Path:
-        return self.root / sha256[:2] / f"{sha256}.json"
+    @staticmethod
+    def path_for(item: WorkItem) -> Path:
+        return document_layout(item.row).manifest_path
 
     def load(self, item: WorkItem) -> ExtractionManifest:
-        path = self.path_for(item.document.sha256)
+        path = self.path_for(item)
         try:
             return ExtractionManifest.model_validate_json(
                 path.read_text(encoding="utf-8")
@@ -870,8 +825,12 @@ class ManifestStore:
                 row=item.row,
             )
 
-    def save(self, manifest: ExtractionManifest) -> None:
-        path = self.path_for(manifest.sha256)
+    def save(
+        self,
+        item: WorkItem,
+        manifest: ExtractionManifest,
+    ) -> None:
+        path = self.path_for(item)
         path.parent.mkdir(parents=True, exist_ok=True)
         handle, temporary_name = tempfile.mkstemp(
             prefix=f".{path.name}.", suffix=".tmp", dir=path.parent
@@ -892,16 +851,17 @@ class ManifestStore:
         **values: Any,
     ) -> ExtractionManifest:
         manifest = self.load(item)
+        layout = document_layout(item.row)
         manifest = manifest.model_copy(
             update={
                 **values,
                 "updated_at": datetime_now_iso(),
                 "row": item.row,
-                "path": item.document.path,
+                "path": layout.pdf_path,
                 "output_dir": item.output_dir,
             }
         )
-        self.save(manifest)
+        self.save(item, manifest)
         return manifest
 
 
@@ -1304,6 +1264,10 @@ def _extract_result_zip(zip_path: Path, output_dir: Path) -> None:
                     with target.open("wb") as destination:
                         shutil.copyfileobj(source, destination)
 
+        service_manifest = stage / "manifest.json"
+        if service_manifest.is_file():
+            os.replace(service_manifest, stage / "service.json")
+
         if not _completed(stage):
             raise ValueError("ZIP MinerU sem middle JSON válido.")
         if output_dir.exists():
@@ -1375,32 +1339,6 @@ def _download_result_zip(
         ) from error
 
 
-def _save_serverless_result(
-    result: dict[str, Any],
-    output_dir: Path,
-    *,
-    artifact_uri: str | None = None,
-) -> None:
-    if artifact_uri:
-        MineruClient.save_s3_tarball(result, output_dir)
-    else:
-        MineruClient.save_tarball(result, output_dir)
-    entry = MineruClient.first(result)
-    metadata = {
-        key: value
-        for key, value in entry.items()
-        if key not in {"tarball_b64", "tarball_url", "images"}
-    }
-    if artifact_uri:
-        metadata["artifact_uri"] = artifact_uri
-    (output_dir / "serverless_result.json").write_text(
-        json.dumps(metadata, ensure_ascii=False, indent=2),
-        encoding="utf-8",
-    )
-    if not _completed(output_dir):
-        raise ValueError("Pacote Serverless sem middle JSON válido.")
-
-
 def _completed(output_dir: Path) -> bool:
     middle_paths = list(output_dir.rglob("*_middle.json"))
     if len(middle_paths) != 1:
@@ -1437,7 +1375,14 @@ def _load_manifest(path: Path) -> list[WorkItem]:
     )
     items: list[WorkItem] = []
     for position, row in manifest.iterrows():
-        pdf_path = Path(str(row["path"])).expanduser().resolve()
+        row_dict = row.to_dict()
+        layout = document_layout(row_dict)
+        source_path = Path(str(row["path"])).expanduser().resolve()
+        pdf_path = (
+            layout.pdf_path.resolve()
+            if layout.pdf_path.is_file()
+            else source_path
+        )
         document = DocumentRecord(
             sha256=str(row["sha256"]),
             document_id=str(row["document_id"]),
@@ -1450,12 +1395,8 @@ def _load_manifest(path: Path) -> list[WorkItem]:
             WorkItem(
                 position=int(position),
                 document=document,
-                output_dir=(
-                    settings.mineru_output_dir
-                    / "documents"
-                    / document.document_id
-                ),
-                row=row.to_dict(),
+                output_dir=layout.mineru_dir,
+                row=row_dict,
             )
         )
     if not items:
@@ -1465,7 +1406,7 @@ def _load_manifest(path: Path) -> list[WorkItem]:
 
 def pending_count(path: Path) -> int:
     """Conta artefatos ausentes/inválidos sem iniciar capacidade GPU."""
-    manifests = ManifestStore(settings.mineru_output_dir / "manifests")
+    manifests = ManifestStore()
     return sum(
         settings.mineru_overwrite
         or (
@@ -1639,7 +1580,6 @@ def _process(
                     if (
                         not task_id
                         and not submission_required
-                        and endpoint.serverless_client is None
                     ):
                         persisted_record = _reconcile_submission(
                             endpoint.api_url,
@@ -1670,169 +1610,109 @@ def _process(
                                     error=None,
                                 )
                                 original_api_url = endpoint.api_url
-                    if endpoint.serverless_client is not None:
-                        throughput_eligible = True
-                        if config.object_storage is not None:
-                            source_uri, file_url = (
-                                config.object_storage.source_location(document)
+                    persisted: dict[str, Any] | None = None
+                    if task_id and not submission_required:
+                        # Em armazenamento compartilhado, um pacote completo
+                        # pode ter sido finalizado por qualquer endpoint.
+                        persisted_urls = [endpoint.api_url]
+                        if settings.mineru_shared_results:
+                            persisted_urls.extend(
+                                str(snapshot["api_url"]).rstrip("/")
+                                for snapshot in config.endpoint_registry.snapshot()
+                                if snapshot["healthy"]
+                                and snapshot["api_url"] != endpoint.api_url
                             )
-                            result = endpoint.serverless_client.parse_document(
-                                file_url=file_url,
-                                backend=settings.mineru_backend,
-                                formula_enable=True,
-                                table_enable=True,
-                                transport="s3",
-                                basename=document.document_id,
-                                timeout=max(
-                                    1,
-                                    int(settings.mineru_task_timeout_seconds),
-                                ),
-                            )
-                            artifact_uri = (
-                                config.object_storage.artifact_uri(result)
-                            )
-                        else:
-                            input_limit = (
-                                settings.runpod_serverless_inline_input_mb
-                                * 1024
-                                * 1024
-                            )
-                            if (
-                                document.size_bytes is not None
-                                and document.size_bytes > input_limit
-                            ):
-                                raise ValueError(
-                                    "PDF excede o transporte inline "
-                                    "Serverless "
-                                    f"({settings.runpod_serverless_inline_input_mb} MB)."
-                                )
-                            result = MineruClient.parse_document_from_file(
-                                endpoint.serverless_client,
-                                document.path,
-                                backend=settings.mineru_backend,
-                                formula_enable=True,
-                                table_enable=True,
-                                transport="tarball_b64",
-                                formats=(
-                                    "markdown",
-                                    "content_list",
-                                    "middle",
-                                    "images",
-                                ),
-                                basename=document.document_id,
-                                timeout=max(
-                                    1,
-                                    int(settings.mineru_task_timeout_seconds),
-                                ),
-                            )
-                        _save_serverless_result(
-                            result,
-                            item.output_dir,
-                            artifact_uri=artifact_uri,
+                        recovered = _recover_orphaned_task(
+                            original_api_url=endpoint.api_url,
+                            persisted_api_urls=tuple(
+                                dict.fromkeys(persisted_urls)
+                            ),
+                            correlation_key=document.sha256,
+                            task_id=task_id,
                         )
-                    else:
-                        persisted: dict[str, Any] | None = None
-                        if task_id and not submission_required:
-                            # No Network Volume o índice é compartilhado: um
-                            # pacote completo pode ter sido finalizado por
-                            # qualquer pod. Com Volume Disk, só o endpoint
-                            # original é consultado para recuperação.
-                            persisted_urls = [endpoint.api_url]
-                            if settings.runpod_network_volume_id:
-                                persisted_urls.extend(
-                                    str(snapshot["api_url"]).rstrip("/")
-                                    for snapshot in config.endpoint_registry.snapshot()
-                                    if snapshot["healthy"]
-                                    and snapshot["transport"] == "mineru-api"
-                                    and snapshot["api_url"] != endpoint.api_url
-                                )
-                            recovered = _recover_orphaned_task(
-                                original_api_url=endpoint.api_url,
-                                persisted_api_urls=tuple(dict.fromkeys(persisted_urls)),
-                                correlation_key=document.sha256,
-                                task_id=task_id,
+                        if recovered is None:
+                            task_history = list(
+                                config.manifests.load(item).task_history
                             )
-                            if recovered is None:
-                                task_history = list(
-                                    config.manifests.load(item).task_history
-                                )
-                                task_history.append(
-                                    {
-                                        "task_id": task_id,
-                                        "pod_id": saved.pod_id,
-                                        "api_url": original_api_url,
-                                        "status": "orphaned",
-                                        "finished_at": datetime_now_iso(),
-                                    }
-                                )
-                                task_id = document.sha256
-                                submission_required = True
-                                config.manifests.update(
-                                    item,
-                                    status="orphaned",
-                                    attempts=attempts,
-                                    retry_count=max(0, attempts - 1),
-                                    pod_id=endpoint.pod_id,
-                                    api_url=endpoint.api_url,
-                                    task_id=task_id,
-                                    correlation_key=document.sha256,
-                                    task_history=task_history,
-                                    error=(
-                                        "Tarefa órfã confirmada após restart "
-                                        "do router; reenviando PDF."
-                                    ),
-                                )
-                            elif isinstance(recovered, dict):
-                                persisted = recovered
-                        if not task_id or submission_required:
-                            if item.output_dir.exists():
-                                shutil.rmtree(item.output_dir)
-                            task_id = task_id or document.sha256
+                            task_history.append(
+                                {
+                                    "task_id": task_id,
+                                    "pod_id": saved.pod_id,
+                                    "api_url": original_api_url,
+                                    "status": "orphaned",
+                                    "finished_at": datetime_now_iso(),
+                                }
+                            )
+                            task_id = document.sha256
+                            submission_required = True
                             config.manifests.update(
                                 item,
-                                status="submitting",
+                                status="orphaned",
                                 attempts=attempts,
                                 retry_count=max(0, attempts - 1),
                                 pod_id=endpoint.pod_id,
                                 api_url=endpoint.api_url,
                                 task_id=task_id,
                                 correlation_key=document.sha256,
-                                error=None,
+                                task_history=task_history,
+                                error=(
+                                    "Tarefa órfã confirmada após restart "
+                                    "do router; reenviando PDF."
+                                ),
                             )
-                            original_api_url = endpoint.api_url
-                            _submit(
-                                document.path,
-                                endpoint.api_url,
-                                correlation_key=document.sha256,
-                                task_id=task_id,
-                            )
-                            throughput_eligible = True
-                            # A confirmação da API é persistida antes de qualquer poll.
-                            saved = config.manifests.update(
-                                item,
-                                status="submitted",
-                                attempts=attempts,
-                                retry_count=max(0, attempts - 1),
-                                pod_id=endpoint.pod_id,
-                                api_url=endpoint.api_url,
-                                task_id=task_id,
-                                correlation_key=document.sha256,
-                                error=None,
-                            )
-                            original_api_url = endpoint.api_url
-                            submission_required = False
-                        if persisted is None:
-                            config.manifests.update(
-                                item, status="waiting_persisted", task_id=task_id
-                            )
-                            persisted = _wait_persisted_result(
-                                endpoint.api_url,
-                                document.sha256,
-                                task_id,
-                            )
-                        package_dir = str(persisted["package_dir"]).strip("/")
-                        artifact_uri = f"/workspace/results/{package_dir}"
-                        persisted_artifacts = list(persisted["artifacts"])
+                        elif isinstance(recovered, dict):
+                            persisted = recovered
+                    if not task_id or submission_required:
+                        if item.output_dir.exists():
+                            shutil.rmtree(item.output_dir)
+                        task_id = task_id or document.sha256
+                        config.manifests.update(
+                            item,
+                            status="submitting",
+                            attempts=attempts,
+                            retry_count=max(0, attempts - 1),
+                            pod_id=endpoint.pod_id,
+                            api_url=endpoint.api_url,
+                            task_id=task_id,
+                            correlation_key=document.sha256,
+                            error=None,
+                        )
+                        original_api_url = endpoint.api_url
+                        _submit(
+                            document.path,
+                            endpoint.api_url,
+                            correlation_key=document.sha256,
+                            task_id=task_id,
+                        )
+                        throughput_eligible = True
+                        # A confirmação é persistida antes de qualquer poll.
+                        saved = config.manifests.update(
+                            item,
+                            status="submitted",
+                            attempts=attempts,
+                            retry_count=max(0, attempts - 1),
+                            pod_id=endpoint.pod_id,
+                            api_url=endpoint.api_url,
+                            task_id=task_id,
+                            correlation_key=document.sha256,
+                            error=None,
+                        )
+                        original_api_url = endpoint.api_url
+                        submission_required = False
+                    if persisted is None:
+                        config.manifests.update(
+                            item,
+                            status="waiting_persisted",
+                            task_id=task_id,
+                        )
+                        persisted = _wait_persisted_result(
+                            endpoint.api_url,
+                            document.sha256,
+                            task_id,
+                        )
+                    package_dir = str(persisted["package_dir"]).strip("/")
+                    artifact_uri = f"/workspace/results/{package_dir}"
+                    persisted_artifacts = list(persisted["artifacts"])
                     duration = time.perf_counter() - started
                     if throughput_eligible:
                         controller = config.endpoint_registry.record_completion(
@@ -2104,30 +1984,6 @@ def _execute(
     items = _load_manifest(config.manifest_path)
     config.output_root.mkdir(parents=True, exist_ok=True)
 
-    deferred = [
-        item
-        for item in items
-        if config.max_source_bytes is not None
-        and item.document.size_bytes is not None
-        and item.document.size_bytes > config.max_source_bytes
-    ]
-    if deferred:
-        deferred_ids = {
-            item.document.document_id
-            for item in deferred
-        }
-        items = [
-            item
-            for item in items
-            if item.document.document_id not in deferred_ids
-        ]
-        reporter.event(
-            "Transporte direto | "
-            f"elegíveis={len(items)} | "
-            f"aguardando bucket={len(deferred)}",
-            color="cyan",
-        )
-
     reporter.start_progress(len(items))
 
     pending_items: list[WorkItem] = []
@@ -2211,14 +2067,15 @@ def _execute(
     reporter.restore_reused(reused)
 
     startup_deadline = (
-        time.monotonic() + settings.runpod_startup_timeout_seconds
+        time.monotonic()
+        + settings.mineru_endpoint_wait_timeout_seconds
     )
     while pending and not config.endpoint_registry.wait_for_first(0.5):
         if stop_event.is_set():
             break
         if time.monotonic() >= startup_deadline:
             raise TimeoutError(
-                "Nenhum pod MinerU ficou pronto dentro do limite."
+                "Nenhum endpoint MinerU ficou pronto dentro do limite."
             )
 
     started = time.perf_counter()
@@ -2311,7 +2168,7 @@ def _execute(
     }
     _write_json_atomic(config.output_root / "summary.json", summary)
     _write_json_atomic(
-        config.output_root / "pods.json",
+        config.output_root / "endpoints.json",
         config.endpoint_registry.snapshot(),
     )
     reporter.event(
@@ -2333,23 +2190,19 @@ def extract(
     manifest_path: Path | None = None,
     stop_event: threading.Event | None = None,
     run_id: str | None = None,
-    max_source_bytes: int | None = None,
-    object_storage: ObjectStorage | None = None,
 ) -> dict[str, Any]:
     registry = endpoint_registry or ApiEndpointRegistry(
-        settings.mineru_concurrency_per_pod
+        settings.mineru_concurrency_per_endpoint
     )
     for api_url in api_urls:
         registry.add(api_url)
     config = ExtractionConfig(
         endpoint_registry=registry,
         manifest_path=manifest_path or settings.inventory_path,
-        output_root=settings.mineru_output_dir,
+        output_root=settings.extraction_dir,
         retries=settings.mineru_retries,
         overwrite=settings.mineru_overwrite,
         run_id=run_id or uuid.uuid4().hex,
-        manifests=ManifestStore(settings.mineru_output_dir / "manifests"),
-        max_source_bytes=max_source_bytes,
-        object_storage=object_storage,
+        manifests=ManifestStore(),
     )
     return _execute(config, stop_event or threading.Event())

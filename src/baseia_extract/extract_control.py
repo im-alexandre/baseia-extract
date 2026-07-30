@@ -11,6 +11,7 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 from rich.console import Group
 from rich.live import Live
@@ -116,18 +117,34 @@ def _active_state() -> dict[str, Any] | None:
     return state
 
 
-def _queue_pods(
+def normalize_api_urls(
+    api_urls: tuple[str, ...],
+) -> tuple[str, ...]:
+    normalized: list[str] = []
+    for raw_url in api_urls:
+        url = raw_url.strip().rstrip("/")
+        parsed = urlsplit(url)
+        if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+            raise ValueError(
+                f"Endpoint MinerU inválido: {raw_url!r}. "
+                "Informe uma URL HTTP(S), não um ID de pod."
+            )
+        if parsed.query or parsed.fragment:
+            raise ValueError(
+                f"Endpoint MinerU não pode conter query ou fragmento: {url}"
+            )
+        normalized.append(url)
+    return tuple(dict.fromkeys(normalized))
+
+
+def _queue_endpoints(
     state: dict[str, Any],
-    pods: tuple[str, ...],
+    api_urls: tuple[str, ...],
     workers: int = 0,
 ) -> Path:
-    normalized = tuple(
-        pod.strip()
-        for pod in pods
-        if isinstance(pod, str) and pod.strip()
-    )
+    normalized = normalize_api_urls(api_urls)
     if not normalized:
-        raise ValueError("Informe ao menos um ID ou URL de pod.")
+        raise ValueError("Informe ao menos uma URL de serviço MinerU.")
     if workers < 0:
         raise ValueError("--workers não pode ser negativo.")
 
@@ -137,7 +154,8 @@ def _queue_pods(
         command_path,
         {
             "created_at": _now(),
-            "pods": list(normalized),
+            "action": "add",
+            "api_urls": list(normalized),
             "workers": workers or None,
         },
     )
@@ -160,9 +178,16 @@ def _queue_stop(state: dict[str, Any]) -> Path:
     return command_path
 
 
-def _queue_scale(state: dict[str, Any], workers: int) -> Path:
+def _queue_scale(
+    state: dict[str, Any],
+    api_urls: tuple[str, ...],
+    workers: int,
+) -> Path:
     if workers < 1:
         raise ValueError("--workers deve ser maior que zero.")
+    normalized = normalize_api_urls(api_urls)
+    if not normalized:
+        raise ValueError("Informe ao menos uma URL de serviço MinerU.")
     command_dir = Path(str(state["command_dir"]))
     command_path = (
         command_dir
@@ -173,6 +198,7 @@ def _queue_scale(state: dict[str, Any], workers: int) -> Path:
         {
             "created_at": _now(),
             "action": "scale",
+            "api_urls": list(normalized),
             "workers": workers,
         },
     )
@@ -180,23 +206,29 @@ def _queue_scale(state: dict[str, Any], workers: int) -> Path:
 
 
 def start(
-    pods: tuple[str, ...] = (),
+    api_urls: tuple[str, ...] = (),
     workers: int = 0,
 ) -> dict[str, Any]:
     active = _active_state()
     if active is not None:
         if active.get("status") == "stopping":
             raise RuntimeError(
-                "A extração está drenando e não aceita novos pods."
+                "A extração está drenando e não aceita novos endpoints."
             )
-        if pods:
-            _queue_pods(active, pods, workers)
+        if api_urls:
+            _queue_endpoints(active, api_urls, workers)
         print(
             f"Extração já está ativa: pid={active['pid']}\n"
             f"Log: {active['log_path']}",
             flush=True,
         )
         return active
+
+    if workers < 0:
+        raise ValueError("--workers não pode ser negativo.")
+    initial_api_urls = normalize_api_urls(
+        api_urls or (settings.mineru_api_url,)
+    )
 
     run_id = datetime.now(timezone.utc).strftime(
         "%Y%m%dT%H%M%SZ"
@@ -217,8 +249,6 @@ def start(
     }
     _write_json(run_dir / "state.json", state)
     _write_json(_current_state_path(), state)
-    if pods:
-        _queue_pods(state, pods, workers)
 
     reporter.configure(log_path)
     reporter.event(
@@ -231,7 +261,12 @@ def start(
     try:
         from .tasks import run_extract
 
-        run_extract(command_dir=command_dir, run_id=run_id)
+        run_extract(
+            api_urls=initial_api_urls,
+            workers=workers,
+            command_dir=command_dir,
+            run_id=run_id,
+        )
         state["status"] = "complete"
     except KeyboardInterrupt:
         state["status"] = "interrupted"
@@ -268,7 +303,7 @@ def start(
 
 
 def add(
-    pods: tuple[str, ...],
+    api_urls: tuple[str, ...],
     workers: int = 0,
 ) -> dict[str, Any]:
     state = _active_state()
@@ -278,12 +313,13 @@ def add(
         )
     if state.get("status") == "stopping":
         raise RuntimeError(
-            "A extração já está encerrando e não aceita novos pods."
+            "A extração já está encerrando e não aceita novos endpoints."
         )
-    command_path = _queue_pods(state, pods, workers)
+    normalized = normalize_api_urls(api_urls)
+    command_path = _queue_endpoints(state, normalized, workers)
     print(
-        f"Pods enfileirados para a extração pid={state['pid']}: "
-        f"{', '.join(pods)}"
+        f"Endpoints enfileirados para a extração pid={state['pid']}: "
+        f"{', '.join(normalized)}"
         f"{f' | workers={workers}' if workers else ''}\n"
         f"Comando: {command_path}",
         flush=True,
@@ -309,7 +345,10 @@ def stop() -> dict[str, Any]:
     return state
 
 
-def scale(workers: int) -> dict[str, Any]:
+def scale(
+    api_urls: tuple[str, ...],
+    workers: int,
+) -> dict[str, Any]:
     state = _active_state()
     if state is None:
         raise RuntimeError("Nenhuma extração ativa.")
@@ -317,10 +356,13 @@ def scale(workers: int) -> dict[str, Any]:
         raise RuntimeError(
             "A extração está encerrando e não aceita ajustes."
         )
-    command_path = _queue_scale(state, workers)
+    normalized = normalize_api_urls(
+        api_urls or (settings.mineru_api_url,)
+    )
+    command_path = _queue_scale(state, normalized, workers)
     print(
-        "Ajuste geral de capacidade enfileirado para todos os pods: "
-        f"workers={workers}\n"
+        "Ajuste de capacidade enfileirado: "
+        f"workers={workers} | endpoints={', '.join(normalized)}\n"
         f"Comando: {command_path}",
         flush=True,
     )
@@ -399,7 +441,7 @@ def _watch_render(
     updated_at: str,
 ) -> Group:
     work = Table(title="Trabalho", expand=True)
-    work.add_column("Pod", style="cyan", no_wrap=True)
+    work.add_column("Endpoint", style="cyan", no_wrap=True)
     work.add_column("Estado/Circuito", no_wrap=True)
     work.add_column("Cliente/API", justify="right", no_wrap=True)
     work.add_column("Voo/Ocioso", justify="right", no_wrap=True)
@@ -408,7 +450,7 @@ def _watch_render(
     work.add_column("Pág/min · p95", justify="right", style="green", no_wrap=True)
 
     pressure = Table(title="Pressão", expand=True)
-    pressure.add_column("Pod", style="cyan", no_wrap=True)
+    pressure.add_column("Endpoint", style="cyan", no_wrap=True)
     pressure.add_column("GPU média/máx", justify="right", no_wrap=True)
     pressure.add_column("VRAM média/máx", justify="right", no_wrap=True)
     pressure.add_column("CPU", justify="right")
@@ -453,7 +495,7 @@ def _watch_render(
             f"em voo={summary.get('em_voo', '-')}  "
             f"[yellow]retries={summary.get('retries', '-')}[/yellow]  "
             f"[red]erros={summary.get('erros', '-')}[/red]  "
-            f"pods={summary.get('pods', '-')}  "
+            f"endpoints={summary.get('endpoints', '-')}  "
             f"capacidade={summary.get('capacidade', '-')}  "
             f"ociosa={summary.get('ociosa', '-')}",
             f"[green]vazão={summary.get('paginas_min', '-')} pág/min[/green]  "
@@ -490,9 +532,9 @@ def watch_dashboard(refresh_seconds: float = 1.0) -> dict[str, Any] | None:
                     summary = _log_fields(message)
                     pods = {}
                     updated_at = line[:23]
-                elif message.startswith("pod="):
+                elif message.startswith("endpoint="):
                     fields = _log_fields(message)
-                    label = fields.get("pod")
+                    label = fields.get("endpoint")
                     if label:
                         pods[label] = fields
             offset = stream.tell()
@@ -535,14 +577,14 @@ def watch_dashboard(refresh_seconds: float = 1.0) -> dict[str, Any] | None:
 
 def dispatch(
     action: str,
-    pods: tuple[str, ...],
+    api_urls: tuple[str, ...],
     workers: int = 0,
 ) -> dict[str, Any] | None:
     normalized_action = action.strip().casefold()
     if normalized_action == "start":
-        return start(pods, workers)
+        return start(api_urls, workers)
     if normalized_action == "add":
-        return add(pods, workers)
+        return add(api_urls, workers)
     if normalized_action == "status":
         return status()
     if normalized_action == "log":
@@ -552,7 +594,7 @@ def dispatch(
     if normalized_action == "stop":
         return stop()
     if normalized_action == "scale":
-        return scale(workers)
+        return scale(api_urls, workers)
     raise ValueError(
         f"Ação inválida: {action!r}. "
         "Use start, add, scale, stop, status ou log."

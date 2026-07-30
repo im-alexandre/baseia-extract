@@ -10,10 +10,12 @@ from typing import Any
 import pandas as pd
 from pypdf import PdfReader
 
+from .layout import document_layout
 from .settings import settings
 
 INVENTORY_COLUMNS = [
     "document_id", "sha256", "path", "relative_path", "filename", "stem",
+    "artifact_dir", "manifest_path",
     "extension", "size_bytes", "size_mb", "created_at", "modified_at",
     "page_count", "encrypted", "pdf_version", "title", "author", "subject",
     "creator", "producer", "status", "error",
@@ -40,14 +42,14 @@ def _sha256(path: Path, chunk_size: int = 1024 * 1024) -> str:
     return digest.hexdigest()
 
 
-def inspect_pdf(path: Path, corpus_dir: Path) -> dict[str, Any]:
+def inspect_pdf(path: Path, documents_dir: Path) -> dict[str, Any]:
     path = path.resolve()
     stat = path.stat()
     row: dict[str, Any] = {
         "document_id": None,
         "sha256": None,
         "path": str(path),
-        "relative_path": str(path.relative_to(corpus_dir)),
+        "relative_path": str(path.relative_to(documents_dir)),
         "filename": path.name,
         "stem": path.stem,
         "extension": path.suffix.lower(),
@@ -70,6 +72,9 @@ def inspect_pdf(path: Path, corpus_dir: Path) -> dict[str, Any]:
         sha256 = _sha256(path)
         row["sha256"] = sha256
         row["document_id"] = sha256[:16]
+        layout = document_layout(row)
+        row["artifact_dir"] = str(layout.document_dir)
+        row["manifest_path"] = str(layout.manifest_path)
         reader = PdfReader(str(path), strict=False)
         row["encrypted"] = bool(reader.is_encrypted)
         if reader.is_encrypted:
@@ -94,19 +99,35 @@ def inspect_pdf(path: Path, corpus_dir: Path) -> dict[str, Any]:
 
 
 def build_inventory(workers: int | None = None, recursive: bool = True) -> Path:
-    """Inventaria todos os PDFs de corpus/ no manifesto canônico em data/."""
-    corpus = settings.corpus_dir
+    """Recria o inventário a partir dos PDFs no repositório canônico."""
+    documents = settings.document_store_dir
     output_path = settings.inventory_path
-    if not corpus.is_dir():
-        raise NotADirectoryError(f"Corpus inválido: {corpus}")
+    if not documents.is_dir():
+        raise NotADirectoryError(
+            f"Repositório de documentos inválido: {documents}"
+        )
 
-    iterator = corpus.rglob("*.pdf") if recursive else corpus.glob("*.pdf")
-    paths = sorted(path for path in iterator if path.is_file())
+    iterator = (
+        documents.rglob("*.pdf") if recursive else documents.glob("*.pdf")
+    )
+    paths = sorted(
+        path
+        for path in iterator
+        if path.is_file()
+        and not any(
+            (parent / "manifest.json").is_file()
+            for parent in path.parents
+            if parent != documents and documents in parent.parents
+        )
+    )
     resolved_workers = workers or max(1, min(8, os.cpu_count() or 4))
     rows: list[dict[str, Any]] = []
 
     with ThreadPoolExecutor(max_workers=resolved_workers) as executor:
-        futures = {executor.submit(inspect_pdf, path, corpus): path for path in paths}
+        futures = {
+            executor.submit(inspect_pdf, path, documents): path
+            for path in paths
+        }
         for index, future in enumerate(as_completed(futures), start=1):
             rows.append(future.result())
             if index % 100 == 0 or index == len(paths):
@@ -115,6 +136,16 @@ def build_inventory(workers: int | None = None, recursive: bool = True) -> Path:
     inventory = pd.DataFrame(rows).reindex(columns=INVENTORY_COLUMNS)
     if not inventory.empty:
         inventory = inventory.sort_values(["relative_path", "filename"]).reset_index(drop=True)
+        aliases = inventory[
+            inventory["sha256"].notna()
+            & inventory["sha256"].duplicated(keep=False)
+        ]
+        if not aliases.empty:
+            paths_by_sha = aliases.groupby("sha256")["path"].apply(list)
+            raise RuntimeError(
+                "O repositório canônico contém aliases do mesmo documento: "
+                f"{paths_by_sha.to_dict()}"
+            )
     output_path.parent.mkdir(parents=True, exist_ok=True)
     inventory.to_csv(output_path, index=False, encoding="utf-8-sig")
     inventory[inventory["status"].ne("ok")].to_csv(
