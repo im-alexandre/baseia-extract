@@ -24,6 +24,7 @@ uv run poe collection ls
 uv run poe collection show "Acme Produção"
 docker compose --profile production ps
 Invoke-RestMethod "$env:BASEIA_CATALOG_API_URL/health"
+Invoke-RestMethod "$env:QDRANT_URL/collections"
 ```
 
 Para cada MinerU:
@@ -55,6 +56,10 @@ uv run poe pipeline --collection "Acme Produção" --through promote --refresh
 
 Use `--refresh` somente quando a fonte mudou. O mesmo snapshot é reutilizado;
 um inventário diferente produz nova revisão de snapshot e preserva o anterior.
+
+Uma retomada até `promote` também executa a ingestão: ela usa a política
+`strategy.ingest_policy`, chama OpenRouter e reconcilia pontos no Qdrant.
+Verifique as credenciais e a conectividade desses serviços antes da execução.
 
 ## Capacidade
 

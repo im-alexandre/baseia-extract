@@ -30,8 +30,8 @@ flowchart LR
     D --> E["Extract audit"]
     E --> F["Render"]
     F --> G["Render audit"]
-    G --> H["Promote S3/catalog"]
-    H -. "futuro" .-> I["Chunk/embed/Qdrant"]
+    G --> H["Ingest"]
+    H --> I["Promote S3/catalog"]
 ```
 
 `collection_worker.py` executa os checkpoints em subprocesso com o contexto da
@@ -44,10 +44,21 @@ coleção. Uma falha de auditoria interrompe a sequência.
 | `inventory` | fontes PDF | CSV, integridade e manifesto validado | collection/inventory |
 | `extract` | revisão e URL MinerU | intermediários e referências S3 | MinerU + adapter |
 | `render` | `middle.json` | IR, estrutura, Markdown e proveniência | render |
+| `ingest` | artefatos canônicos + política YAML | chunks locais e, em `apply`, pontos Qdrant | ingest |
 | `promote` | inventário integral e manifests | objetos verificados e snapshot ativo | bootstrap_s3/catalog |
 
-`ingest` aparece nas choices para demarcar a próxima etapa, mas falha
-explicitamente. Chunking, embeddings e Qdrant não estão implementados.
+`ingest` exige uma política declarada em `strategy.ingest_policy` no YAML da
+coleção ou em `BASEIA_INGEST_POLICY`. `prepare` materializa e valida os chunks
+locais; o pipeline usa `apply`, que também gera embeddings e reconcilia o
+Qdrant. `promote` não pode anteceder essa etapa.
+
+## Revisão de metadados
+
+O render preserva candidatos bibliográficos, proveniência, confiança e flags
+de revisão em `canonical/metadata.json`. `poe review --path <diretório>` é uma
+leitura sem escrita: seleciona o inventário, lista apenas atributos com
+`review.required=true` e informa `metadata.json` ausentes. A saída padrão é
+tabela; `--format json` produz o mesmo resultado estruturado.
 
 ## Amostras
 

@@ -30,6 +30,7 @@ nav_order: 430
 │   ├── audit/
 │   ├── extraction/
 │   ├── bootstrap/s3/
+│   ├── ingest/
 │   ├── pipeline/
 │   │   ├── latest.json
 │   │   └── runs/
@@ -41,8 +42,11 @@ nav_order: 430
     └── canonical/
         ├── document_ir.json
         ├── structure.json
+        ├── metadata.json
         ├── document.md
-        └── render.json
+        ├── render.json
+        ├── chunks/<perfil>.jsonl
+        └── ingest/<perfil>.json
 ```
 
 O registro global contém apenas coleção atual e paths para os YAMLs. Por
@@ -56,7 +60,9 @@ default, ele usa o diretório de dados do usuário calculado por `platformdirs`;
 | init/inventory | PDF ou diretório | YAML, inventário e auditoria |
 | sample | inventário válido | `sample.csv`, sem copiar PDFs |
 | extract | inventário ou amostra | intermediários, manifests e runs |
-| render | `*_middle.json` | IR, estrutura, Markdown e proveniência |
+| render | `*_middle.json` e `content_list_v2.json` opcional | IR, estrutura, metadados, Markdown e proveniência |
+| ingest prepare | artefatos canônicos + política | `chunks/<perfil>.jsonl`, `ingest/<perfil>.json` e sumário local |
+| ingest apply | chunks preparados + OpenRouter/Qdrant | pontos Qdrant reconciliados e sumário de conclusão |
 | audit | seleção e artefatos | summaries, failures, warnings e review sample |
 | promote | inventário integral + manifests | objetos S3, snapshot e relatório |
 
@@ -69,8 +75,11 @@ default, ele usa o diretório de dados do usuário calculado por `platformdirs`;
 | Markdown MinerU | intermediário; não é publicado como final |
 | `canonical/document_ir.json` | canônico |
 | `canonical/structure.json` | canônico |
+| `canonical/metadata.json` | metadados bibliográficos e itens que exigem revisão |
 | `canonical/document.md` | único Markdown canônico |
 | `canonical/render.json` | canônico |
+| `canonical/chunks/<perfil>.jsonl` | chunks estruturais da política |
+| `canonical/ingest/<perfil>.json` | estado, hashes e resultado da ingestão por perfil |
 | `manifest.json` | índice materializado e commit marker |
 
 ## Layout S3
@@ -88,6 +97,16 @@ inventory/scopes/<scope>/snapshots/<snapshot-id>/
 
 Payloads são enviados e verificados antes do manifesto. Integridade usa
 SHA-256 e tamanho; ETag não é tratado como MD5.
+
+Os chunks mantêm assets no payload: quando habilitado pela política, arquivos
+de imagem são incluídos em `data_base64`. O texto enviado para embedding usa
+placeholders e captions para figuras, tabelas e equações; referências podem
+ser mantidas apenas no payload ou excluídas pela política.
+
+Cada chunk também registra a object key determinística do PDF original. Quando
+`BASEIA_S3_BUCKET` está configurado, o payload inclui a URI `s3://` calculada
+antes do upload; ela só passa a representar um objeto disponível depois da
+promoção.
 
 ## Reconciliação direta após a promoção
 

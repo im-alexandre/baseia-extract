@@ -35,6 +35,7 @@ _PUBLISHER_ID = (
 _CANONICAL_KINDS = {
     "canonical_document_ir",
     "canonical_structure",
+    "canonical_document_metadata",
     "canonical_markdown",
     "canonical_render_manifest",
 }
@@ -48,6 +49,11 @@ _CANONICAL_FILES = (
         "canonical_structure",
         "canonical/structure.json",
         "structure_path",
+    ),
+    (
+        "canonical_document_metadata",
+        "canonical/metadata.json",
+        "metadata_path",
     ),
     (
         "canonical_markdown",

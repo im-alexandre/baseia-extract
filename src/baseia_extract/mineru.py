@@ -126,15 +126,16 @@ class ExtractionStopped(RuntimeError):
 # o endpoint original saudável; falhas de transporte nunca contam como 404.
 _ORPHAN_TASK_404_CONFIRMATIONS = 3
 _ORPHAN_TASK_404_GRACE_SECONDS = 2.0
-_HTTP_CLIENT: httpx.Client | None = None
-_HTTP_CLIENT_LOCK = threading.Lock()
+_HTTP_CLIENTS: dict[str, httpx.Client] = {}
+_HTTP_CLIENTS_LOCK = threading.Lock()
 
 
-def _http_client() -> httpx.Client:
-    global _HTTP_CLIENT
-    with _HTTP_CLIENT_LOCK:
-        if _HTTP_CLIENT is None:
-            _HTTP_CLIENT = httpx.Client(
+def _http_client(api_url: str) -> httpx.Client:
+    endpoint = api_url.strip().rstrip("/")
+    with _HTTP_CLIENTS_LOCK:
+        client = _HTTP_CLIENTS.get(endpoint)
+        if client is None:
+            client = httpx.Client(
                 limits=httpx.Limits(
                     max_connections=settings.mineru_http_max_connections,
                     max_keepalive_connections=(
@@ -146,14 +147,15 @@ def _http_client() -> httpx.Client:
                 ),
                 follow_redirects=True,
             )
-        return _HTTP_CLIENT
+            _HTTP_CLIENTS[endpoint] = client
+        return client
 
 
-def _close_http_client() -> None:
-    global _HTTP_CLIENT
-    with _HTTP_CLIENT_LOCK:
-        client, _HTTP_CLIENT = _HTTP_CLIENT, None
-    if client is not None:
+def _close_http_clients() -> None:
+    with _HTTP_CLIENTS_LOCK:
+        clients = tuple(_HTTP_CLIENTS.values())
+        _HTTP_CLIENTS.clear()
+    for client in clients:
         client.close()
 
 
@@ -1089,7 +1091,7 @@ def _health(
     *,
     timeout: float | None = None,
 ) -> dict[str, Any]:
-    response = _http_client().get(
+    response = _http_client(api_url).get(
         f"{api_url}/health",
         timeout=timeout or settings.mineru_health_timeout_seconds,
         headers={"Accept": "application/json"},
@@ -1103,7 +1105,7 @@ def _health(
 
 def _baseia_capabilities(api_url: str) -> dict[str, Any]:
     try:
-        response = _http_client().get(
+        response = _http_client(api_url).get(
             f"{api_url}/baseia-capabilities",
             timeout=settings.mineru_health_timeout_seconds,
             headers={"Accept": "application/json"},
@@ -1158,7 +1160,7 @@ def _submit(
     }
     try:
         with pdf_path.open("rb") as pdf:
-            response = _http_client().post(
+            response = _http_client(api_url).post(
                 f"{api_url}/tasks",
                 data=fields,
                 files={"files": (f"{correlation_key}.pdf", pdf, "application/pdf")},
@@ -1233,7 +1235,7 @@ def _persisted_tasks(
 ) -> list[dict[str, Any]]:
     """Lê o índice persistente sem inferir que uma ausência é falha remota."""
     try:
-        response = _http_client().get(
+        response = _http_client(api_url).get(
             f"{api_url}/persisted-tasks/{correlation_key}",
             params={"task_id": task_id} if task_id else None,
             timeout=settings.mineru_health_timeout_seconds,
@@ -1449,7 +1451,7 @@ def _recover_orphaned_task(
                 return "active", None
 
         try:
-            response = _http_client().get(
+            response = _http_client(original_api_url).get(
                 f"{original_api_url}/tasks/{task_id}",
                 timeout=settings.mineru_health_timeout_seconds,
                 headers={"Accept": "application/json"},
@@ -1517,7 +1519,7 @@ def _wait_persisted_result(
     last_error = "registro persistido ainda indisponível"
     while time.monotonic() < deadline:
         try:
-            response = _http_client().get(
+            response = _http_client(api_url).get(
                 f"{api_url}/persisted-tasks/{correlation_key}",
                 params={"task_id": task_id},
                 timeout=settings.mineru_health_timeout_seconds,
@@ -1654,7 +1656,7 @@ def _download_result_zip(
                         write=300,
                         pool=30,
                     )
-                    with _http_client().stream(
+                    with _http_client(api_url).stream(
                         "GET",
                         f"{api_url}/tasks/{task_id}/result",
                         timeout=timeout,
@@ -2596,4 +2598,4 @@ def extract(
     try:
         return _execute(config, stop_event or threading.Event())
     finally:
-        _close_http_client()
+        _close_http_clients()

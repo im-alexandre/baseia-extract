@@ -16,7 +16,10 @@ def _load_dotenv(path: Path) -> None:
         if not line or line.startswith("#") or "=" not in line:
             continue
         key, value = line.split("=", 1)
-        os.environ.setdefault(key.strip(), value.strip().strip('"').strip("'"))
+        normalized_key = key.strip()
+        normalized_value = value.strip().strip('"').strip("'")
+        if not os.environ.get(normalized_key, "").strip():
+            os.environ[normalized_key] = normalized_value
 
 
 def _project_root() -> Path:
@@ -164,7 +167,7 @@ def get_settings() -> Settings:
         ),
         mineru_poll_interval_seconds=_float_env(
             "MINERU_POLL_INTERVAL_SECONDS",
-            1.0,
+            5.0,
         ),
         mineru_task_timeout_seconds=_float_env(
             "MINERU_TASK_TIMEOUT_SECONDS",
@@ -263,6 +266,10 @@ def get_settings() -> Settings:
         )
     if result.mineru_retries < 0:
         raise ValueError("MINERU_RETRIES não pode ser negativo.")
+    if result.mineru_poll_interval_seconds <= 0:
+        raise ValueError(
+            "MINERU_POLL_INTERVAL_SECONDS deve ser maior que zero."
+        )
     if result.mineru_http_max_connections < 1:
         raise ValueError("MINERU_HTTP_MAX_CONNECTIONS deve ser positivo.")
     if not (

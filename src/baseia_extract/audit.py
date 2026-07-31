@@ -726,6 +726,10 @@ def audit_extraction(
             for canonical_path, failure in (
                 (layout.ir_path, "canonical_ir_missing"),
                 (layout.structure_path, "canonical_structure_missing"),
+                (
+                    layout.metadata_path,
+                    "canonical_document_metadata_missing",
+                ),
                 (layout.markdown_path, "canonical_markdown_missing"),
                 (layout.render_path, "canonical_render_manifest_missing"),
             ):

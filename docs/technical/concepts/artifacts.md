@@ -31,8 +31,11 @@ nav_order: 570
     └── canonical/
         ├── document_ir.json
         ├── structure.json
+        ├── metadata.json
         ├── document.md
-        └── render.json
+        ├── render.json
+        ├── chunks/<política>.jsonl
+        └── ingest/<política>.json
 ```
 
 O arquivo original permanece diretamente navegável no diretório da coleção. O
@@ -89,6 +92,37 @@ No modo local, render escreve em disco. `pipeline --through promote` publica o
 manifesto integral; a publicação direta do stage render continua opt-in por
 `BASEIA_RENDER_PUBLISH_S3=true`.
 
+## Projeções irmãs
+
+`canonical/document_ir.json` é a representação física normalizada do
+`middle.json`: conserva sem reescrita semântica os blocos modelados, spans,
+geometria e blocos descartados. O `middle.json` continua sendo a evidência
+completa do MinerU; `preproc_blocks` não é serializado no IR.
+`content_list_v2`, quando presente nos intermediários MinerU, é reconciliado
+um-a-um com os blocos do IR por página; ele propõe tipo e ordem de leitura, mas
+não duplica texto nem substitui a evidência física.
+
+`structure.json` é a `DocumentStructure` derivada dessa reconciliação.
+`metadata.json` registra bibliografia, proveniência, confiança e revisão.
+`document.md` é uma projeção de leitura e os chunks são uma projeção de
+retrieval. Nenhuma dessas projeções é autoridade sobre as demais nem altera o
+IR. O `render.json` fixa hashes, fonte do `content_list_v2`, avisos e status.
+
+Uma decisão humana pode ser persistida fora dos canônicos em
+`.baseia/metadata-overrides.yaml`, indexada pelo caminho relativo do PDF. O
+render aplica essa decisão antes de gravar `metadata.json`, preserva autoria
+corporativa separadamente e registra o hash específico da decisão em
+`render.json`. Assim, a confirmação sobrevive a novos renders sem alterar o
+IR nem recorrer aos metadados nativos do PDF.
+
+Imagens permanecem nos intermediários e são referenciadas relativamente pelo
+Markdown. Para retrieval, a política pode levar assets para o payload com hash,
+MIME, HTML/LaTeX, caminho relativo e base64; ausências ficam explícitas. O
+render preserva equações inline/interline como LaTeX e tenta converter tabelas
+para Markdown a partir do PDF quando necessário.
+
+Veja também: [Ingestão e retrieval](ingestion.md).
+
 Anterior: [Catálogo e identidade](catalog.md)
-Próximo: [Guia de desenvolvimento](../development/guide.md)
+Próximo: [Ingestão e retrieval](ingestion.md)
 Operação relacionada: [Artefatos e saídas](../../operational/reference/artifacts.md)

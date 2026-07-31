@@ -40,13 +40,14 @@ específico deste repositório. Novas coleções usam `poe init` e
 - inventário e amostragem externos ao worktree;
 - extração MinerU idempotente;
 - render canônico;
+- revisão somente leitura de metadados canônicos;
+- chunks estruturais, embeddings OpenRouter e ingestão idempotente no Qdrant;
 - auditorias entre etapas;
 - promoção genérica para S3 e catálogo;
 - múltiplas URLs MinerU e stores externos.
 
 O CLI Poe ainda coordena as etapas. Temporal, estratégia promovível
-formalizada, chunking, embeddings, ingestão Qdrant e exportação de dumps de
-cliente permanecem futuros.
+formalizada e exportação de dumps de cliente permanecem futuros.
 
 Anterior: [Desenvolvimento catalogado](../cataloged-development/README.md)
 Próximo: [Promover a estratégia](promoting-the-strategy.md)

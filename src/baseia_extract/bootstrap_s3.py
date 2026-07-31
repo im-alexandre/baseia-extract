@@ -23,6 +23,7 @@ from .identity import (
     collection_uuid,
     normalize_relative_path,
 )
+from .inventory_selection import physical_path_mask
 from .layout import document_layout
 from .settings import settings
 from .storage import S3ArtifactStore, UploadRequest, file_sha256
@@ -191,6 +192,7 @@ def _build_snapshot(
     inventory_path: str | Path | None = None,
     scope: str = "",
     collections: Iterable[str] | str | None = None,
+    collection_path: str | Path | None = None,
 ) -> tuple[
     dict[str, Any],
     list[dict[str, Any]],
@@ -214,6 +216,15 @@ def _build_snapshot(
         )
     selected = inventory.copy()
     filters = _collection_filters(collections)
+    raw_collection_path = (
+        str(collection_path).strip()
+        if collection_path is not None
+        else ""
+    )
+    if filters and raw_collection_path:
+        raise ValueError(
+            "Use somente um seletor: --collection ou --path."
+        )
     if filters:
         available = {
             collection_slug(value)
@@ -228,6 +239,17 @@ def _build_snapshot(
             )
         selected = selected[
             selected["collection_slug"].map(collection_slug).isin(filters)
+        ].copy()
+    elif raw_collection_path:
+        if "path" not in selected.columns:
+            raise ValueError(
+                "O seletor --path exige a coluna path no inventário."
+            )
+        selected = selected.loc[
+            physical_path_mask(
+                selected["path"],
+                raw_collection_path,
+            )
         ].copy()
     if selected.empty:
         raise RuntimeError("Nenhum documento foi selecionado para promoção.")
@@ -376,11 +398,13 @@ def plan_s3(
     inventory_path: str | Path | None = None,
     scope: str = "",
     collections: Iterable[str] | str | None = None,
+    collection_path: str | Path | None = None,
 ) -> Path:
     snapshot, _, _, inventory_payload = _build_snapshot(
         inventory_path=inventory_path,
         scope=scope,
         collections=collections,
+        collection_path=collection_path,
     )
     return _write_snapshot_files(snapshot, inventory_payload)
 
@@ -518,6 +542,7 @@ def apply_s3(
     inventory_path: str | Path | None = None,
     scope: str = "",
     collections: Iterable[str] | str | None = None,
+    collection_path: str | Path | None = None,
     batch_size: int = 100,
     upload_batch_size: int = 2000,
 ) -> dict[str, Any]:
@@ -527,6 +552,7 @@ def apply_s3(
         inventory_path=inventory_path,
         scope=scope,
         collections=collections,
+        collection_path=collection_path,
     )
     manifest_path = _write_snapshot_files(snapshot, inventory_payload)
     state_path = manifest_path.parent / "promotion-state.json"
@@ -658,6 +684,7 @@ def promote_s3(
     inventory: str = "",
     scope: str = "",
     collection: Iterable[str] | str | None = None,
+    collection_path: str = "",
     batch_size: int = 100,
     upload_batch_size: int = 2000,
 ) -> Path | dict[str, Any]:
@@ -666,12 +693,14 @@ def promote_s3(
             inventory_path=inventory,
             scope=scope,
             collections=collection,
+            collection_path=collection_path,
         )
     if action == "apply":
         return apply_s3(
             inventory_path=inventory,
             scope=scope,
             collections=collection,
+            collection_path=collection_path,
             batch_size=batch_size,
             upload_batch_size=upload_batch_size,
         )

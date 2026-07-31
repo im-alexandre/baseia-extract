@@ -39,7 +39,7 @@ Cada item descreve:
 | `SEM-001` | [Cobrir tipos semânticos MinerU como `index`](semantic-block-types.md) | TODO |
 | `OPS-001` | [Formalizar a estratégia promovível](promotable-strategy.md) | TODO |
 | `ORC-001` | [Implementar orquestração de produção](production-orchestration.md) | TODO |
-| `ING-001` | [Implementar chunking, embeddings e Qdrant](qdrant-ingestion.md) | TODO |
+| `ING-001` | [Chunking, embeddings e Qdrant](qdrant-ingestion.md) | concluído (histórico) |
 
 Itens só devem ser adicionados ou alterados quando o usuário solicitar
 diretamente uma atualização documental, conforme `AGENTS.md`.

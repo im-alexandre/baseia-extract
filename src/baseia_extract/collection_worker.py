@@ -18,6 +18,7 @@ from .collection import (
     load_collection_config,
     rebuild_collection_inventory,
 )
+from .ingest import ingest
 from .render import render
 from .settings import settings
 from .tasks import run_extract
@@ -65,6 +66,23 @@ def _ensure_success(summary: dict[str, Any], *, stage: str) -> None:
             f"A auditoria de {stage} encontrou {failed} documento(s) "
             "com falha. Consulte o diretório de auditoria antes de continuar."
         )
+
+
+def _ingest_policy_path(
+    *,
+    config_path: Path,
+    configured: str,
+) -> Path | None:
+    value = (
+        os.getenv("BASEIA_INGEST_POLICY", "").strip()
+        or configured.strip()
+    )
+    if not value:
+        return None
+    path = Path(value).expanduser()
+    if not path.is_absolute():
+        path = config_path.parent / path
+    return path.resolve()
 
 
 def run(
@@ -144,6 +162,27 @@ def run(
         _ensure_success(render_audit, stage="render")
         results["render_audit"] = render_audit
 
+    policy_path = _ingest_policy_path(
+        config_path=config_path,
+        configured=loaded.config.strategy.ingest_policy,
+    )
+    should_ingest = target_index >= STAGES.index("ingest")
+    if should_ingest and policy_path is None:
+        raise RuntimeError(
+            "As etapas ingest e promote exigem strategy.ingest_policy "
+            "no YAML da coleção ou BASEIA_INGEST_POLICY. A promoção não "
+            "pode anteceder a ingestão vetorial."
+        )
+    if should_ingest:
+        results["ingest"] = ingest(
+            "apply",
+            policy_path=str(policy_path),
+            inventory=str(selected_inventory),
+            collection=loaded.config.name,
+            qdrant_url=loaded.config.services.qdrant_url,
+            workers=workers,
+        )
+
     if target_index >= STAGES.index("promote"):
         results["promotion"] = promote_s3(
             "apply",
@@ -184,11 +223,17 @@ def run(
         "completed_at": _now(),
         "results": results,
         "next_stage": {
-            "name": "ingest",
-            "available": False,
+            "name": (
+                "promote"
+                if through == "ingest"
+                else None
+            ),
+            "available": through == "ingest",
             "reason": (
-                "Chunking, embeddings e Qdrant ainda não fazem parte "
-                "deste pipeline."
+                "O próximo checkpoint publica os artefatos já "
+                "embeddados no S3/catálogo."
+                if through == "ingest"
+                else None
             ),
         },
     }

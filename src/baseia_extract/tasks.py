@@ -7,7 +7,7 @@ from typing import Any, Iterable
 
 import pandas as pd
 
-from . import mineru
+from . import mineru_sdk
 from .audit import audit_inventory
 from .reporting import reporter
 from .settings import settings
@@ -67,7 +67,6 @@ def _validated_sample_manifest(
 
 
 def _monitor_commands(
-    endpoint_registry: mineru.ApiEndpointRegistry,
     command_dir: Path,
     monitor_stop: threading.Event,
     graceful_stop: threading.Event,
@@ -90,65 +89,11 @@ def _monitor_commands(
                     )
                     continue
 
-                api_urls = payload.get("api_urls", [])
-                if not isinstance(api_urls, list):
-                    raise TypeError("Campo api_urls deve ser uma lista.")
-                workers_value = payload.get("workers")
-                workers = (
-                    int(workers_value)
-                    if workers_value is not None
-                    else None
+                raise ValueError(
+                    "O cliente oficial MinerU fixa o endpoint e deriva a "
+                    "concorrência de GET /health no início da execução; "
+                    f"o comando {action!r} não pode alterá-los em runtime."
                 )
-                if workers is not None and workers < 1:
-                    raise ValueError("workers deve ser maior que zero.")
-
-                if action == "scale":
-                    if workers is None:
-                        raise ValueError(
-                            "O comando scale exige workers."
-                        )
-                    updated = sum(
-                        endpoint_registry.set_initial_capacity(
-                            api_url,
-                            workers,
-                        )
-                        for api_url in api_urls
-                    )
-                    if updated != len(api_urls):
-                        raise LookupError(
-                            "Um ou mais endpoints não pertencem à "
-                            "extração ativa."
-                        )
-                    reporter.event(
-                        "Capacidade atualizada em runtime | "
-                        f"endpoints={updated} | workers={workers}",
-                        color="cyan",
-                    )
-                else:
-                    for api_url in api_urls:
-                        added = endpoint_registry.add(
-                            api_url,
-                            name=api_url,
-                            client_capacity=workers,
-                        )
-                        if (
-                            not added
-                            and workers is not None
-                            and not endpoint_registry.set_initial_capacity(
-                                api_url,
-                                workers,
-                            )
-                        ):
-                            raise LookupError(
-                                f"Endpoint não encontrado: {api_url}"
-                            )
-                    reporter.event(
-                        "Endpoint(s) adicionados à extração | "
-                        f"quantidade={len(api_urls)}",
-                        color="cyan",
-                    )
-
-                command_path.replace(processed_dir / command_path.name)
             except Exception as error:
                 reporter.event(
                     "ATENÇÃO: comando de extração inválido "
@@ -180,18 +125,7 @@ def run_extract(
             settings.sample_path,
         )
 
-    endpoint_registry = mineru.ApiEndpointRegistry(
-        settings.mineru_concurrency_per_endpoint
-    )
-
-    if mineru.pending_count(manifest_path) > 0:
-        for api_url in api_urls:
-            endpoint_registry.add(
-                api_url,
-                name=api_url,
-                client_capacity=workers or None,
-            )
-    else:
+    if mineru_sdk.pending_count(manifest_path) == 0:
         reporter.event(
             "Nenhum documento pendente; endpoints não serão consultados.",
             color="green",
@@ -207,7 +141,6 @@ def run_extract(
             monitor_thread = threading.Thread(
                 target=_monitor_commands,
                 args=(
-                    endpoint_registry,
                     command_dir,
                     monitor_stop,
                     graceful_stop,
@@ -217,8 +150,8 @@ def run_extract(
             )
             monitor_thread.start()
 
-        extraction_summary = mineru.extract(
-            endpoint_registry=endpoint_registry,
+        extraction_summary = mineru_sdk.extract(
+            api_urls=api_urls,
             manifest_path=manifest_path,
             stop_event=graceful_stop,
             run_id=run_id,

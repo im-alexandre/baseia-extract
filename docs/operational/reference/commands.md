@@ -67,7 +67,7 @@ Principais opções:
 | `--mode` | `ask` | `local`, `cataloged`, `production` |
 | `--resource-scope` | `ask` | `personal`, `operator`, `client` |
 | `--topology` | `ask` | `local`, `services`, `distributed` |
-| `--through` | `auto` | etapa-alvo: `inventory`, `extract`, `render`, `promote`; `ingest` falha enquanto Qdrant for futuro |
+| `--through` | `auto` | etapa-alvo: `inventory`, `extract`, `render`, `ingest`, `promote`; `ingest` aplica a política vetorial e antecede `promote` |
 | `--execute` | `auto` | `register` inventaria; `run` executa; `auto` executa adições a coleção existente e apenas registra uma nova |
 | `--prefix` | raiz lógica | coloca a fonte em um subdiretório lógico |
 | `--api-url` | configuração/ambiente | endpoint MinerU; repetível |
@@ -100,11 +100,12 @@ uv run poe pipeline `
 Ordem implementada:
 
 ```text
-inventory → extract → render → promote
+inventory → extract → render → ingest → promote
 ```
 
-Cada seta inclui uma auditoria. `ingest` é reconhecido apenas para produzir uma
-falha explícita: chunking, embeddings e Qdrant ainda não estão implementados.
+Cada seta inclui uma auditoria. `ingest` prepara chunks, gera embeddings via
+OpenRouter e reconcilia os pontos no Qdrant; `promote` exige que a política de
+ingestão esteja configurada.
 
 ## Adição rápida
 
@@ -131,11 +132,46 @@ uv run poe extract stop
 uv run poe recover-extract URL...
 uv run poe recover-extract URL... --apply
 uv run poe render --workers 3 --overwrite
+uv run poe review --path "D:/colecoes/artigos"
+uv run poe review --path "D:/colecoes/artigos" --format json
+uv run poe ingest prepare --policy "D:/politicas/embedding.yaml"
+uv run poe ingest apply --path "D:/colecoes/artigos"
 uv run poe audit
 ```
 
 No uso normal de coleções registradas, prefira `pipeline`; ele injeta paths e
 serviços da coleção no worker isolado.
+
+### Revisões de metadados
+
+`review` é somente leitura: seleciona o inventário existente e lista as
+revisões requeridas em `canonical/metadata.json`, sem reextrair, renderizar ou
+alterar artefatos. `--format table` é o default; `--format json` inclui o
+inventário, a quantidade selecionada, o alerta `missing_metadata` e os itens.
+Cada item tem `path`, `relative_path`, `document_id`, `attribute`, `candidate`,
+`status`, `reason` e `provenance`.
+
+### Ingestão vetorial
+
+```powershell
+uv run poe ingest prepare `
+    --path "D:/colecoes/artigos"
+
+uv run poe ingest apply `
+    --path "D:/colecoes/artigos" `
+    --qdrant-url "http://127.0.0.1:6333"
+```
+
+`prepare` usa somente os artefatos canônicos locais e grava chunks e sumários.
+`apply` também exige a credencial OpenRouter e envia embeddings, criando ou
+validando a coleção Qdrant e reconciliando pontos idempotentemente. `--path`
+seleciona documentos do inventário vigente sob aquele diretório; não recria o
+inventário nem reexecuta a extração.
+
+A política é resolvida nesta ordem: `--policy`; `strategy.ingest_policy` no
+`baseia.collection.yaml` sob `--path`; `<raiz>/.baseia/embedding.yaml`; e
+`BASEIA_INGEST_POLICY`. Para a task direta sem um YAML de coleção, a descoberta
+sob `--path` usa a política convencional antes do fallback global.
 
 ## Bootstrap legado
 

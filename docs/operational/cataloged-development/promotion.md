@@ -28,7 +28,7 @@ Registre fora do histórico de runs:
 - regras de render e versão;
 - critérios de auditoria aceitos;
 - topologia e requisitos de capacidade;
-- política de chunking/embedding quando essa etapa existir.
+- política de chunking/embedding e coleção Qdrant.
 
 ## Não promova automaticamente
 
@@ -44,8 +44,10 @@ No diretório limpo de entrega, execute um novo `poe init` em modo
 `production`. Isso recria inventário e manifestos. Depois valide localmente,
 promova o snapshot S3 e trate esse inventário S3 como autoridade.
 
-O campo `strategy` do YAML atual é um identificador mínimo (`name` e
-`version`). Um pacote de estratégia validado e promovível continua no
+O campo `strategy` do YAML atual inclui `name`, `version` e `ingest_policy`.
+Para produção, preserve o path ou copie a política YAML para a nova raiz e
+configure novas credenciais OpenRouter/Qdrant. Um pacote de estratégia
+validado e promovível mais amplo continua no
 [soft backlog](../../technical/backlog/promotable-strategy.md).
 
 Anterior: [Renderizar e publicar](rendering.md)

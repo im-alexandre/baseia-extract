@@ -66,6 +66,12 @@ src/baseia_extract/
 ├── bootstrap.py
 ├── bootstrap_s3.py
 ├── render.py
+├── content_list.py
+├── bibliographic.py
+├── review.py
+├── ingest_models.py
+├── chunking.py
+├── ingest.py
 ├── render_publish.py
 ├── semantic_models.py
 ├── structure.py
@@ -106,7 +112,13 @@ src/baseia_extract/
 | `ir/` | construção e validação da representação intermediária |
 | `structure.py` | inferência de estrutura documental |
 | `semantic_models.py` | modelos do conteúdo semântico renderizado |
-| `render.py` | geração local dos quatro artefatos canônicos |
+| `render.py` | geração local dos cinco artefatos canônicos |
+| `content_list.py` | reconcilia a evidência `content_list_v2` com blocos do IR |
+| `bibliographic.py` | deriva metadados bibliográficos e flags de revisão |
+| `review.py` | consulta read-only das revisões pendentes em `metadata.json` |
+| `ingest_models.py` | schema e validação da política YAML de ingestão |
+| `chunking.py` | projeção hierárquica do IR/estrutura em chunks determinísticos |
+| `ingest.py` | preparo local e aplicação OpenRouter/Qdrant idempotente |
 | `render_publish.py` | publicação S3 e conclusão catalogada do render |
 | `reporting.py` | eventos, progresso e relatórios operacionais |
 | `catalog/models.py` | modelo relacional SQLAlchemy |
@@ -198,6 +210,8 @@ publicado.
 | `extract` | `baseia_extract.tasks` → `extract_control` → `mineru` |
 | `recover-extract` | `baseia_extract.recover` |
 | `render` | `baseia_extract.render` |
+| `review` | `baseia_extract.review` |
+| `ingest` | `baseia_extract.ingest` |
 | `bootstrap` | `baseia_extract.bootstrap` |
 | `promote-s3` | `baseia_extract.bootstrap_s3` |
 | `catalog-api` | `baseia_extract.catalog.run` |

@@ -29,6 +29,7 @@ operacional de desenvolvimento.
 - opções de OCR/parsing;
 - versão e regras de render;
 - critérios de auditoria;
+- política de ingestão (chunking, embedding e coleção Qdrant);
 - requisitos de hardware e topologia;
 - nome e versão lógica da estratégia.
 
@@ -57,8 +58,18 @@ uv run poe init "E:/entregas/acme/documentos" `
     --execute register
 ```
 
-O YAML atual tem apenas `strategy.name` e `strategy.version`. O pacote
-declarativo e validado de estratégia está no
+Antes de executar `pipeline --through promote`, complete o YAML criado com a
+política aprovada e deixe as credenciais no ambiente do controlador:
+
+```yaml
+strategy:
+  name: acme-production
+  version: "1"
+  ingest_policy: .baseia/embedding.yaml
+```
+
+`strategy` já aceita `name`, `version` e `ingest_policy`; o pacote declarativo
+mais amplo e validado de estratégia está no
 [soft backlog](../../technical/backlog/promotable-strategy.md).
 
 Anterior: [Produção](README.md)

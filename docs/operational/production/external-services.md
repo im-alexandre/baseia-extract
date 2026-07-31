@@ -81,14 +81,36 @@ Somente a Catalog API acessa diretamente o PostgreSQL. Configure
 
 ## Qdrant
 
-`qdrant_url` existe como reserva no schema, mas chunking, embeddings, ingestão
-e exportação Qdrant ainda não são executados por `poe pipeline`.
+O Qdrant recebe os pontos da etapa `ingest`; ele pode estar no Compose ou ser
+externo. Para um endpoint externo, declare `services.qdrant_url` e
+`services.qdrant_api_key_env` no `baseia.collection.yaml` e mantenha o valor
+da credencial no ambiente:
+
+```yaml
+services:
+  qdrant_url: https://qdrant.example
+  qdrant_api_key_env: CLIENT_QDRANT_API_KEY
+```
+
+```powershell
+$env:QDRANT_URL = "https://qdrant.example"
+$env:CLIENT_QDRANT_API_KEY = "<api-key>"
+$env:OPENROUTER_API_KEY = "<api-key>"
+```
+
+A política YAML da coleção define o nome da coleção Qdrant e a variável da
+chave OpenRouter. A chave Qdrant é opcional quando o endpoint não exige
+autenticação. `QDRANT_URL` é o fallback quando a política e o YAML da coleção
+não definem a URL. `poe pipeline --through ingest` usa OpenRouter para gerar
+embeddings e reconcilia os pontos; `--through promote` não pode anteceder essa
+etapa. Confirme DNS/TLS e alcance de rede do controlador para os dois serviços.
 
 ## Checklist
 
 - DNS/TLS e rede privada;
 - catálogo e S3 acessíveis pelo controlador;
 - result store acessível pelos hosts GPU e pelo cliente;
+- OpenRouter e Qdrant acessíveis pelo controlador quando houver ingestão;
 - variáveis de segredo presentes no processo;
 - relógios sincronizados;
 - timeouts e pools dimensionados;

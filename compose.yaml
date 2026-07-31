@@ -90,6 +90,25 @@ services:
       timeout: 5s
       retries: 20
 
+  qdrant:
+    image: qdrant/qdrant:${QDRANT_VERSION:-v1.18.3}
+    restart: unless-stopped
+    profiles:
+      - catalog
+      - production
+    ports:
+      - "${BASEIA_BIND_HOST:-127.0.0.1}:${QDRANT_HTTP_PORT:-6333}:6333"
+      - "${BASEIA_BIND_HOST:-127.0.0.1}:${QDRANT_GRPC_PORT:-6334}:6334"
+    volumes:
+      - qdrant-data:/qdrant/storage
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - timeout 3 bash -c '</dev/tcp/127.0.0.1/6333'
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
   mineru-api:
     image: baseia/mineru-api:${MINERU_IMAGE_TAG:-3.4.4}
     restart: unless-stopped
@@ -184,6 +203,7 @@ services:
 volumes:
   postgres-data:
   seaweed-data:
+  qdrant-data:
   mineru-models:
   mineru-results:
   temporal-postgres-data:

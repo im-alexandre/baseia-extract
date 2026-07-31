@@ -45,8 +45,18 @@ def _kind(relative: str) -> tuple[str, bool]:
         return "canonical_document_ir", True
     if relative == "canonical/structure.json":
         return "canonical_structure", True
+    if relative == "canonical/metadata.json":
+        return "canonical_document_metadata", True
     if relative == "canonical/render.json":
         return "canonical_render_manifest", True
+    if relative.startswith("canonical/chunks/") and relative.endswith(
+        ".jsonl"
+    ):
+        return "canonical_chunks", True
+    if relative.startswith("canonical/ingest/") and relative.endswith(
+        ".json"
+    ):
+        return "canonical_ingest_manifest", True
     if relative.endswith("_middle.json"):
         return "mineru_middle_json", False
     if relative.endswith(("_content_list.json", "_content_list_v2.json")):

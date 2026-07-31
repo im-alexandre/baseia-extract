@@ -19,7 +19,8 @@ nav_order: 420
 
 O projeto lê variáveis do processo. `.env` é a configuração de conveniência
 usada pelas ferramentas do projeto e pelo Compose. Uma variável definida no
-processo atual pode prevalecer conforme a ferramenta que iniciar o comando.
+processo atual e não vazia prevalece; uma variável herdada como string vazia é
+preenchida pelo valor não vazio do `.env`.
 
 Use [.env.example](../../../.env.example) como referência executável. Seus
 segredos e endpoints são apenas defaults de desenvolvimento.
@@ -132,8 +133,98 @@ usado pelo container MinerU.
 `--workers 3` controla o processamento local do render. As duas concorrências
 de publicação são limites diferentes.
 
+Decisões humanas de autoria ficam em
+`<raiz>/.baseia/metadata-overrides.yaml`, separadas dos artefatos canônicos.
+O arquivo usa `schema_version: 1` e um mapa `documents` indexado pelo caminho
+relativo POSIX do PDF. Cada entrada confirma `authors` ou declara
+`no_personal_author: true`; `corporate_authors`, `source` e `note` preservam o
+contexto da decisão. O render incorpora a decisão em `metadata.json` e seu
+hash em `render.json`.
+
 A taxonomia desses limites ainda precisa ser unificada; consulte o
 [TODO técnico de concorrência](../../technical/backlog/concurrency-model.md).
+
+## Ingestão, OpenRouter e Qdrant
+
+| Variável | Default | Papel |
+| --- | --- | --- |
+| `BASEIA_INGEST_POLICY` | vazio | fallback global para o YAML de política |
+| `OPENROUTER_API_KEY` | vazio | credencial usada pela política para embeddings |
+| `QDRANT_URL` | `http://127.0.0.1:6333` | endpoint Qdrant usado quando a política e `--qdrant-url` não o sobrescrevem |
+| `QDRANT_API_KEY` | vazio | credencial Qdrant, se o YAML a referenciar |
+| `QDRANT_VERSION` | `v1.18.3` | imagem Qdrant do Compose |
+| `QDRANT_HTTP_PORT` | `6333` | porta HTTP publicada pelo Compose |
+| `QDRANT_GRPC_PORT` | `6334` | porta gRPC publicada pelo Compose |
+
+Uma política é YAML versionado. Ela define a coleção Qdrant, splitter, blocos
+e o provedor de embedding. A precedência é `--policy`,
+`strategy.ingest_policy`, `<raiz>/.baseia/embedding.yaml` e
+`BASEIA_INGEST_POLICY`. A estratégia de uma coleção usa
+`strategy.ingest_policy`; `--path` permite descobrir o YAML da própria raiz.
+
+O schema oferece `openai/text-embedding-3-small` com `1536` dimensões como
+valores da política de exemplo/schema. Não trate esses valores como um default
+universal: o YAML selecionado é a autoridade e o retorno do provedor precisa
+ter exatamente as dimensões declaradas.
+
+Exemplo completo para uma coleção contextual:
+
+```yaml
+schema_version: 1
+name: artigos-contextual
+version: "1"
+contextual_prefix: true
+include_title_payload: true
+include_abstract_payload: true
+include_references_payload: true
+base64_assets: true
+splitter:
+  kind: recursive_character
+  tokenizer: cl100k_base
+  chunk_size: 700
+  chunk_overlap: 100
+embedding:
+  provider: openrouter
+  model: openai/text-embedding-3-small
+  dimensions: 1536
+  base_url: https://openrouter.ai/api/v1
+  api_key_env: OPENROUTER_API_KEY
+qdrant:
+  url: ""
+  api_key_env: QDRANT_API_KEY
+  collection: artigos-contextual
+  distance: cosine
+  on_disk_payload: true
+  replace_documents: true
+blocks:
+  title: {action: payload}
+  body: {action: embed}
+  list: {action: embed}
+  reference: {action: payload}
+  abstract: {action: payload}
+  metadata: {action: payload}
+  equation: {action: placeholder, placeholder: "[EQUAÇÃO]"}
+  figure: {action: placeholder, placeholder: "[FIGURA]"}
+  table: {action: placeholder, placeholder: "[TABELA]"}
+  chart: {action: placeholder, placeholder: "[GRÁFICO]"}
+  code: {action: embed}
+  aside: {action: payload}
+  other: {action: embed}
+```
+
+Todos os papéis devem estar declarados. As ações têm estes efeitos:
+
+| Ação | Texto de embedding | Payload |
+| --- | --- | --- |
+| `embed` | inclui o texto | inclui os metadados do bloco |
+| `payload` | não inclui | preserva o bloco para hidratação |
+| `placeholder` | inclui placeholder e legenda | preserva asset, HTML/LaTeX e base64 configurado |
+| `exclude` | não inclui | não preserva o bloco |
+
+O conteúdo interno de tabelas não entra no embedding quando elas usam
+`placeholder`; o payload mantém a representação recuperável. O Markdown
+canônico integral e metadados documentais extensos ficam apenas no payload do
+primeiro chunk, evitando sua duplicação em todos os pontos.
 
 ## Catálogo e PostgreSQL
 

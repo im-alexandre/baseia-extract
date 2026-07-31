@@ -48,6 +48,26 @@ Inspecione o Markdown canônico e os relatórios. Uma amostra não é promovida.
 
 ## 3. Executar e promover o conjunto completo
 
+Antes da promoção, declare no `baseia.collection.yaml` a política que será
+reproduzida e disponibilize as credenciais exigidas por ela:
+
+```yaml
+strategy:
+  name: acme-production
+  version: "1"
+  ingest_policy: .baseia/embedding.yaml
+```
+
+```powershell
+$env:OPENROUTER_API_KEY = "<api-key>"
+# Somente quando o endpoint Qdrant exigir autenticação:
+$env:QDRANT_API_KEY = "<qdrant-api-key>"
+```
+
+O YAML da política escolhe a coleção Qdrant e os nomes das variáveis de
+credencial. Confirme também `services.qdrant_url` no YAML da coleção, ou
+forneça `QDRANT_URL` como fallback.
+
 ```powershell
 uv run poe pipeline `
     --collection "Acme Produção" `
@@ -62,15 +82,17 @@ O pipeline:
 3. audita intermediários;
 4. renderiza canônicos;
 5. audita o render;
-6. publica objetos e snapshot;
-7. ativa o snapshot no escopo da coleção.
+6. prepara chunks, gera embeddings OpenRouter e reconcilia pontos Qdrant;
+7. publica objetos e snapshot;
+8. ativa o snapshot no escopo da coleção.
 
 ## Autoridade e limite atual
 
 O snapshot ativo do S3/catálogo é a autoridade publicada. Paths absolutos e
 histórico de desenvolvimento não entram nele.
 
-Hoje, o comando integrado promove o snapshot depois de extract e render. O
+Hoje, o comando integrado promove o snapshot depois de extract, render e
+ingest. O
 handoff anterior ao processamento — subir apenas PDFs brutos, inventariar o
 S3 e abandonar imediatamente o inventário local — ainda exige uma separação
 explícita de snapshots e está no

@@ -41,6 +41,7 @@ D:/colecoes/artigos/
     └── canonical/
         ├── document_ir.json
         ├── structure.json
+        ├── metadata.json
         ├── document.md
         └── render.json
 ```
@@ -153,7 +154,41 @@ Get-ChildItem "D:/colecoes/artigos" -Recurse -Filter "document.md"
 O resumo deve indicar zero falhas e a mesma contagem de páginas esperadas e
 extraídas.
 
-## 7. Incorpore rapidamente um novo PDF
+## 7. Revise os metadados pendentes
+
+```powershell
+uv run poe review --path "D:/colecoes/artigos"
+```
+
+O comando não altera a coleção. Ele mostra candidatos que o render marcou para
+revisão e avisa quantos documentos selecionados ainda não têm `metadata.json`.
+
+## 8. Prepare a ingestão local
+
+Após concluir a revisão, coloque a política aprovada em
+`D:/colecoes/artigos/.baseia/embedding.yaml` e prepare os chunks sem chamar
+serviços externos:
+
+```powershell
+uv run poe ingest prepare --path "D:/colecoes/artigos"
+```
+
+O resultado inclui `canonical/chunks/<perfil>.jsonl`,
+`canonical/ingest/<perfil>.json` e um sumário em `.baseia/ingest/`.
+
+Somente depois da revisão, para gerar embeddings e alterar o Qdrant, informe
+as credenciais e use `apply` (ou execute o pipeline até `ingest`):
+
+```powershell
+$env:OPENROUTER_API_KEY = "<api-key>"
+$env:QDRANT_URL = "http://127.0.0.1:6333"
+uv run poe ingest apply --path "D:/colecoes/artigos"
+```
+
+`apply` chama um serviço pago de embeddings e faz upsert/reconciliação no
+Qdrant; não é uma operação somente local.
+
+## 9. Incorpore rapidamente um novo PDF
 
 Quando chegar um novo paper:
 

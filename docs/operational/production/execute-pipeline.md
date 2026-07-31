@@ -23,7 +23,21 @@ nav_order: 340
 - catálogo e S3 canônico saudáveis;
 - um ou mais endpoints MinerU;
 - result store acessível pelo cliente;
-- estratégia e versões fixadas.
+- estratégia e versões fixadas;
+- `strategy.ingest_policy` configurada no `baseia.collection.yaml`;
+- `OPENROUTER_API_KEY` disponível no processo do controlador;
+- endpoint Qdrant acessível e, quando ele exigir autenticação, a credencial
+  declarada pela política/serviço disponível.
+
+`--through promote` inclui a ingestão vetorial. Antes de usá-lo, a estratégia
+da coleção precisa referenciar uma política YAML existente:
+
+```yaml
+strategy:
+  name: acme-production
+  version: "1"
+  ingest_policy: .baseia/embedding.yaml
+```
 
 ## Executar
 
@@ -44,8 +58,9 @@ uv run poe pipeline `
     --api-url "https://gpu-b.example"
 ```
 
-`inventory`, `extract`, `render` e `promote` são checkpoints. Escolher uma
-etapa executa ou reconcilia todas as anteriores. O relatório final fica em
+`inventory`, `extract`, `render`, `ingest` e `promote` são checkpoints.
+Escolher uma etapa executa ou reconcilia todas as anteriores. A ingestão chama
+OpenRouter e altera o Qdrant configurado; o relatório final fica em
 `.baseia/pipeline/latest.json`.
 
 ## Retomar

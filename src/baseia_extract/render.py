@@ -17,18 +17,26 @@ from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from json import JSONDecodeError
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
-import pandas as pd
-
+from .bibliographic import derive_bibliographic_metadata
+from .content_list import reconcile_content_list_v2
 from .document_manifest import write_document_manifest
+from .inventory_selection import select_inventory_rows
 from .ir import DocumentIR, build_document_ir, validate_document_ir
 from .layout import DocumentLayout, document_layout
+from .metadata_overrides import (
+    MetadataOverrides,
+    ResolvedMetadataOverride,
+    load_metadata_overrides,
+    resolve_metadata_override,
+)
 from .settings import settings
+from .storage import file_sha256
 from .structure import enrich_document, validate_structure
 
-RENDERER_VERSION = 2
+RENDERER_VERSION = 5
 RENDER_SOURCE = "poe_render"
 
 
@@ -877,9 +885,80 @@ def _middle_paths(layout: DocumentLayout) -> list[Path]:
     )
 
 
+def _content_list_v2_paths(layout: DocumentLayout) -> list[Path]:
+    directory = layout.mineru_dir
+    if not directory.is_dir():
+        return []
+    return sorted(
+        path
+        for path in directory.rglob("*_content_list_v2.json")
+        if path.is_file() and path.stat().st_size
+    )
+
+
+def _collection_root_for_row(
+    row: dict[str, Any],
+    layout: DocumentLayout,
+) -> tuple[Path, str]:
+    """Deriva a raiz local a partir do caminho físico e relativo do PDF."""
+    raw_relative = str(
+        row.get("collection_relative_path")
+        or row.get("relative_path")
+        or row.get("filename")
+        or ""
+    )
+    relative_path = PurePosixPath(raw_relative.replace("\\", "/"))
+    if (
+        not raw_relative.strip()
+        or relative_path.is_absolute()
+        or ".." in relative_path.parts
+        or relative_path.suffix.casefold() != ".pdf"
+    ):
+        raise ValueError(
+            f"Caminho relativo de coleção inválido: {raw_relative!r}"
+        )
+    collection_root = layout.pdf_path.resolve()
+    for _ in relative_path.parts:
+        collection_root = collection_root.parent
+    expected_pdf = (
+        collection_root.joinpath(*relative_path.parts).resolve()
+    )
+    if expected_pdf != layout.pdf_path.resolve():
+        raise ValueError(
+            "Caminho físico não corresponde ao caminho relativo da coleção: "
+            f"{layout.pdf_path} != {relative_path.as_posix()}"
+        )
+    return collection_root, relative_path.as_posix()
+
+
+def _metadata_overrides_for_rows(
+    rows: list[dict[str, Any]],
+) -> list[ResolvedMetadataOverride | None]:
+    """Carrega cada arquivo de decisões uma vez antes do render concorrente."""
+    loaded: dict[Path, tuple[MetadataOverrides, Path, str | None]] = {}
+    resolved: list[ResolvedMetadataOverride | None] = []
+    for row in rows:
+        layout = document_layout(row)
+        root, relative_path = _collection_root_for_row(row, layout)
+        if root not in loaded:
+            loaded[root] = load_metadata_overrides(root)
+        overrides, source_path, source_file_sha256 = loaded[root]
+        resolved.append(
+            resolve_metadata_override(
+                overrides,
+                relative_path=relative_path,
+                source_path=source_path,
+                source_file_sha256=source_file_sha256,
+            )
+        )
+    return resolved
+
+
 def _existing_is_current(
     layout: DocumentLayout,
     middle_path: Path,
+    content_list_v2_path: Path | None,
+    metadata_override: ResolvedMetadataOverride | None,
 ) -> bool:
     ir_path = layout.ir_path
     structure_path = layout.structure_path
@@ -887,24 +966,60 @@ def _existing_is_current(
     render_path = layout.render_path
     if not all(
         path.is_file()
-        for path in (ir_path, structure_path, markdown_path, render_path)
+        for path in (
+            ir_path,
+            structure_path,
+            layout.metadata_path,
+            markdown_path,
+            render_path,
+        )
     ):
         return False
     try:
         ir = DocumentIR.model_validate_json(ir_path.read_text(encoding="utf-8"))
         render_metadata = json.loads(render_path.read_text(encoding="utf-8"))
+        expected_content_list_sha256 = (
+            hashlib.sha256(content_list_v2_path.read_bytes()).hexdigest()
+            if content_list_v2_path is not None
+            else None
+        )
+        expected_output_hashes = {
+            path.relative_to(layout.document_dir).as_posix(): file_sha256(
+                path
+            )
+            for path in (
+                ir_path,
+                structure_path,
+                layout.metadata_path,
+                markdown_path,
+            )
+        }
         return (
             ir.middle_sha256
             == hashlib.sha256(middle_path.read_bytes()).hexdigest()
             and render_metadata.get("render_source") == RENDER_SOURCE
             and render_metadata.get("renderer_version") == RENDERER_VERSION
+            and render_metadata.get("content_list_v2_sha256")
+            == expected_content_list_sha256
+            and render_metadata.get("metadata_override_sha256")
+            == (
+                metadata_override.decision_sha256
+                if metadata_override is not None
+                else None
+            )
+            and render_metadata.get("output_hashes")
+            == expected_output_hashes
             and not render_metadata.get("missing_assets")
         )
     except Exception:
         return False
 
 
-def _render_one(row: dict[str, Any], overwrite: bool) -> dict[str, Any]:
+def _render_one(
+    row: dict[str, Any],
+    overwrite: bool,
+    metadata_override: ResolvedMetadataOverride | None,
+) -> dict[str, Any]:
     document_id = str(row["document_id"])
     layout = document_layout(row)
     middle_paths = _middle_paths(layout)
@@ -917,7 +1032,25 @@ def _render_one(row: dict[str, Any], overwrite: bool) -> dict[str, Any]:
             "reason": f"middle.json ambíguo ({len(middle_paths)} encontrados)",
         }
     middle_path = middle_paths[0]
-    if not overwrite and _existing_is_current(layout, middle_path):
+    content_list_v2_paths = _content_list_v2_paths(layout)
+    if len(content_list_v2_paths) > 1:
+        return {
+            "document_id": document_id,
+            "status": "failed",
+            "reason": (
+                "content_list_v2.json ambíguo "
+                f"({len(content_list_v2_paths)} encontrados)"
+            ),
+        }
+    content_list_v2_path = (
+        content_list_v2_paths[0] if content_list_v2_paths else None
+    )
+    if not overwrite and _existing_is_current(
+        layout,
+        middle_path,
+        content_list_v2_path,
+        metadata_override,
+    ):
         return {"document_id": document_id, "status": "skipped", "middle_path": str(middle_path)}
 
     try:
@@ -931,13 +1064,35 @@ def _render_one(row: dict[str, Any], overwrite: bool) -> dict[str, Any]:
         if not ir_validation["valid"]:
             raise ValueError(f"IR inválido: {ir_validation['checks']}")
 
-        structure = enrich_document(document)
+        reconciliation = (
+            reconcile_content_list_v2(document, content_list_v2_path)
+            if content_list_v2_path is not None
+            else None
+        )
+        structure = enrich_document(
+            document,
+            content_list_v2=reconciliation,
+        )
         structure_validation = validate_structure(document, structure)
         if not structure_validation["valid"]:
             raise ValueError(f"Estrutura inválida: {structure_validation['checks']}")
 
         markdown_path = layout.markdown_path
         render_warnings: list[str] = []
+        if reconciliation is None:
+            render_warnings.append(
+                "content_list_v2 ausente; ordem física do middle.json usada"
+            )
+        elif not reconciliation["page_count_matches_ir"]:
+            render_warnings.append(
+                "content_list_v2 e middle.json divergem na contagem de "
+                "páginas; ordem e papéis do v2 não foram aplicados"
+            )
+        elif reconciliation["counts"].get("ambiguous", 0):
+            render_warnings.append(
+                "associações ambíguas do content_list_v2 foram preservadas "
+                "apenas como evidência"
+            )
         markdown, missing_assets = _render_markdown(
             document,
             structure,
@@ -964,6 +1119,38 @@ def _render_one(row: dict[str, Any], overwrite: bool) -> dict[str, Any]:
             layout.structure_path,
             structure.model_dump(mode="json", exclude_none=True),
         )
+        bibliographic = derive_bibliographic_metadata(
+            document,
+            structure,
+            content_list_v2=content_list_v2_path,
+            author_override=(
+                metadata_override.decision
+                if metadata_override is not None
+                else None
+            ),
+        )
+        author_review = (
+            bibliographic.attributes.get("review", {}).get("authors")
+        )
+        if metadata_override is not None:
+            render_warnings.append(
+                "decisão de autoria confirmada por metadata-overrides.yaml"
+            )
+        elif not bibliographic.authors:
+            render_warnings.append(
+                "autores não identificados no conteúdo; revisão requerida"
+            )
+        elif (
+            isinstance(author_review, dict)
+            and author_review.get("required") is True
+        ):
+            render_warnings.append(
+                "autores inferidos do front matter; revisão requerida"
+            )
+        _atomic_write_json(
+            layout.metadata_path,
+            bibliographic.model_dump(mode="json", exclude_none=True),
+        )
         _atomic_write_text(markdown_path, markdown)
         status = "incomplete" if missing_assets else "ok"
         _atomic_write_json(
@@ -971,13 +1158,54 @@ def _render_one(row: dict[str, Any], overwrite: bool) -> dict[str, Any]:
             {
                 "document_id": document_id,
                 "middle_sha256": document.middle_sha256,
+                "content_list_v2_sha256": (
+                    reconciliation["source"]["sha256"]
+                    if reconciliation is not None
+                    else None
+                ),
+                "metadata_override": (
+                    {
+                        "source": ".baseia/metadata-overrides.yaml",
+                        "document_path": metadata_override.path,
+                    }
+                    if metadata_override is not None
+                    else None
+                ),
+                "metadata_override_sha256": (
+                    metadata_override.decision_sha256
+                    if metadata_override is not None
+                    else None
+                ),
                 "source_pdf_sha256": document.source_pdf_sha256,
                 "render_source": RENDER_SOURCE,
                 "renderer_version": RENDERER_VERSION,
                 "included_discarded_block_ids": included_discarded_ids,
+                "content_list_v2": (
+                    {
+                        "source": reconciliation["source"],
+                        "page_count_matches_ir": reconciliation[
+                            "page_count_matches_ir"
+                        ],
+                        "counts": reconciliation["counts"],
+                        "confidence": reconciliation["confidence"],
+                    }
+                    if reconciliation is not None
+                    else None
+                ),
                 "status": status,
                 "missing_assets": missing_assets,
                 "warnings": render_warnings,
+                "output_hashes": {
+                    path.relative_to(
+                        layout.document_dir
+                    ).as_posix(): file_sha256(path)
+                    for path in (
+                        layout.ir_path,
+                        layout.structure_path,
+                        layout.metadata_path,
+                        markdown_path,
+                    )
+                },
             },
         )
         stage_runs: list[dict[str, Any]] = []
@@ -1013,6 +1241,15 @@ def _render_one(row: dict[str, Any], overwrite: bool) -> dict[str, Any]:
             "render_source": RENDER_SOURCE,
             "ir_validation": ir_validation,
             "structure_validation": structure_validation,
+            "content_list_v2": (
+                {
+                    "source": reconciliation["source"],
+                    "counts": reconciliation["counts"],
+                    "confidence": reconciliation["confidence"],
+                }
+                if reconciliation is not None
+                else None
+            ),
             "missing_assets": missing_assets,
             "warnings": render_warnings,
         }
@@ -1044,6 +1281,8 @@ def render(
     workers: int = 3,
     overwrite: bool = False,
     inventory_path: str | Path | None = None,
+    collection: str = "",
+    collection_path: str = "",
 ) -> dict[str, Any]:
     """Gera IR, estrutura e Markdown para documentos ``ok`` do inventário.
 
@@ -1052,36 +1291,29 @@ def render(
     """
     source_path = (
         Path(inventory_path).expanduser().resolve()
-        if inventory_path is not None
+        if (
+            inventory_path is not None
+            and str(inventory_path).strip()
+        )
         else settings.inventory_path
     )
-    if not source_path.is_file():
-        raise FileNotFoundError(f"Inventário ausente: {source_path}")
-    inventory = pd.read_csv(
+    rows = select_inventory_rows(
         source_path,
-        dtype=str,
-        keep_default_na=False,
+        collection=collection,
+        collection_path=collection_path,
     )
-    required = {
-        "collection",
-        "collection_slug",
-        "collection_relative_path",
-        "document_id",
-        "revision_id",
-        "relative_path",
-        "status",
-        "sha256",
-    }
-    missing_columns = required - set(inventory.columns)
-    if missing_columns:
-        raise ValueError(f"Inventário sem colunas obrigatórias: {sorted(missing_columns)}")
-    rows = inventory.loc[inventory["status"].eq("ok")].to_dict("records")
+    metadata_overrides = _metadata_overrides_for_rows(rows)
     resolved_workers = workers or max(1, min(14, os.cpu_count() or 4))
 
     results: list[dict[str, Any] | None] = [None] * len(rows)
     with ThreadPoolExecutor(max_workers=resolved_workers) as executor:
         futures = {
-            executor.submit(_render_one, row, overwrite): index
+            executor.submit(
+                _render_one,
+                row,
+                overwrite,
+                metadata_overrides[index],
+            ): index
             for index, row in enumerate(rows)
         }
         for future in as_completed(futures):

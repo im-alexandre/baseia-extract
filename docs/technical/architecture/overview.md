@@ -64,7 +64,7 @@ flowchart TB
     API["Catalog API"]
     PG["PostgreSQL"]
     T["Temporal"]
-    Q["Qdrant"]
+    Q["Ingest: chunks, embeddings e Qdrant"]
 
     CLI --> GPU
     GPU --> RS3
@@ -75,8 +75,8 @@ flowchart TB
     CLI --> API
     API --> PG
     GPU --> API
+    R --> Q
     T -. "workflows futuros" .-> API
-    R -. "chunking/ingest futuros" .-> Q
 ```
 
 O result store pode ser o mesmo S3 canônico ou outro endpoint. A referência da
@@ -93,9 +93,11 @@ do perfil da coleção.
 | S3 canônico | PDFs, artefatos e snapshots publicados | atuar como fila ou lock |
 | result store | intermediários persistidos pelo MinerU | definir identidade |
 | MinerU | parsing e intermediários | produzir Markdown canônico |
-| Render | IR, estrutura e canônicos | decidir identidade |
+| Render | IR físico normalizado, estrutura, metadados e projeções canônicas | decidir identidade |
+| Ingest | chunks por política, embeddings e reconciliação Qdrant | redefinir IR/estrutura ou identidade |
 | Poe CLI | coordenação atual | fingir orquestração durável |
-| Temporal/Qdrant | infraestrutura/etapas futuras | participar do pipeline atual |
+| Qdrant | índice vetorial materializado por política | substituir os artefatos canônicos |
+| Temporal | infraestrutura futura | participar do pipeline atual |
 
 ## Modos, escopos e topologias
 
@@ -104,7 +106,7 @@ Esses eixos são relacionados, mas independentes:
 - modo: `local`, `cataloged`, `production`;
 - escopo de recursos: `personal`, `operator`, `client`;
 - topologia: `local`, `services`, `distributed`;
-- etapa-alvo: `inventory`, `extract`, `render`, `promote`.
+- etapa-alvo: `inventory`, `extract`, `render`, `ingest`, `promote`.
 
 Assim, uma coleção pessoal pode usar serviços distribuídos e uma consultoria
 pode executar localmente. Um futuro conceito de workspace agrupará defaults
@@ -127,7 +129,9 @@ recebe várias URLs. A taxonomia dos limites ainda está no
 - payloads precedem manifests e conclusão;
 - render é o único produtor do Markdown canônico;
 - produção recria registros;
-- Qdrant e Temporal não são simulados enquanto forem futuros.
+- Qdrant é alimentado apenas por uma política de ingestão explícita; políticas
+  incompatíveis usam coleções físicas distintas.
+- Temporal não é simulado enquanto for futuro.
 
 Anterior: [Estrutura do repositório](../repository-structure.md)
 Próximo: [Transações e concorrência](catalog.md)

@@ -30,7 +30,7 @@ from .settings import settings
 
 CONFIG_FILENAME = "baseia.collection.yaml"
 SCHEMA_VERSION = 1
-STAGES = ("inventory", "extract", "render", "promote")
+STAGES = ("inventory", "extract", "render", "ingest", "promote")
 console = Console()
 
 
@@ -103,6 +103,7 @@ class ServiceProfile(BaseModel):
     s3_access_key_env: str = "AWS_ACCESS_KEY_ID"
     s3_secret_key_env: str = "AWS_SECRET_ACCESS_KEY"
     qdrant_url: str = ""
+    qdrant_api_key_env: str = "QDRANT_API_KEY"
 
     @field_validator("mineru_api_urls")
     @classmethod
@@ -144,6 +145,7 @@ class StrategyProfile(BaseModel):
 
     name: str = "default"
     version: str = "1"
+    ingest_policy: str = ""
 
 
 class CollectionConfig(BaseModel):
@@ -162,9 +164,13 @@ class CollectionConfig(BaseModel):
         "client",
     ] = "personal"
     topology: Literal["local", "services", "distributed"] = "local"
-    target_stage: Literal["inventory", "extract", "render", "promote"] = (
-        "inventory"
-    )
+    target_stage: Literal[
+        "inventory",
+        "extract",
+        "render",
+        "ingest",
+        "promote",
+    ] = "inventory"
     workers: int = Field(default=3, ge=1)
     state_dir: str = ".baseia"
     sources: list[CollectionSource] = Field(min_length=1)
@@ -376,6 +382,7 @@ def _service_defaults(api_urls: Iterable[str] = ()) -> ServiceProfile:
         ),
         s3_bucket=os.getenv("BASEIA_S3_BUCKET", "baseia"),
         s3_region=os.getenv("AWS_DEFAULT_REGION", "us-east-1"),
+        qdrant_url=os.getenv("QDRANT_URL", ""),
     )
 
 
@@ -632,6 +639,7 @@ def _status(
             for path in (
                 layout.ir_path,
                 layout.structure_path,
+                layout.metadata_path,
                 layout.markdown_path,
                 layout.render_path,
             )
@@ -1284,11 +1292,6 @@ def _stage_choice(
 ) -> str:
     if value == "auto":
         return default
-    if value == "ingest":
-        raise NotImplementedError(
-            "A etapa de ingestão Qdrant ainda não está implementada. "
-            "O pipeline disponível termina em `promote`."
-        )
     if value not in STAGES:
         if interactive:
             return Prompt.ask(
@@ -1333,6 +1336,8 @@ def _worker_environment(
         environment["BASEIA_S3_BUCKET"] = services.s3_bucket
     if services.s3_region:
         environment["AWS_DEFAULT_REGION"] = services.s3_region
+    if services.qdrant_url:
+        environment["QDRANT_URL"] = services.qdrant_url
     result_endpoint = (
         services.mineru_result_s3_endpoint_url
         or services.s3_endpoint_url
@@ -1361,6 +1366,7 @@ def _worker_environment(
         "MINERU_RESULT_S3_SECRET_ACCESS_KEY": (
             services.mineru_result_s3_secret_key_env
         ),
+        "QDRANT_API_KEY": services.qdrant_api_key_env,
     }
     for destination, source in secret_mappings.items():
         if source and environment.get(source):

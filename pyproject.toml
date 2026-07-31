@@ -7,7 +7,7 @@ name = "baseia-extract"
 version = "0.1.0"
 description = "Camada de extração documental do BaseIA"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.12,<3.14"
 dependencies = [
   "alembic>=1.14,<2",
   "aiofiles",
@@ -34,9 +34,26 @@ dependencies = [
   "tenacity>=9,<10",
   "tabulate>=0.9,<1",
   "tqdm",
+  "torch==2.13.0",
+  "torchvision==0.28.0",
   "unpywall",
   "uvicorn[standard]>=0.34,<1",
+  "mineru[pipeline]==3.4.4",
+  "langchain-qdrant>=1.1.0",
+  "langchain-openai>=1.4.1",
+  "langchain-text-splitters>=1.1.2",
+  "qdrant-client>=1.18.0",
+  "beautifulsoup4>=4.15.0",
 ]
+
+[[tool.uv.index]]
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu130" }
+torchvision = { index = "pytorch-cu130" }
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/baseia_extract"]
@@ -84,23 +101,24 @@ cmd = "alembic upgrade head"
 
 [tool.poe.tasks.promote-s3]
 help = "Publica um inventário validado como snapshot canônico no S3 e no catálogo. Use plan para conferir o contrato e apply para efetivar a promoção."
-script = "baseia_extract.bootstrap_s3:promote_s3(action, inventory, scope, collection, batch_size, upload_batch_size)"
+script = "baseia_extract.bootstrap_s3:promote_s3(action, inventory, scope, collection, collection_path, batch_size, upload_batch_size)"
 args = [
   { name = "action", positional = true, default = "plan", choices = ["plan", "apply"], help = "plan valida e gera o snapshot local sem publicar; apply verifica/envia objetos ao S3, registra o snapshot e o ativa no catálogo." },
   { name = "inventory", options = ["--inventory"], default = "", help = "CSV a promover; vazio usa o inventário do contexto local vigente." },
   { name = "scope", options = ["--scope"], default = "", help = "Nome lógico do snapshot ativo. É obrigatório quando o inventário seleciona mais de uma coleção." },
   { name = "collection", options = ["--collection"], multiple = true, help = "Filtra uma ou mais coleções do CSV antes da promoção; pode ser repetido." },
+  { name = "collection_path", options = ["--path"], default = "", help = "Seleciona no inventário vigente somente PDFs sob este diretório; é incompatível com --collection." },
   { name = "batch_size", options = ["--batch-size"], type = "integer", default = 100, help = "Quantidade de documentos enviada por requisição ao catálogo." },
   { name = "upload_batch_size", options = ["--upload-batch-size"], type = "integer", default = 2000, help = "Quantidade de objetos verificada/enviada por lote ao storage S3." },
 ]
 
 [tool.poe.tasks.extract]
-help = "Inicia ou controla uma extração MinerU do inventário local. Use URLs de mineru-api ou mineru-router; serviços locais, containers e endpoints externos são equivalentes."
+help = "Inicia ou acompanha uma extração pelo cliente Python oficial do MinerU. O cliente recebe o ZIP e usa a capacidade anunciada pelo endpoint em GET /health."
 script = "baseia_extract.tasks:extract(action, api_urls, workers, sample)"
 args = [
-  { name = "action", positional = true, default = "start", choices = ["start", "add", "scale", "stop", "status", "log", "watch"], help = "start executa/retoma; add incorpora endpoints; scale redefine capacidade por endpoint; stop drena e encerra; status mostra o estado; log imprime o log; watch acompanha ao vivo." },
-  { name = "api_urls", positional = true, multiple = true, help = "Endpoints HTTP(S) MinerU. start usa MINERU_API_URL quando omitido; add e scale exigem ao menos uma URL." },
-  { name = "workers", options = ["--workers"], type = "integer", default = 3 },
+  { name = "action", positional = true, default = "start", choices = ["start", "stop", "status", "log", "watch"], help = "start executa/retoma; stop impede novas submissões e drena as tarefas em voo; status mostra o estado; log imprime o log; watch acompanha ao vivo." },
+  { name = "api_urls", positional = true, multiple = true, help = "Uma mineru-api ou um mineru-router HTTP(S). Quando omitida, usa MINERU_API_URL; múltiplas GPUs devem ser agregadas pelo router." },
+  { name = "workers", options = ["--workers"], type = "integer", default = 3, help = "Mantido por compatibilidade com pipeline/init/quick; não limita o MinerU. O cliente usa min(1024, capacidade anunciada em GET /health)." },
   { name = "sample", options = ["--sample"], type = "boolean", default = false, help = "Quando ativo, processa data/inventory/sample.csv em vez de todo o inventário validado." },
 ]
 
@@ -119,10 +137,37 @@ script = "baseia_extract.audit:audit()"
 
 [tool.poe.tasks.render]
 help = "Transforma middle.json do MinerU em IR, estrutura e Markdown canônicos. Use após a extração; o Markdown MinerU permanece apenas intermediário."
-script = "baseia_extract.render:render(workers, overwrite)"
+script = "baseia_extract.render:render(workers, overwrite, inventory_path, collection, collection_path)"
 args = [
   { name = "workers", options = ["--workers"], type = "integer", default = 3 },
   { name = "overwrite", options = ["--overwrite"], type = "boolean", default = false },
+  { name = "inventory_path", options = ["--inventory"], default = "", help = "Inventário CSV; vazio usa o contexto local vigente." },
+  { name = "collection", options = ["--collection"], default = "", help = "Filtra por nome ou slug da coleção sem refazer a extração." },
+  { name = "collection_path", options = ["--path"], default = "", help = "Seleciona no inventário vigente somente PDFs sob este diretório; não recria inventário nem extração." },
+]
+
+[tool.poe.tasks.review]
+help = "Lista revisões requeridas nos metadata.json canônicos sem alterar artefatos."
+script = "baseia_extract.review:review(inventory_path, collection, collection_path, output_format)"
+args = [
+  { name = "inventory_path", options = ["--inventory"], default = "", help = "Inventário CSV; vazio usa o contexto local vigente." },
+  { name = "collection", options = ["--collection"], default = "", help = "Filtra por nome ou slug da coleção." },
+  { name = "collection_path", options = ["--path"], default = "", help = "Seleciona no inventário vigente somente PDFs sob este diretório; é incompatível com --collection." },
+  { name = "output_format", options = ["--format"], default = "table", choices = ["table", "json"] },
+]
+
+[tool.poe.tasks.ingest]
+help = "Prepara chunks estruturais localmente ou gera embeddings OpenRouter e faz upsert idempotente no Qdrant conforme uma política YAML."
+script = "baseia_extract.ingest:ingest(action, policy_path, inventory, collection, collection_path, qdrant_url, workers, overwrite)"
+args = [
+  { name = "action", positional = true, default = "prepare", choices = ["prepare", "apply"], help = "prepare grava e valida chunks locais; apply também chama OpenRouter e reconcilia os pontos no Qdrant." },
+  { name = "policy_path", options = ["--policy"], default = "", help = "Política YAML. Quando omitida, procura .baseia/embedding.yaml sob --path e depois BASEIA_INGEST_POLICY." },
+  { name = "inventory", options = ["--inventory"], default = "", help = "Inventário CSV; vazio usa o contexto local vigente." },
+  { name = "collection", options = ["--collection"], default = "", help = "Filtra por nome ou slug da coleção." },
+  { name = "collection_path", options = ["--path"], default = "", help = "Seleciona no inventário vigente somente PDFs sob este diretório; é incompatível com --collection." },
+  { name = "qdrant_url", options = ["--qdrant-url"], default = "", help = "Sobrescreve qdrant.url da política e QDRANT_URL." },
+  { name = "workers", options = ["--workers"], type = "integer", default = 3, help = "Paralelismo local da preparação dos chunks." },
+  { name = "overwrite", options = ["--overwrite"], type = "boolean", default = false, help = "Reconstrói chunks mesmo quando hashes e política não mudaram." },
 ]
 
 [tool.poe.tasks.collection]
@@ -134,8 +179,8 @@ args = [
   { name = "mode", options = ["--mode"], default = "keep", choices = ["keep", "local", "cataloged", "production"], help = "Em configure: keep preserva; local, cataloged e production definem o modo operacional." },
   { name = "resource_scope", options = ["--resource-scope"], default = "keep", choices = ["keep", "personal", "operator", "client"], help = "Em configure: keep preserva; personal, operator e client escolhem quais recursos/credenciais a coleção deve usar." },
   { name = "topology", options = ["--topology"], default = "keep", choices = ["keep", "local", "services", "distributed"], help = "Em configure: keep preserva; as demais escolhas definem onde o pipeline é executado." },
-  { name = "target_stage", options = ["--target-stage"], default = "keep", choices = ["keep", "inventory", "extract", "render", "promote"], help = "Em configure: etapa que pipeline/quick alcançam quando --through=auto." },
-  { name = "api_urls", options = ["--api-url"], multiple = true, help = "Em configure: substitui a lista persistida de endpoints MinerU; repita a opção para vários servidores." },
+  { name = "target_stage", options = ["--target-stage"], default = "keep", choices = ["keep", "inventory", "extract", "render", "ingest", "promote"], help = "Em configure: etapa que pipeline/quick alcançam quando --through=auto." },
+  { name = "api_urls", options = ["--api-url"], multiple = true, help = "Em configure: define a mineru-api ou o mineru-router. O cliente oficial usa um endpoint; agregue múltiplas GPUs pelo router." },
   { name = "catalog_api_url", options = ["--catalog-api-url"], default = "keep", help = "Em configure: URL da API de catálogo; keep preserva e - remove." },
   { name = "s3_endpoint_url", options = ["--s3-endpoint-url"], default = "keep", help = "Em configure: endpoint do S3 canônico usado na promoção; keep preserva e - remove." },
   { name = "s3_bucket", options = ["--s3-bucket"], default = "keep", help = "Em configure: bucket canônico da coleção; keep preserva e - remove." },
@@ -157,9 +202,9 @@ args = [
   { name = "mode", options = ["--mode"], default = "ask", choices = ["ask", "local", "cataloged", "production"], help = "ask pergunta no terminal; local prioriza operação em disco; cataloged mantém estado em catálogo/S3; production prepara execução reprodutível de entrega." },
   { name = "resource_scope", options = ["--resource-scope"], default = "ask", choices = ["ask", "personal", "operator", "client"], help = "personal usa recursos particulares; operator compartilha infraestrutura mantida por você; client referencia recursos isolados do cliente e futura exportação de dumps." },
   { name = "topology", options = ["--topology"], default = "ask", choices = ["ask", "local", "services", "distributed"], help = "local privilegia processos locais; services usa serviços HTTP/S3; distributed admite múltiplos nós e endpoints." },
-  { name = "through", options = ["--through"], default = "auto", choices = ["auto", "inventory", "extract", "render", "promote", "ingest"], help = "auto usa a etapa-alvo da coleção; as demais encerram na etapa escolhida. ingest é reservado e falha claramente enquanto Qdrant não estiver implementado." },
+  { name = "through", options = ["--through"], default = "auto", choices = ["auto", "inventory", "extract", "render", "ingest", "promote"], help = "auto usa a etapa-alvo da coleção; ingest gera chunks, embeddings e pontos Qdrant antes da promoção S3." },
   { name = "execute", options = ["--execute"], default = "auto", choices = ["auto", "run", "register"], help = "auto executa fontes adicionadas a coleção existente e só registra coleções novas; run executa até --through; register limita-se a registrar, inventariar e auditar." },
-  { name = "api_urls", options = ["--api-url"], multiple = true, help = "Sobrescreve os endpoints MinerU desta execução; pode ser repetido." },
+  { name = "api_urls", options = ["--api-url"], multiple = true, help = "Sobrescreve o endpoint MinerU desta execução. Use uma mineru-api ou um mineru-router." },
   { name = "logical_prefix", options = ["--prefix"], default = "", help = "Subdiretório lógico dentro da coleção. Vazio coloca os novos documentos na raiz lógica." },
   { name = "workers", options = ["--workers"], type = "integer", default = 3 },
   { name = "recursive", options = ["--recursive"], type = "boolean", default = true, help = "Quando ativo, inventaria PDFs em subdiretórios da fonte." },
@@ -170,8 +215,8 @@ help = "Executa, de forma idempotente, as etapas disponíveis de uma coleção r
 script = "baseia_extract.collection:pipeline(collection_name, through, api_urls, workers, refresh, sample)"
 args = [
   { name = "collection_name", options = ["--collection"], default = "" },
-  { name = "through", options = ["--through"], default = "auto", choices = ["auto", "inventory", "extract", "render", "promote", "ingest"], help = "auto usa a etapa-alvo configurada; inventory só valida; extract também executa MinerU; render produz canônicos; promote publica S3/catálogo; ingest ainda não está disponível." },
-  { name = "api_urls", options = ["--api-url"], multiple = true, help = "Sobrescreve os endpoints MinerU configurados somente nesta execução." },
+  { name = "through", options = ["--through"], default = "auto", choices = ["auto", "inventory", "extract", "render", "ingest", "promote"], help = "auto usa a etapa-alvo configurada; ingest prepara chunks e Qdrant; promote publica no S3/catálogo depois do embedding." },
+  { name = "api_urls", options = ["--api-url"], multiple = true, help = "Sobrescreve o endpoint MinerU somente nesta execução. Use uma mineru-api ou um mineru-router." },
   { name = "workers", options = ["--workers"], type = "integer", default = 3 },
   { name = "refresh", options = ["--refresh"], type = "boolean", default = false, help = "Quando ativo, relê e recalcula todas as fontes antes de executar; desativado reutiliza o inventário persistido." },
   { name = "sample", options = ["--sample"], type = "boolean", default = false, help = "Executa extract, render e auditorias apenas sobre o sample.csv vigente. Não pode ser combinado com --through promote." },
@@ -183,8 +228,8 @@ script = "baseia_extract.collection:quick(path, collection_name, through, api_ur
 args = [
   { name = "path", positional = true, required = true, help = "PDF ou diretório novo; os arquivos permanecem na origem." },
   { name = "collection_name", options = ["--collection"], default = "" },
-  { name = "through", options = ["--through"], default = "auto", choices = ["auto", "inventory", "extract", "render", "promote", "ingest"], help = "auto acompanha a etapa-alvo da coleção; uma escolha explícita limita esta execução. ingest ainda não está disponível." },
-  { name = "api_urls", options = ["--api-url"], multiple = true, help = "Sobrescreve os endpoints MinerU configurados somente nesta execução." },
+  { name = "through", options = ["--through"], default = "auto", choices = ["auto", "inventory", "extract", "render", "ingest", "promote"], help = "auto acompanha a etapa-alvo da coleção; ingest antecede a promoção S3 e a política é obrigatória para ambas as etapas." },
+  { name = "api_urls", options = ["--api-url"], multiple = true, help = "Sobrescreve o endpoint MinerU somente nesta execução. Use uma mineru-api ou um mineru-router." },
   { name = "logical_prefix", options = ["--prefix"], default = "", help = "Subdiretório lógico dentro da coleção; vazio usa a raiz." },
   { name = "workers", options = ["--workers"], type = "integer", default = 3 },
   { name = "recursive", options = ["--recursive"], type = "boolean", default = true, help = "Quando ativo, inclui PDFs em subdiretórios." },

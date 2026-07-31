@@ -53,6 +53,7 @@ Esse perfil inicia:
 - PostgreSQL do catálogo;
 - SeaweedFS como S3 compatível;
 - Catalog API;
+- Qdrant;
 - PostgreSQL do Temporal;
 - Temporal e sua UI.
 
@@ -76,6 +77,7 @@ O perfil `gpu` não é incluído automaticamente em `production`.
 docker compose --profile production ps
 Invoke-RestMethod "http://127.0.0.1:8088/health"
 Invoke-RestMethod "http://127.0.0.1:9333/cluster/status"
+Invoke-RestMethod "http://127.0.0.1:6333/collections"
 ```
 
 Com GPU local:

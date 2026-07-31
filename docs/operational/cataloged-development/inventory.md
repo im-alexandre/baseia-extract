@@ -32,6 +32,11 @@ uv run poe init "D:/clientes/acme/documentos" `
 `register` cria o YAML, inventaria e audita sem disparar a coleção inteira. O
 inventário fica em `D:/clientes/acme/documentos/.baseia/inventory/`.
 
+Antes de executar até `promote`, declare `strategy.ingest_policy` no YAML da
+coleção e disponibilize `OPENROUTER_API_KEY`. Se o endpoint Qdrant exigir
+autenticação, disponibilize também a credencial referenciada pela política. A
+promoção integrada não antecede a ingestão vetorial.
+
 ## Validar uma amostra
 
 ```powershell
@@ -52,7 +57,8 @@ uv run poe pipeline `
 ```
 
 O pipeline audita inventário, extrai pendências, renderiza, audita novamente,
-publica todos os artefatos por SHA-256, registra o snapshot e o ativa no escopo
+prepara chunks, gera embeddings OpenRouter, reconcilia Qdrant, publica todos os
+artefatos por SHA-256, registra o snapshot e o ativa no escopo
 `acme-diagnostico`.
 
 Uma reexecução idêntica verifica objetos e reutiliza o snapshot ativo. Se a

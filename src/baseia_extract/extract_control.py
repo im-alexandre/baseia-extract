@@ -142,31 +142,6 @@ def normalize_api_urls(
     return tuple(dict.fromkeys(normalized))
 
 
-def _queue_endpoints(
-    state: dict[str, Any],
-    api_urls: tuple[str, ...],
-    workers: int = 3,
-) -> Path:
-    normalized = normalize_api_urls(api_urls)
-    if not normalized:
-        raise ValueError("Informe ao menos uma URL de serviço MinerU.")
-    if workers < 0:
-        raise ValueError("--workers não pode ser negativo.")
-
-    command_dir = Path(str(state["command_dir"]))
-    command_path = command_dir / f"{time.time_ns()}-{uuid.uuid4().hex}.json"
-    _write_json(
-        command_path,
-        {
-            "created_at": _now(),
-            "action": "add",
-            "api_urls": list(normalized),
-            "workers": workers or None,
-        },
-    )
-    return command_path
-
-
 def _queue_stop(state: dict[str, Any]) -> Path:
     command_dir = Path(str(state["command_dir"]))
     command_path = (
@@ -178,33 +153,6 @@ def _queue_stop(state: dict[str, Any]) -> Path:
         {
             "created_at": _now(),
             "action": "stop",
-        },
-    )
-    return command_path
-
-
-def _queue_scale(
-    state: dict[str, Any],
-    api_urls: tuple[str, ...],
-    workers: int,
-) -> Path:
-    if workers < 1:
-        raise ValueError("--workers deve ser maior que zero.")
-    normalized = normalize_api_urls(api_urls)
-    if not normalized:
-        raise ValueError("Informe ao menos uma URL de serviço MinerU.")
-    command_dir = Path(str(state["command_dir"]))
-    command_path = (
-        command_dir
-        / f"{time.time_ns()}-{uuid.uuid4().hex}.json"
-    )
-    _write_json(
-        command_path,
-        {
-            "created_at": _now(),
-            "action": "scale",
-            "api_urls": list(normalized),
-            "workers": workers,
         },
     )
     return command_path
@@ -222,7 +170,11 @@ def start(
                 "A extração está drenando e não aceita novos endpoints."
             )
         if api_urls:
-            _queue_endpoints(active, api_urls, workers)
+            raise RuntimeError(
+                "A extração oficial MinerU já fixou seu endpoint e a "
+                "concorrência anunciada por GET /health. Aguarde o término "
+                "para selecionar outro endpoint."
+            )
         print(
             f"Extração já está ativa: pid={active['pid']}\n"
             f"Log: {active['log_path']}",
@@ -268,14 +220,18 @@ def start(
     try:
         from .tasks import run_extract
 
-        run_extract(
+        result = run_extract(
             api_urls=initial_api_urls,
             workers=workers,
             sample=sample,
             command_dir=command_dir,
             run_id=run_id,
         )
-        state["status"] = "complete"
+        state["status"] = (
+            "stopped"
+            if result["extraction"].get("stopped_early")
+            else "complete"
+        )
     except KeyboardInterrupt:
         state["status"] = "interrupted"
         state["error"] = "Interrompida pelo terminal."
@@ -310,31 +266,6 @@ def start(
     return state
 
 
-def add(
-    api_urls: tuple[str, ...],
-    workers: int = 3,
-) -> dict[str, Any]:
-    state = _active_state()
-    if state is None:
-        raise RuntimeError(
-            "Nenhuma extração ativa. Inicie com `poe extract`."
-        )
-    if state.get("status") == "stopping":
-        raise RuntimeError(
-            "A extração já está encerrando e não aceita novos endpoints."
-        )
-    normalized = normalize_api_urls(api_urls)
-    command_path = _queue_endpoints(state, normalized, workers)
-    print(
-        f"Endpoints enfileirados para a extração pid={state['pid']}: "
-        f"{', '.join(normalized)}"
-        f"{f' | workers={workers}' if workers else ''}\n"
-        f"Comando: {command_path}",
-        flush=True,
-    )
-    return state
-
-
 def stop() -> dict[str, Any]:
     state = _active_state()
     if state is None:
@@ -347,30 +278,6 @@ def stop() -> dict[str, Any]:
     print(
         "Encerramento gracioso solicitado. A execução não enviará "
         "novos documentos e aguardará os que estão em voo.\n"
-        f"Comando: {command_path}",
-        flush=True,
-    )
-    return state
-
-
-def scale(
-    api_urls: tuple[str, ...],
-    workers: int,
-) -> dict[str, Any]:
-    state = _active_state()
-    if state is None:
-        raise RuntimeError("Nenhuma extração ativa.")
-    if state.get("status") == "stopping":
-        raise RuntimeError(
-            "A extração está encerrando e não aceita ajustes."
-        )
-    normalized = normalize_api_urls(
-        api_urls or (settings.mineru_api_url,)
-    )
-    command_path = _queue_scale(state, normalized, workers)
-    print(
-        "Ajuste de capacidade enfileirado: "
-        f"workers={workers} | endpoints={', '.join(normalized)}\n"
         f"Comando: {command_path}",
         flush=True,
     )
@@ -594,8 +501,6 @@ def dispatch(
         return start(api_urls, workers, sample)
     if sample:
         raise ValueError("--sample só pode ser usado com a ação start.")
-    if normalized_action == "add":
-        return add(api_urls, workers)
     if normalized_action == "status":
         return status()
     if normalized_action == "log":
@@ -604,9 +509,7 @@ def dispatch(
         return watch_dashboard()
     if normalized_action == "stop":
         return stop()
-    if normalized_action == "scale":
-        return scale(api_urls, workers)
     raise ValueError(
         f"Ação inválida: {action!r}. "
-        "Use start, add, scale, stop, status ou log."
+        "Use start, stop, status, log ou watch."
     )

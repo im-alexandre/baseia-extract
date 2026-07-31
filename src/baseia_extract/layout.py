@@ -19,6 +19,7 @@ class DocumentLayout:
     manifest_path: Path
     ir_path: Path
     structure_path: Path
+    metadata_path: Path
     markdown_path: Path
     render_path: Path
 
@@ -78,6 +79,7 @@ def document_layout(row: Mapping[str, Any]) -> DocumentLayout:
         manifest_path=document_dir / "manifest.json",
         ir_path=canonical_dir / "document_ir.json",
         structure_path=canonical_dir / "structure.json",
+        metadata_path=canonical_dir / "metadata.json",
         markdown_path=canonical_dir / "document.md",
         render_path=canonical_dir / "render.json",
     )

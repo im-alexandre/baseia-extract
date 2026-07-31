@@ -27,6 +27,7 @@ class BlockRole(StrEnum):
     LIST = "list"
     REFERENCE = "reference"
     ABSTRACT = "abstract"
+    METADATA = "metadata"
     EQUATION = "equation"
     FIGURE = "figure"
     TABLE = "table"
